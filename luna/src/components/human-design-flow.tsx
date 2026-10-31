@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
 import { IconField, IconSelect } from "@/components/form-field";
 import { centers, type HumanDesignChart } from "@/lib/human-design";
+import { track } from "@/lib/analytics";
 
 type Interpretation = {
   summary: string;
@@ -46,8 +47,10 @@ export function HumanDesignFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "human_design_interpret_complete" : "human_design_interpret_fail");
     } catch {
       setReading(null);
+      track("human_design_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
@@ -58,6 +61,7 @@ export function HumanDesignFlow() {
     const data = new FormData(event.currentTarget);
     setLoading(true);
     setError("");
+    track("human_design_submit");
     const zone = zones.find((z) => z.label === String(data.get("zone"))) ?? zones[0];
     const body = {
       birthDate: String(data.get("birthDate") || ""),
@@ -73,12 +77,15 @@ export function HumanDesignFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Không lập được biểu đồ.");
       setChart(payload.chart);
+      track("human_design_result_view");
+      track("experience_complete", { method: "human-design" });
       setLastInput(body);
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body);
     } catch (err) {
       setError((err as Error).message);
+      track("human_design_error");
     } finally {
       setLoading(false);
     }
@@ -194,7 +201,7 @@ export function HumanDesignFlow() {
           <h2 className="mt-1 text-[30px] leading-tight text-[#1d1133]">{chart.type}</h2>
           <p className="mt-1 text-[13px] text-[#5b5276]">{chart.strategy}</p>
         </div>
-        <Button variant="outline" onClick={() => { setChart(null); setReading(null); setLastInput(null); }}>
+        <Button variant="outline" onClick={() => { track("human_design_restart"); setChart(null); setReading(null); setLastInput(null); }}>
           <RotateCcw size={15} /> Lập lại
         </Button>
       </div>
@@ -307,7 +314,7 @@ export function HumanDesignFlow() {
             chỗ từ vị trí hành tinh thật nên vẫn đầy đủ.
           </p>
           {lastInput ? (
-            <Button variant="outline" className="mt-3" onClick={() => void loadReading(lastInput)}>
+            <Button variant="outline" className="mt-3" onClick={() => { track("human_design_interpret_retry"); void loadReading(lastInput); }}>
               <RotateCcw size={15} /> Thử luận giải lại
             </Button>
           ) : null}

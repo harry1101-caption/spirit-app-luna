@@ -26,7 +26,6 @@ import {
   Share2,
   Sparkles,
   Sun,
-  Target,
   UsersRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -196,6 +195,7 @@ export function TuViFlow() {
     setFormValues(input);
     setError("");
     setLoading(true);
+    track("tuvi_submit");
     try {
       const response = await fetch("/api/tuvi", {
         method: "POST",
@@ -205,15 +205,18 @@ export function TuViFlow() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Không thể lập lá số lúc này.");
       setChart(data as TuViChart);
+      track("tuvi_result_view");
+      track("experience_complete", { method: "tuvi" });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Không thể lập lá số lúc này.");
+      track("tuvi_error");
     } finally {
       setLoading(false);
     }
   }
 
-  if (chart?.formatVersion === 2) return <TuViChartView chart={chart} onEdit={() => setChart(null)} />;
+  if (chart?.formatVersion === 2) return <TuViChartView chart={chart} onEdit={() => { track("tuvi_restart"); setChart(null); }} />;
   return (
     <section className="experience-page experience-page-tarot tuvi-page pt-[35px]! max-[1250px]:pt-[45px]! min-[1600px]:pt-[45px]!" aria-labelledby="tuvi-title">
       <div className="tarot-page-background left-1/2! right-auto! w-screen! -translate-x-1/2!" aria-hidden="true" />
@@ -1140,53 +1143,66 @@ function DailyResultView({ report, saved, onSave, onShare, onRestart }: {
   const [sign, day] = report.subtitle.split(" · ");
   const signIndex = zodiac.indexOf(sign);
   const details = zodiacDetails[sign];
-  const sectionIcons = [Target, BriefcaseBusiness, Heart, Sparkles];
 
-  return <div>
-    <h2 className="sr-only">Thông điệp chiêm tinh hôm nay của {sign}</h2>
-    {/* Chỉ bo góc + cắt tràn: khung thẻ đã do .experience-surface lo, thêm
-        viền hay nền ở đây sẽ thành hai lớp hộp lồng nhau. */}
-    <div className="overflow-hidden rounded-[18px]">
-      <div className="daily-reading-layout h-auto!">
-        <aside className="daily-reading-art" aria-label={`Thông điệp ngày ${day}`}>
-          <span className="daily-reading-moon" aria-hidden="true">☾</span>
-          <div className="daily-reading-heading">
-            <span>HOROSCOPE</span>
-            <h2>Thông điệp<br />chiêm tinh<br />hôm nay</h2>
-            <p>{sign} · {day}</p>
-          </div>
-          <Image src="/images/zodiac-bust.png" alt="Nữ thần giữa quầng sao và mây" width={816} height={1024} priority />
-          <span className="daily-reading-art-caption">A BRIGHTER YOU<br />EVERY DAY</span>
-        </aside>
-        <div className="daily-reading-content overflow-visible!">
-          <div className="daily-reading-sign">
-            <span className="daily-reading-symbol" aria-hidden="true">{zodiacSymbols[signIndex] || "✦"}</span>
-            <div><h3>{sign}</h3><p>{details?.dates || day}</p></div>
-            {details ? <span className="daily-reading-traits">{details.traits}</span> : null}
-          </div>
-          <blockquote className="daily-reading-summary">{report.summary}</blockquote>
-          <div className="daily-reading-sections">
-            {report.sections.map((section, index) => {
-              const Icon = sectionIcons[index] || Sparkles;
-              return <section className="daily-reading-section" key={`${section.title}-${index}`}>
-                <span className="daily-reading-section-icon" aria-hidden="true"><Icon size={25} strokeWidth={1.7}/></span>
-                <div><h4>{section.title}</h4><p>{section.text}</p></div>
-              </section>;
-            })}
-          </div>
-          <div className="daily-reading-reflection">
-            <div><Sun size={20} strokeWidth={1.4}/><span>MỘT CÂU HỎI CHO BẠN</span></div>
-            <p>{report.reflection}</p>
-          </div>
-          <div className="daily-reading-actions">
-            <Button onClick={onSave} disabled={saved}>{saved ? <Check size={16}/> : <Bookmark size={16}/>} {saved ? "Đã lưu kết quả" : "Lưu kết quả"}</Button>
-            <Button variant="outline" onClick={onShare}><Share2 size={16}/> Chia sẻ</Button>
-            <button className="daily-reading-restart" onClick={onRestart}><RotateCcw size={15}/> Xem cung khác</button>
-          </div>
+  // Cùng khuôn kết quả với Thần số học, Bát tự…: một panel, đầu đề + nút làm lại, rồi phần đọc.
+  return (
+    <div className="tarot-setup-panel">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <p className="eyebrow">CHIÊM TINH · {day}</p>
+          <h2 className="mt-1 text-[30px] leading-tight text-[#1d1133]">
+            Thông điệp hôm nay cho {sign}
+          </h2>
+          {details ? (
+            <p className="mt-1 text-[12px] text-[#6a5c7a]">{details.dates}</p>
+          ) : null}
+        </div>
+        <Button variant="outline" onClick={onRestart}>
+          <RotateCcw size={15} /> Xem cung khác
+        </Button>
+      </div>
+
+      <div className="mt-6 flex items-center gap-4 rounded-2xl border border-[#e0d5f0] bg-[#f6f0fd]/70 p-4">
+        <span className="font-[family-name:var(--font-serif-app)] text-[40px] leading-none text-[#3e357e]" aria-hidden="true">
+          {zodiacSymbols[signIndex] || "✦"}
+        </span>
+        <div className="min-w-0">
+          <p className="text-xs tracking-[0.2em] text-[#6a5c7a] uppercase">Cung {sign}</p>
+          {details ? (
+            <p className="mt-1 text-[13px] leading-[1.6] text-[#281b44]">{details.traits}</p>
+          ) : null}
         </div>
       </div>
+
+      <div className="mt-7 border-t border-[#efe6f6] pt-6">
+        <p className="text-[15px] leading-[1.8] text-[#5b5276]">{report.summary}</p>
+        {report.sections.map((section, index) => (
+          <section key={`${section.title}-${index}`} className="mt-5">
+            <h3 className="font-[family-name:var(--font-serif-app)] text-[19px] text-[#281b44]">{section.title}</h3>
+            <p className="mt-2 text-[14px] leading-[1.8] text-[#5b5276]">{section.text}</p>
+          </section>
+        ))}
+      </div>
+
+      {report.reflection ? (
+        <div className="mt-6 rounded-2xl border border-[#e8ddef] bg-white/60 p-4">
+          <p className="text-xs tracking-[0.2em] text-[#6a5c7a] uppercase">Một câu hỏi cho bạn</p>
+          <p className="mt-2 font-[family-name:var(--font-serif-app)] text-[19px] leading-[1.5] text-[#3e357e]">
+            {report.reflection}
+          </p>
+        </div>
+      ) : null}
+
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Button onClick={onSave} disabled={saved}>
+          {saved ? <Check size={16} /> : <Bookmark size={16} />} {saved ? "Đã lưu kết quả" : "Lưu kết quả"}
+        </Button>
+        <Button variant="outline" onClick={onShare}>
+          <Share2 size={16} /> Chia sẻ
+        </Button>
+      </div>
     </div>
-  </div>;
+  );
 }
 
 function TarotCardSpread({

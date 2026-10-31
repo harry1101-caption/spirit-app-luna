@@ -11,6 +11,7 @@ import {
   checkQuestion, gradeMeaning, notes, ritualSteps, sampleQuestions, type Grade,
 } from "@/lib/xin-xam";
 import { KeoToss } from "@/components/keo-toss";
+import { track } from "@/lib/analytics";
 
 type Stick = { so: number; cap: Grade; tho: string[]; dienTich: string };
 type Chart = { stick: number; question: string; day: string; card: Stick };
@@ -59,8 +60,10 @@ export function XinXamFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "xin_xam_interpret_complete" : "xin_xam_interpret_fail");
     } catch {
       setReading(null);
+      track("xin_xam_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
@@ -69,6 +72,7 @@ export function XinXamFlow() {
   async function receiveStick() {
     setLoading(true);
     setError("");
+    track("xin_xam_submit");
     const body = {
       question: question.trim(),
       device: deviceSeed(),
@@ -83,17 +87,21 @@ export function XinXamFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Chưa rút được quẻ.");
       setChart(payload.chart);
+      track("xin_xam_result_view");
+      track("experience_complete", { method: "xin-xam" });
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body);
     } catch (err) {
       setError((err as Error).message);
+      track("xin_xam_error");
     } finally {
       setLoading(false);
     }
   }
 
   function restart() {
+    track("xin_xam_restart");
     setChart(null);
     setReading(null);
     setQuestion("");

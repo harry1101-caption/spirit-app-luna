@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { IconField, IconSelect } from "@/components/form-field";
 import { CalendarClock, Smile } from "lucide-react";
 import { dreamMoods, dreamRecurrences, type GiacMoChart } from "@/lib/giac-mo";
+import { track } from "@/lib/analytics";
 
 type Interpretation = {
   summary: string;
@@ -34,8 +35,10 @@ export function GiacMoFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "giac_mo_interpret_complete" : "giac_mo_interpret_fail");
     } catch {
       setReading(null);
+      track("giac_mo_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
@@ -46,6 +49,7 @@ export function GiacMoFlow() {
     const data = new FormData(event.currentTarget);
     setLoading(true);
     setError("");
+    track("giac_mo_submit");
     const body = {
       dream: dream.trim(),
       mood: String(data.get("mood") || ""),
@@ -61,12 +65,15 @@ export function GiacMoFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Chưa đọc được giấc mơ này.");
       setChart(payload.chart);
+      track("giac_mo_result_view");
+      track("experience_complete", { method: "giac-mo" });
       setLastInput(body);
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body);
     } catch (err) {
       setError((err as Error).message);
+      track("giac_mo_error");
     } finally {
       setLoading(false);
     }
@@ -214,7 +221,7 @@ export function GiacMoFlow() {
               : "Một giấc mơ riêng của bạn"}
           </h2>
         </div>
-        <Button variant="outline" onClick={() => { setChart(null); setReading(null); setLastInput(null); }}>
+        <Button variant="outline" onClick={() => { track("giac_mo_restart"); setChart(null); setReading(null); setLastInput(null); }}>
           <RotateCcw size={15} /> Kể giấc mơ khác
         </Button>
       </div>
@@ -284,7 +291,7 @@ export function GiacMoFlow() {
             trên được tra tại chỗ nên vẫn đọc được.
           </p>
           {lastInput ? (
-            <Button variant="outline" className="mt-3" onClick={() => void loadReading(lastInput)}>
+            <Button variant="outline" className="mt-3" onClick={() => { track("giac_mo_interpret_retry"); void loadReading(lastInput); }}>
               <RotateCcw size={15} /> Thử diễn giải lại
             </Button>
           ) : null}

@@ -148,6 +148,11 @@ export default function LunaApp({
       : null,
   );
   const mainRef = useRef<HTMLElement>(null);
+  // Vào thẳng /tarot, /chiem-tinh, /tinh-cach (kể cả khi openMethod chuyển trang)
+  // không đi qua openMethod, nên bắn sự kiện bắt đầu ở đây.
+  useEffect(() => {
+    if (initialFlow) trackMethodStart(initialFlow);
+  }, [initialFlow]);
   // Reconcile browser-only persistence once after SSR; never write personal data implicitly.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Hydrate an external browser store after the SSR snapshot.
@@ -331,10 +336,7 @@ export default function LunaApp({
     setFlow(method);
     setReport(null);
     setError("");
-    track("experience_start", { method });
-    if (method === "tarot") track("tarot_start");
-    if (method === "daily") track("daily_guidance_view");
-    if (method === "personality") track("personality_test_start");
+    trackMethodStart(method);
   }
   function startOnboard() {
     setIntent(prefs.intent || intents[0]);
@@ -630,7 +632,7 @@ export default function LunaApp({
       >
         {tab === "home" && !flow && !report ? (
           <CelestialHome
-            onStart={startOnboard}
+            onStart={() => openMethod("tarot")}
             onMethod={openMethod}
             onTool={openTool}
             onTopic={openTopic}
@@ -742,7 +744,7 @@ export default function LunaApp({
                   <br />
                   Chỉ có bạn, trên thiết bị này, xem được chúng.
                 </p>
-                <Button onClick={() => navigateTab("explore")}>
+                <Button onClick={() => openMethod("tarot")}>
                   Bắt đầu khám phá <ArrowRight size={16} />
                 </Button>
               </div>
@@ -959,8 +961,9 @@ export default function LunaApp({
                 }
               />
             )}
-            <RelatedToolsSlot panel="experience-surface">
-            <div className="experience-surface">
+            <RelatedToolsSlot panel={report?.type === "daily" ? "tarot-setup-panel" : "experience-surface"}>
+            {/* Kết quả chiêm tinh tự vẽ panel như các tool khác, nên bỏ khung ngoài. */}
+            <div className={`experience-surface ${report?.type === "daily" ? "max-w-none! rounded-none! border-0! bg-transparent! p-0! shadow-none!" : ""}`}>
               {" "}
               {report ? (
                 <ReportView
@@ -972,6 +975,7 @@ export default function LunaApp({
                   onSave={saveReport}
                   onShare={shareReport}
                   onRestart={() => {
+                    track("experience_restart", { method: report.type });
                     if (report.type === "lenormand") {
                       setFlow(null);
                       setTab("lenormand");
@@ -1172,6 +1176,13 @@ export default function LunaApp({
     </div>
   );
 }
+function trackMethodStart(method: Method) {
+  track("experience_start", { method });
+  if (method === "tarot") track("tarot_start");
+  if (method === "daily") track("daily_guidance_view");
+  if (method === "personality") track("personality_test_start");
+}
+
 function PageHeading({
   eyebrow,
   title,

@@ -12,6 +12,7 @@ import { PalmDiagram, PalmLegend } from "@/components/palm-diagram";
 import {
   hands, palmLineGuide, palmLines, photoTips, type ChiTayResult, type Hand as HandSide,
 } from "@/lib/chi-tay";
+import { track } from "@/lib/analytics";
 
 /**
  * Thu nhỏ ảnh ngay trên máy người dùng trước khi gửi.
@@ -101,6 +102,7 @@ export function ChiTayFlow() {
     const data = new FormData(event.currentTarget);
     setLoading(true);
     setError("");
+    track("chi_tay_submit");
     try {
       const response = await fetch("/api/chi-tay", {
         method: "POST",
@@ -114,15 +116,19 @@ export function ChiTayFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Chưa đọc được ảnh.");
       setResult(payload.result);
+      track("chi_tay_result_view");
+      track("experience_complete", { method: "chi-tay" });
       window.scrollTo({ top: 0, behavior: "auto" });
     } catch (err) {
       setError((err as Error).message);
+      track("chi_tay_error");
     } finally {
       setLoading(false);
     }
   }
 
   function reset() {
+    track("chi_tay_restart");
     setResult(null);
     setLeft("");
     setRight("");

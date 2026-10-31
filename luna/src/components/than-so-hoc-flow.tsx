@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
 import { IconField } from "@/components/form-field";
 import { numberMeanings, type ThanSoHocChart } from "@/lib/than-so-hoc";
+import { track } from "@/lib/analytics";
 
 type Interpretation = {
   summary: string;
@@ -32,8 +33,10 @@ export function ThanSoHocFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "than_so_hoc_interpret_complete" : "than_so_hoc_interpret_fail");
     } catch {
       setReading(null);
+      track("than_so_hoc_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
@@ -44,6 +47,7 @@ export function ThanSoHocFlow() {
     const data = new FormData(event.currentTarget);
     setLoading(true);
     setError("");
+    track("than_so_hoc_submit");
     const body = {
       fullName: String(data.get("fullName") || "").trim(),
       birthDate: String(data.get("birthDate") || ""),
@@ -58,12 +62,15 @@ export function ThanSoHocFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Không tính được các con số.");
       setChart(payload.chart);
+      track("than_so_hoc_result_view");
+      track("experience_complete", { method: "than-so-hoc" });
       setLastInput(body);
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body);
     } catch (err) {
       setError((err as Error).message);
+      track("than_so_hoc_error");
     } finally {
       setLoading(false);
     }
@@ -199,7 +206,7 @@ export function ThanSoHocFlow() {
             Tên quy ra chữ cái: {chart.normalizedName}
           </p>
         </div>
-        <Button variant="outline" onClick={() => { setChart(null); setReading(null); setLastInput(null); }}>
+        <Button variant="outline" onClick={() => { track("than_so_hoc_restart"); setChart(null); setReading(null); setLastInput(null); }}>
           <RotateCcw size={15} /> Tính lại
         </Button>
       </div>
@@ -309,7 +316,7 @@ export function ThanSoHocFlow() {
             tại chỗ nên vẫn đầy đủ và chính xác.
           </p>
           {lastInput ? (
-            <Button variant="outline" className="mt-3" onClick={() => void loadReading(lastInput)}>
+            <Button variant="outline" className="mt-3" onClick={() => { track("than_so_hoc_interpret_retry"); void loadReading(lastInput); }}>
               <RotateCcw size={15} /> Thử luận giải lại
             </Button>
           ) : null}

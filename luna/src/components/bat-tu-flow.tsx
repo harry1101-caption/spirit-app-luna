@@ -7,6 +7,7 @@ import { useRelatedTools } from "@/components/related-tools";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IconField, IconSelect } from "@/components/form-field";
 import { elements, type BatTuChart } from "@/lib/bat-tu";
+import { track } from "@/lib/analytics";
 
 type Interpretation = {
   summary: string;
@@ -42,8 +43,10 @@ export function BatTuFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "bat_tu_interpret_complete" : "bat_tu_interpret_fail");
     } catch {
       setReading(null);
+      track("bat_tu_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
@@ -54,6 +57,7 @@ export function BatTuFlow() {
     const data = new FormData(event.currentTarget);
     setLoading(true);
     setError("");
+    track("bat_tu_submit");
     const body = {
       name: String(data.get("name") || "").trim() || undefined,
       birthDate: String(data.get("birthDate") || ""),
@@ -69,12 +73,15 @@ export function BatTuFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Không lập được lá số.");
       setChart(payload.chart);
+      track("bat_tu_result_view");
+      track("experience_complete", { method: "bat-tu" });
       setLastInput(body);
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body); // không await: lá số hiện ngay, luận giải tới sau
     } catch (err) {
       setError((err as Error).message);
+      track("bat_tu_error");
     } finally {
       setLoading(false);
     }
@@ -221,7 +228,7 @@ export function BatTuFlow() {
             {chart.input.name ? `Lá số của ${chart.input.name}` : "Tứ trụ của bạn"}
           </h2>
         </div>
-        <Button variant="outline" onClick={() => { setChart(null); setReading(null); setLastInput(null); }}>
+        <Button variant="outline" onClick={() => { track("bat_tu_restart"); setChart(null); setReading(null); setLastInput(null); }}>
           <RotateCcw size={15} /> Lập lại
         </Button>
       </div>
@@ -339,7 +346,7 @@ export function BatTuFlow() {
             bằng toán lịch nên vẫn đầy đủ và chính xác.
           </p>
           {lastInput ? (
-            <Button variant="outline" className="mt-3" onClick={() => void loadReading(lastInput)}>
+            <Button variant="outline" className="mt-3" onClick={() => { track("bat_tu_interpret_retry"); void loadReading(lastInput); }}>
               <RotateCcw size={15} /> Thử luận giải lại
             </Button>
           ) : null}
