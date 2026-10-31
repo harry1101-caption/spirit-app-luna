@@ -81,7 +81,7 @@ export function FeedbackSection() {
       <div className="experience-section-heading">
         <div>
           <h2 id="feedback-heading">Người dùng nói gì về Lunara</h2>
-          <p>Những góp ý thật từ người đã dùng, chưa qua chỉnh sửa câu chữ</p>
+          <p>Nội dung minh họa cho giao diện, chưa phải phản hồi từ người dùng thật</p>
         </div>
       </div>
 
