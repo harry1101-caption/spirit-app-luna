@@ -50,6 +50,10 @@ export const topics: Topic[] = [
   },
 ];
 
+/** Tra chủ đề theo key, dùng khi đọc lại từ query string sau khi tải lại trang. */
+export const topicByKey = (key: string | undefined) =>
+  topics.find((t) => t.key === key);
+
 export function TopicPicker({ onPick }: { onPick: (topic: Topic) => void }) {
   return (
     <section

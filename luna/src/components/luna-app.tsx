@@ -14,9 +14,10 @@ import { ThanSoHocFlow } from "@/components/than-so-hoc-flow";
 import { GiacMoFlow } from "@/components/giac-mo-flow";
 import { HumanDesignFlow } from "@/components/human-design-flow";
 import { ChiTayFlow } from "@/components/chi-tay-flow";
+import { XinXamFlow } from "@/components/xin-xam-flow";
 import { AllToolsMenu } from "@/components/all-tools-menu";
 import { toolGroups } from "@/components/tool-groups";
-import type { Topic } from "@/components/topic-picker";
+import { topicByKey, type Topic } from "@/components/topic-picker";
 import {
   ChevronDown,
   Menu,
@@ -61,7 +62,7 @@ import { RelatedToolsSlot } from "@/components/related-tools";
 import { LogoMark } from "@/components/logo-mark";
 
 import { buildDailyCardReport, drawDailyCard } from "@/lib/daily-card";
-type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay";
+type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam";
 type DailyCardState = { id: number; day: string; revealed: boolean };
 /** Lá bài hôm nay được khoá theo ngày, nên cần một seed ổn định cho mỗi thiết bị. */
 const DAILY_CARD_KEY = "luna:dailycard:v1";
@@ -85,6 +86,10 @@ const nav: { label: string; action: string }[] = [
   { label: "Tarot", action: "tarot" },
   { label: "Thần số học", action: "than-so-hoc" },
 ];
+/** Chủ đề trên trang chủ ↔ chủ đề trong form Tarot. */
+function tarotTopicFor(key: string) {
+  return key === "love" ? "Tình cảm" : "Công việc & học tập";
+}
 function readLocal<T>(key: string, defaultValue: T): T {
   try {
     const v = localStorage.getItem(key);
@@ -96,7 +101,16 @@ function readLocal<T>(key: string, defaultValue: T): T {
 function writeLocal(key: string, value: unknown) {
   localStorage.setItem(key, JSON.stringify(value));
 }
-export default function LunaApp({ initialFlow, initialTab = "home" }: { initialFlow?: Method; initialTab?: Tab } = {}) {
+export default function LunaApp({
+  initialFlow,
+  initialTab = "home",
+  initialTopic,
+}: {
+  initialFlow?: Method;
+  initialTab?: Tab;
+  /** Key chủ đề đọc từ query string, ví dụ /tarot?chu-de=work. */
+  initialTopic?: string;
+} = {}) {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [historyFilter, setHistoryFilter] = useState<"all" | Method>("all");
   const [tab, setTab] = useState<Tab>(initialTab);
@@ -115,8 +129,19 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
   const [analytics, setAnalytics] = useState(false);
   const [savedStatus, setSavedStatus] = useState(false);
   const [dailyCard, setDailyCard] = useState<DailyCardState | null>(null);
-  /** Chủ đề + câu hỏi điền sẵn khi vào từ khối "Chọn một chủ đề để bắt đầu". */
-  const [tarotSeed, setTarotSeed] = useState<{ topic: string; question: string } | null>(null);
+  /**
+   * Chủ đề + câu hỏi điền sẵn khi vào từ khối "Chọn một chủ đề để bắt đầu".
+   *
+   * Lấy từ query string chứ KHÔNG phải từ state đặt trước lúc điều hướng:
+   * `openMethod` đi bằng window.location.assign, tức tải lại cả trang, nên mọi
+   * state React đặt trước đó đều mất trước khi TarotFlow kịp đọc.
+   */
+  const seedTopic = topicByKey(initialTopic);
+  const [tarotSeed, setTarotSeed] = useState<{ topic: string; question: string } | null>(
+    seedTopic && seedTopic.key !== "self" && seedTopic.key !== "future"
+      ? { topic: tarotTopicFor(seedTopic.key), question: seedTopic.question }
+      : null,
+  );
   const mainRef = useRef<HTMLElement>(null);
   // Reconcile browser-only persistence once after SSR; never write personal data implicitly.
   useEffect(() => {
@@ -238,6 +263,10 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
     }
     if (next === "chi-tay" && window.location.pathname !== "/chi-tay") {
       window.location.assign("/chi-tay");
+      return;
+    }
+    if (next === "xin-xam" && window.location.pathname !== "/xin-xam") {
+      window.location.assign("/xin-xam");
       return;
     }
     if (next === "home" && window.location.pathname !== "/") {
@@ -453,22 +482,35 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
     }
   }
   /**
-   * Mở phương pháp hợp với chủ đề người dùng bấm. "Bản thân" đi thẳng vào trắc
-   * nghiệm tính cách vì câu hỏi của nó đúng là thứ bài trắc nghiệm trả lời;
-   * ba chủ đề còn lại mở Tarot với chủ đề đã chọn sẵn.
+   * Mở phương pháp hợp với từng chủ đề, chứ không đổ cả bốn về một chỗ — section
+   * đó tự hứa "Lunara gợi ý phương pháp phù hợp" nên phải làm đúng.
+   *
+   * Cách chia: câu hỏi về MỘT TÌNH HUỐNG đang diễn ra ("chuyện này sẽ ra sao")
+   * thì hợp bói bài; câu hỏi về BẢN CHẤT hoặc GIAI ĐOẠN ("tôi là người thế
+   * nào", "hướng đi sắp tới") thì hợp lá số.
+   * - Tình yêu, Công việc → Tarot, điền sẵn cả chủ đề lẫn câu hỏi in trên thẻ.
+   * - Bản thân → Thần số học: đúng câu "đặc điểm nào đang ảnh hưởng đến tôi",
+   *   mà form chỉ hai ô.
+   * - Tương lai → Tử Vi: "hướng đi phía trước" chính là Đại Vận.
+   *
+   * Hai cái sau không có ô câu hỏi nên mất phần điền sẵn; đổi lại chúng trả lời
+   * đúng thứ người ta hỏi.
    */
   function openTopic(topic: Topic) {
     track("home_topic_select", { topic: topic.key });
-    if (topic.key === "self") {
+    if (topic.key === "self" || topic.key === "future") {
       setTarotSeed(null);
-      openMethod("personality");
+      navigateTab(topic.key === "self" ? "than-so-hoc" : "tuvi");
       return;
     }
-    const tarotTopic =
-      topic.key === "love" ? "Tình cảm"
-      : topic.key === "work" ? "Công việc & học tập"
-      : "Tổng quan";
-    setTarotSeed({ topic: tarotTopic, question: topic.question });
+    // Mang chủ đề theo URL, không đặt vào state: điều hướng dưới đây tải lại
+    // cả trang nên state sẽ mất. Chỉ truyền KEY, không truyền câu hỏi — câu
+    // hỏi tra lại được từ key, và không nên nhét nội dung vào thanh địa chỉ.
+    if (window.location.pathname !== "/tarot") {
+      window.location.assign(`/tarot?chu-de=${topic.key}`);
+      return;
+    }
+    setTarotSeed({ topic: tarotTopicFor(topic.key), question: topic.question });
     openMethod("tarot");
   }
 
@@ -585,14 +627,7 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
           <CelestialHome
             onStart={startOnboard}
             onMethod={openMethod}
-            onTuVi={() => navigateTab("tuvi")}
-            onLenormand={() => navigateTab("lenormand")}
-            onDailyCard={openDailyCard}
-            onBatTu={() => navigateTab("bat-tu")}
-            onThanSoHoc={() => navigateTab("than-so-hoc")}
-            onGiacMo={() => navigateTab("giac-mo")}
-            onHumanDesign={() => navigateTab("human-design")}
-            onChiTay={() => navigateTab("chi-tay")}
+            onTool={openTool}
             onTopic={openTopic}
             date={ready ? dateLabel() : ""}
             sign={prefs.sign}
@@ -710,6 +745,13 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
           </>
         ) : null}
         {tab === "tuvi" && !flow && !report ? <TuViFlow /> : null}
+        {tab === "xin-xam" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-xinxam">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Một lời gợi mở từ quẻ xăm</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><XinXamFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
         {tab === "chi-tay" && !flow && !report ? (
           <section className="experience-page experience-page-tarot experience-page-chitay">
             <div className="tarot-page-background" aria-hidden="true" />

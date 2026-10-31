@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toolGroups, toolRoutes } from "@/components/tool-groups";
@@ -70,15 +67,22 @@ function ColumnTitle({ children }: { children: string }) {
   );
 }
 
-export function SiteFooter() {
-  // new Date() lúc prerender làm Next báo blocking-prerender-current-time-client,
-  // nên lấy năm sau khi mount như các chỗ khác trong app.
-  const [year, setYear] = useState<number | null>(null);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- năm hiện tại thuộc về phiên người dùng, không phải lúc prerender
-    setYear(new Date().getFullYear());
-  }, []);
+/**
+ * Năm bản quyền tính ở phạm vi module, tức lúc build chứ không phải lúc render.
+ *
+ * Trước đây chỗ này là useState + useEffect, và chỉ vì nó mà cả footer phải
+ * mang "use client" — toàn bộ JS của footer ship xuống trình duyệt trong khi
+ * footer không có tương tác nào ngoài mấy cái link. Nó còn gây nháy: năm hiện
+ * rỗng ở lần sơn đầu rồi mới nhảy vào sau khi hydrate.
+ *
+ * Không đặt `new Date()` trong thân component được: với `cacheComponents` bật,
+ * Next báo lỗi blocking-prerender-current-time. Ở phạm vi module thì không
+ * thuộc giai đoạn render nên hợp lệ, và năm bản quyền vốn chỉ cần đúng tới lần
+ * deploy gần nhất.
+ */
+const YEAR = new Date().getFullYear();
 
+export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden! mt-[70px]! block! w-screen! max-w-none! left-1/2! -translate-x-1/2! border-0! border-t! border-t-[#e6d9ef]! bg-[linear-gradient(118deg,#efe7f6,#f6f0fb_55%,#f3ecf9)]! px-0! py-[clamp(38px,4vw,58px)]!">
       {/* Hoạ tiết nền: vài quầng sáng rất mờ cho dải gradient đỡ phẳng. Để
@@ -170,7 +174,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-10 border-t border-[#e3d6ec] pt-5 text-xs! text-[#9b89aa]">
-          © {year ?? ""} Lunara
+          © {YEAR} Lunara
         </div>
       </div>
     </footer>

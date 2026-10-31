@@ -106,28 +106,15 @@ export function ExperienceCard({
 export function CelestialHome({
   onStart,
   onMethod,
-  onTuVi,
-  onLenormand,
-  onDailyCard,
-  onBatTu,
-  onThanSoHoc,
-  onGiacMo,
-  onHumanDesign,
-  onChiTay,
+  onTool,
   onTopic,
   date,
   sign,
 }: {
   onStart: () => void;
   onMethod: (method: Method) => void;
-  onTuVi: () => void;
-  onLenormand: () => void;
-  onDailyCard: () => void;
-  onBatTu: () => void;
-  onThanSoHoc: () => void;
-  onGiacMo: () => void;
-  onHumanDesign: () => void;
-  onChiTay: () => void;
+  /** Một cửa duy nhất cho mọi công cụ — xem openTool trong luna-app. */
+  onTool: (action: string) => void;
   onTopic: (topic: Topic) => void;
   date: string;
   sign: string;
@@ -313,7 +300,7 @@ export function CelestialHome({
                       {action ? <ArrowRight className="tool-arrow" size={16} aria-hidden="true" /> : <span className="tool-upcoming">Sắp ra mắt</span>}
                     </>;
                     return action ? (
-                      <button className="tool-card is-available" key={tool.title} onClick={() => action === "tuvi" ? onTuVi() : action === "lenormand" ? onLenormand() : action === "chi-tay" ? onChiTay() : action === "human-design" ? onHumanDesign() : action === "giac-mo" ? onGiacMo() : action === "than-so-hoc" ? onThanSoHoc() : action === "bat-tu" ? onBatTu() : action === "dailycard" ? onDailyCard() : onMethod(action as Method)} aria-label={`Mở ${tool.title}`}>
+                      <button className="tool-card is-available" key={tool.title} onClick={() => onTool(action)} aria-label={`Mở ${tool.title}`}>
                         {content}
                       </button>
                     ) : <div className="tool-card is-upcoming" key={tool.title}>{content}</div>;
