@@ -56,7 +56,12 @@ import {
   type Method,
   type Report,
 } from "@/lib/engine";
-import { track } from "@/lib/analytics";
+import {
+  clearAnalytics,
+  hasAnalyticsConsent,
+  setAnalyticsConsent,
+  track,
+} from "@/lib/analytics";
 import { DailyCardModal } from "@/components/daily-card-modal";
 import { RelatedToolsSlot } from "@/components/related-tools";
 import { LogoMark } from "@/components/logo-mark";
@@ -126,7 +131,7 @@ export default function LunaApp({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
-  const [analytics, setAnalytics] = useState(false);
+  const [analytics, setAnalytics] = useState(true);
   const [savedStatus, setSavedStatus] = useState(false);
   const [dailyCard, setDailyCard] = useState<DailyCardState | null>(null);
   /**
@@ -148,7 +153,7 @@ export default function LunaApp({
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Hydrate an external browser store after the SSR snapshot.
     setPrefs(readLocal("luna:prefs:v1", defaultPrefs));
     setHistory(readLocal("luna:history:v1", []));
-    setAnalytics(localStorage.getItem("luna:analytics:v1") === "true");
+    setAnalytics(hasAnalyticsConsent());
     setReady(true);
     track("session_start");
   }, []);
@@ -858,7 +863,7 @@ export default function LunaApp({
                     checked={analytics}
                     onCheckedChange={(v) => {
                       setAnalytics(v);
-                      localStorage.setItem("luna:analytics:v1", String(v));
+                      setAnalyticsConsent(v);
                     }}
                   />
                 </div>
@@ -874,11 +879,11 @@ export default function LunaApp({
                         "luna:history:v1",
                         "luna:prefs:v1",
                         "luna:daily:v1",
-                        "luna:analytics:v1",
                       ].forEach((k) => localStorage.removeItem(k));
+                      clearAnalytics();
                       setHistory([]);
                       setPrefs(defaultPrefs);
-                      setAnalytics(false);
+                      setAnalytics(true);
                       setToast("Đã xóa dữ liệu Luna trên thiết bị này.");
                     }
                   }}
