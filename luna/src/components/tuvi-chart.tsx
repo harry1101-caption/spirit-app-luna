@@ -254,7 +254,7 @@ export function TuViChartView({ chart, onEdit }: { chart: TuViChart; onEdit: () 
             </div>
             <footer className="tuvi-chart-footer">
               <span>M: Miếu · V: Vượng · Đ: Đắc · B: Bình · H: Hãm</span>
-              <span>Dữ liệu an sao: {chart.source.name} · {chart.source.url.replace(/^https?:\/\//, "")}</span>
+              <span>Dữ liệu an sao: {chart.source.name}{chart.source.url ? ` · ${chart.source.url.replace(/^https?:\/\//, "")}` : ""}</span>
             </footer>
           </div>
         </div>

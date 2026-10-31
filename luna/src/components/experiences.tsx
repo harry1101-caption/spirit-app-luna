@@ -251,7 +251,7 @@ export function TuViFlow() {
         </div>
         <Button className="tuvi-submit" type="submit" disabled={loading || !currentYear}>{loading ? <LoaderCircle className="spin" size={18} /> : null}{loading ? "Đang lập lá số…" : "Lập lá số"}{!loading ? <ArrowRight size={18} /> : null}</Button>
         {error ? <p className="tuvi-form-error" role="alert">{error}</p> : null}
-        <p className="tuvi-provider-note">Ngày, giờ sinh, giới tính và năm lập được gửi tới Huyền Minh để an sao. Họ tên và thông tin cá nhân khác không gửi tới dịch vụ này.</p>
+        <p className="tuvi-provider-note">Lá số được an sao ngay trên máy chủ Lunara, ngày giờ sinh không gửi tới dịch vụ an sao bên ngoài.</p>
       </form>
 
       <section className="tarot-introduction" aria-label="Tìm hiểu về Tử Vi">
