@@ -19,6 +19,7 @@ import {
   Bookmark,
   Check,
   ChevronLeft,
+  Layers,
   LoaderCircle,
   RotateCcw,
   Scale,
@@ -29,11 +30,11 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RelatedTools, useRelatedTools } from "@/components/related-tools";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
@@ -60,6 +61,8 @@ import {
 } from "@/lib/engine";
 import { track } from "@/lib/analytics";
 import { TuViChartView } from "@/components/tuvi-chart";
+import { ReadingSetup } from "@/components/reading-setup";
+import { IconField, IconSelect as TuViSelect } from "@/components/form-field";
 import { tuViTimeSlots, type TuViChart, type TuViInput } from "@/lib/tuvi";
 import { vi } from "date-fns/locale";
 import { lenormandCards } from "@/lib/lenormand";
@@ -123,18 +126,6 @@ function normalizeTarotTopic(topic?: string) {
   if (topic === "Bản thân & tinh thần") return "Bản thân";
   if (topic === "Cuộc sống") return "Tổng quan";
   return topic && topic in tarotQuestionSuggestions ? topic : "Tình cảm";
-}
-
-function TuViSelect({ name, placeholder, options, required = false, defaultValue, icon: Icon }: { name: string; placeholder: string; options: string[]; required?: boolean; defaultValue?: string; icon: typeof UserRound }) {
-  return <Select name={name} required={required} defaultValue={defaultValue ?? null}>
-    <SelectTrigger className="tuvi-select-trigger" aria-label={placeholder}>
-      <Icon className="tuvi-control-icon" size={17} aria-hidden="true" />
-      <SelectValue placeholder={placeholder} />
-    </SelectTrigger>
-    <SelectContent className="tuvi-select-popup" alignItemWithTrigger={false}>
-      {options.map((option) => <SelectItem key={option} value={option} className="tuvi-select-item">{option}</SelectItem>)}
-    </SelectContent>
-  </Select>;
 }
 
 function TuViBirthDate({ value, onChange, currentYear }: { value: string; onChange: (date: string) => void; currentYear: number | null }) {
@@ -224,12 +215,13 @@ export function TuViFlow() {
 
   if (chart?.formatVersion === 2) return <TuViChartView chart={chart} onEdit={() => setChart(null)} />;
   return (
-    <section className="experience-page experience-page-tarot tuvi-page" aria-labelledby="tuvi-title">
-      <div className="tuvi-heading page-heading">
-        <p className="eyebrow">LẬP LÁ SỐ CÁ NHÂN</p>
+    <section className="experience-page experience-page-tarot tuvi-page pt-[35px]! max-[1250px]:pt-[45px]! min-[1600px]:pt-[45px]!" aria-labelledby="tuvi-title">
+      <div className="tarot-page-background left-1/2! right-auto! w-screen! -translate-x-1/2!" aria-hidden="true" />
+      <div className="page-heading tarot-title-only">
         <h1 id="tuvi-title">Hiểu mình qua những vì sao</h1>
-        <p>Nhập thông tin sinh để tạo lá số Tử vi theo dương lịch.</p>
       </div>
+      <div className="experience-surface">
+      <div className="flow-body tuvi-flow is-configuring">
       <form className="tuvi-form tarot-setup-panel" onSubmit={createChart}>
         <label>Họ và tên<span className="tuvi-input-wrap"><UserRound className="tuvi-control-icon" size={17} aria-hidden="true" /><Input required name="fullName" placeholder="Nguyễn Văn An" defaultValue={formValues?.fullName} className="tuvi-input-with-icon" /></span></label>
         <div className="tuvi-grid">
@@ -258,6 +250,81 @@ export function TuViFlow() {
         {error ? <p className="tuvi-form-error" role="alert">{error}</p> : null}
         <p className="tuvi-provider-note">Ngày, giờ sinh, giới tính và năm lập được gửi tới Huyền Minh để an sao. Họ tên và thông tin cá nhân khác không gửi tới dịch vụ này.</p>
       </form>
+
+      <section className="tarot-introduction" aria-label="Tìm hiểu về Tử Vi">
+        <div className="tarot-introduction-body">
+          <div className="tarot-introduction-context">
+            <section>
+              <h2>Tử Vi là gì?</h2>
+              <p>
+                Từ ngày giờ sinh, Tử Vi Đẩu Số dựng một lá số chia thành mười
+                hai cung — Mệnh, Tài Bạch, Quan Lộc, Phu Thê, Phúc Đức… Mỗi
+                cung soi một mảng của đời sống. Hơn một trăm ngôi sao được an
+                vào các cung, mỗi sao mạnh yếu khác nhau tuỳ chỗ nó đóng.
+              </p>
+            </section>
+            <section>
+              <h2>Xem để làm gì?</h2>
+              <p>
+                Để nhìn rõ hơn khuynh hướng của chính mình: đâu là thế mạnh tự
+                nhiên, đâu là chỗ hay vướng, giai đoạn nào thuận và giai đoạn
+                nào nên giữ sức. Lá số không nói trước điều sẽ xảy ra — nó mô
+                tả chất liệu bạn đang có và gợi ý cách dùng chất liệu ấy.
+              </p>
+            </section>
+          </div>
+          <section className="tarot-introduction-steps">
+            <h2>Lá số được lập thế nào?</h2>
+            <ol>
+              <li>
+                <strong>Nhập ngày giờ sinh</strong>
+                <span>Theo dương lịch, giờ càng chính xác càng tốt.</span>
+              </li>
+              <li>
+                <strong>An sao vào cung</strong>
+                <span>Chính tinh và phụ tinh được xếp vào mười hai cung.</span>
+              </li>
+              <li>
+                <strong>Đọc theo lĩnh vực</strong>
+                <span>Mở cung ứng với điều bạn muốn hiểu rõ.</span>
+              </li>
+              <li>
+                <strong>Xét vận hạn</strong>
+                <span>Đại hạn mười năm và tiểu hạn từng năm.</span>
+              </li>
+            </ol>
+          </section>
+        </div>
+      </section>
+
+      <div className="tarot-afterword">
+        <h3>Lá số mở ra góc nhìn, không khép lại lựa chọn</h3>
+      </div>
+      <div className="tarot-principles">
+        <div>
+          <span><Layers size={28} strokeWidth={1.2} /></span>
+          <div>
+            <h4>Đọc theo cung</h4>
+            <p>Mỗi cung soi một lĩnh vực, không đánh giá tốt xấu tổng thể.</p>
+          </div>
+        </div>
+        <div>
+          <span><Clock3 size={28} strokeWidth={1.2} /></span>
+          <div>
+            <h4>Giờ sinh rất quan trọng</h4>
+            <p>Lệch một khung giờ có thể đổi cung Mệnh và cả cách luận.</p>
+          </div>
+        </div>
+        <div>
+          <span><Check size={28} strokeWidth={1.2} /></span>
+          <div>
+            <h4>Quyết định vẫn ở bạn</h4>
+            <p>Giữ lại điều hữu ích và tự chọn bước tiếp theo.</p>
+          </div>
+        </div>
+      </div>
+      </div>
+      </div>
     </section>
   );
 }
@@ -265,13 +332,22 @@ export function TarotFlow({
   onSubmit,
   loading,
   previous,
+  initialTopic,
+  initialQuestion,
 }: {
   previous?: Report;
+  /** Chủ đề chọn sẵn khi vào từ khối "Chọn một chủ đề để bắt đầu". */
+  initialTopic?: string;
+  initialQuestion?: string;
   onSubmit: (input: InterpretationInput) => void;
   loading: boolean;
 }) {
-  const [topic, setTopic] = useState(() => normalizeTarotTopic(previous?.subtitle));
-  const [question, setQuestion] = useState(previous?.context || "");
+  // `previous` (lượt trải bài cũ) được ưu tiên hơn chủ đề gợi ý, vì lúc xem
+  // sâu hơn thì phải bám đúng lượt trước chứ không phải điểm vào ban đầu.
+  const [topic, setTopic] = useState(() =>
+    normalizeTarotTopic(previous?.subtitle ?? initialTopic),
+  );
+  const [question, setQuestion] = useState(previous?.context || initialQuestion || "");
   const [deepQuestions, setDeepQuestions] = useState(() => previous?.followUpQuestions || ["", "", "", "", ""]);
   const count = 3;
   const [deck, setDeck] = useState<number[]>([]);
@@ -311,6 +387,23 @@ export function TarotFlow({
     setOrientations([]);
     setDeck(drawCards(9));
   }
+  const reversedOption = (
+    <div className="reversed-option">
+      <label htmlFor="tarot-reversed">
+        Dùng lá ngược
+        <small>
+          {previous
+            ? "Tùy chọn. Lá ngược gợi điều cần nhìn vào bên trong, không đồng nghĩa với điềm xấu."
+            : "Tùy chọn · Không đồng nghĩa với điềm xấu."}
+        </small>
+      </label>
+      <Switch
+        id="tarot-reversed"
+        checked={useReversed}
+        onCheckedChange={setUseReversed}
+      />
+    </div>
+  );
   return (
     <div
       className={`flow-body tarot-reading-flow ${started ? "has-started" : "is-configuring"}`}
@@ -323,91 +416,18 @@ export function TarotFlow({
               <label htmlFor={`deep-question-${index}`}>Câu hỏi {index + 1}</label>
               <Textarea id={`deep-question-${index}`} value={value} maxLength={300} minLength={5} required onChange={event => setDeepQuestions(current => current.map((item, i) => i === index ? event.target.value : item))} />
             </div>)}
-          </div> : <>
-          <label className="tarot-field-label">Điều bạn muốn lắng nghe</label>
-          <div className="chips tarot-topic-options">
-            {tarotTopics.map(({ label: t, icon: Icon }) => {
-              return (
-                <button
-                  key={t}
-                  className={topic === t ? "selected" : ""}
-                  aria-pressed={topic === t}
-                  onClick={() => {
-                    setTopic(t);
-                    track("tarot_topic_select", { topic: t });
-                  }}
-                >
-                  <Icon size={26} strokeWidth={1.4} />
-                  <span>{t}</span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="tarot-question-layout">
-            <div className="tarot-question-entry">
-              <div className="tarot-question-heading">
-                <label htmlFor="tarot-question">
-                  Câu hỏi của bạn <small>bắt buộc</small>
-                </label>
-                <span>{question.length}/300</span>
-              </div>
-              <div className="tarot-question-wrap">
-                <Textarea
-                  id="tarot-question"
-                  placeholder="Tôi + muốn hiểu điều gì + về vấn đề nào + trong khoảng thời gian nào."
-                  maxLength={300}
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                />
-                <Pencil size={18} strokeWidth={1.3} aria-hidden="true" />
-              </div>
-            </div>
-            <div className="tarot-question-suggestions">
-              <p>
-                Thử một câu hỏi về {topic.toLowerCase()}{" "}
-                <small>Bấm để điền, bạn có thể sửa lại</small>
-              </p>
-              <div>
-                {tarotQuestionSuggestions[topic].map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    onClick={() => {
-                      setQuestion(suggestion);
-                      document.getElementById("tarot-question")?.focus();
-                    }}
-                  >
-                    <span>{suggestion}</span>
-                    <ArrowRight size={15} />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          </>}
-          <div className={`tarot-setup-actions ${previous ? "is-deep-actions" : "is-overview-actions"}`}>
-          <div className="reversed-option">
-            <label htmlFor="tarot-reversed">
-              Dùng lá ngược
-              <small>
-                {previous
-                  ? "Tùy chọn. Lá ngược gợi điều cần nhìn vào bên trong, không đồng nghĩa với điềm xấu."
-                  : "Tùy chọn · Không đồng nghĩa với điềm xấu."}
-              </small>
-            </label>
-            <Switch
-              id="tarot-reversed"
-              checked={useReversed}
-              onCheckedChange={setUseReversed}
-            />
-          </div>
+          </div> : null}
+          {previous ? (
+          <div className="tarot-setup-actions is-deep-actions">
+          {reversedOption}
           <div className="tarot-begin-row">
             <Button
               className="tarot-begin-button"
-              disabled={previous ? deepQuestions.some(q => q.trim().length < 5) : !question.trim()}
+              disabled={deepQuestions.some(q => q.trim().length < 5)}
               onClick={() => setStarted(true)}
             >
-              <Sparkles size={20} strokeWidth={1.1} />
-              {previous ? "Rút 3 lá để đào sâu" : "Bắt đầu trải bài"}
+              Rút 3 lá để đào sâu
+              <ArrowRight size={18} />
             </Button>
             <span className="tarot-handwritten">
               Hãy giữ tâm trí
@@ -416,10 +436,34 @@ export function TarotFlow({
             </span>
           </div>
           </div>
-          <p className="tarot-private-note">
-            <LockKeyhole size={14} strokeWidth={1.4} />
-            Riêng tư · Chỉ lưu khi bạn chọn “Lưu kết quả”
-          </p>
+          ) : (
+          <ReadingSetup
+            fieldLabel="Điều bạn muốn lắng nghe"
+            topics={tarotTopics}
+            topicColumns="grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+            topic={topic}
+            onTopicChange={(label) => {
+              setTopic(label);
+              track("tarot_topic_select", { topic: label });
+            }}
+            questionId="tarot-question"
+            question={question}
+            onQuestionChange={setQuestion}
+            placeholder="Tôi + muốn hiểu điều gì + về vấn đề nào + trong khoảng thời gian nào."
+            suggestionsLabel={`Thử một câu hỏi về ${topic.toLowerCase()}`}
+            suggestions={tarotQuestionSuggestions[topic]}
+            option={reversedOption}
+            submitLabel="Bắt đầu trải bài"
+            submitDisabled={!question.trim()}
+            onSubmit={() => setStarted(true)}
+          />
+          )}
+          {previous ? (
+            <p className="tarot-private-note">
+              <LockKeyhole size={14} strokeWidth={1.4} />
+              Riêng tư · Chỉ lưu khi bạn chọn “Lưu kết quả”
+            </p>
+          ) : null}
         </div>
       ) : (
         <div className="tarot-selection-panel">
@@ -642,49 +686,145 @@ export function DailyFlow({
 }) {
   const [selected, setSelected] = useState(sign);
   const [birth, setBirth] = useState("");
+  // today() gọi new Date(); chạy lúc prerender sẽ làm Next báo lỗi
+  // blocking-prerender-current-time-client, nên chỉ lấy sau khi mount.
+  const [maxDate, setMaxDate] = useState("");
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- ngày hiện tại chỉ có ở client
+    setMaxDate(today());
+  }, []);
   return (
-    <div className="flow-body">
-      <div className="zodiac-grid">
-        {zodiac.map((s, i) => (
-          <button
-            key={s}
-            className={s === selected ? "selected" : ""}
-            onClick={() => {
-              setSelected(s);
-              setBirth("");
-            }}
-          >
-            <span>{zodiacSymbols[i]}</span>
-            {s}
-          </button>
-        ))}
-      </div>
-      <label htmlFor="birth-date">
-        Hoặc chọn ngày sinh <small>không bắt buộc, không lưu</small>
-      </label>
-      <Input
-        id="birth-date"
-        type="date"
-        max={today()}
-        value={birth}
-        onChange={(e) => {
-          setBirth(e.target.value);
-          if (e.target.value) setSelected(zodiacFromDate(e.target.value));
+    <div className="flow-body daily-flow is-configuring">
+      <form
+        className="tuvi-form tarot-setup-panel"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit(selected);
         }}
-      />
-      <p className="gentle-note">
-        Chiêm tinh phương Tây, khác với Tử Vi truyền thống Việt Nam. Nội dung
-        được AI tạo theo cung và ngày bạn chọn, sau đó giữ nhất quán trong ngày.
-      </p>
-      <Button disabled={loading} onClick={() => onSubmit(selected)}>
-        {loading ? (
-          <LoaderCircle className="spin" size={17} />
-        ) : (
-          <Sun size={17} />
-        )}{" "}
-        {loading ? "Đang chuẩn bị lời nhắn…" : `Khám phá hôm nay · ${selected}`}
-      </Button>
-      {error ? <div role="alert" className="error-box">{error}</div> : null}
+      >
+        <p className="tuvi-note mb-1">
+          Chọn cung hoàng đạo của bạn, hoặc nhập ngày sinh để hệ thống tự xác
+          định cung. Đây là chiêm tinh phương Tây, không phải Tử Vi Việt Nam.
+        </p>
+
+        <label>Cung hoàng đạo</label>
+        <div className="zodiac-grid">
+          {zodiac.map((s, i) => (
+            <button
+              type="button"
+              key={s}
+              className={s === selected ? "selected" : ""}
+              onClick={() => {
+                setSelected(s);
+                setBirth("");
+              }}
+            >
+              <span>{zodiacSymbols[i]}</span>
+              {s}
+            </button>
+          ))}
+        </div>
+
+        <label className="mt-4 block">
+          Hoặc nhập ngày sinh
+          <IconField
+            icon={CalendarDays}
+            type="date"
+            name="birthDate"
+            max={maxDate || undefined}
+            value={birth}
+            onChange={(e) => {
+              setBirth(e.target.value);
+              if (e.target.value) setSelected(zodiacFromDate(e.target.value));
+            }}
+          />
+        </label>
+
+        {error ? <p className="tuvi-form-error" role="alert">{error}</p> : null}
+
+        <Button className="tuvi-submit" type="submit" disabled={loading}>
+          {loading ? <LoaderCircle className="spin" size={18} /> : null}
+          {loading ? "Đang chuẩn bị lời nhắn…" : `Xem thông điệp cho ${selected}`}
+          {loading ? null : <ArrowRight size={18} />}
+        </Button>
+        <p className="tuvi-provider-note">
+          <LockKeyhole size={13} strokeWidth={1.4} className="inline align-[-2px] mr-1" />
+          Ngày sinh chỉ dùng để xác định cung, không lưu lại trên máy chủ.
+        </p>
+      </form>
+
+      <section className="tarot-introduction" aria-label="Tìm hiểu về Chiêm tinh">
+        <div className="tarot-introduction-body">
+          <div className="tarot-introduction-context">
+            <section>
+              <h2>Chiêm tinh là gì?</h2>
+              <p>
+                Chiêm tinh phương Tây chia vòng hoàng đạo thành mười hai cung.
+                Cung của bạn được xác định theo vị trí Mặt Trời vào ngày sinh —
+                đó là lý do chỉ cần ngày tháng, không cần giờ. Mỗi cung gắn với
+                một nguyên tố và một nhịp năng lượng riêng.
+              </p>
+            </section>
+            <section>
+              <h2>Xem để làm gì?</h2>
+              <p>
+                Để có một lời nhắn gọn cho ngày hôm nay, đọc theo nhịp của cung
+                bạn: nên dồn sức vào đâu, nên chậm lại ở đâu. Nội dung giữ
+                nguyên suốt cả ngày, không đổi mỗi lần tải lại — để bạn đọc một
+                lần rồi mang theo.
+              </p>
+            </section>
+          </div>
+          <section className="tarot-introduction-steps">
+            <h2>Thông điệp được tạo thế nào?</h2>
+            <ol>
+              <li>
+                <strong>Chọn cung</strong>
+                <span>Bấm trực tiếp, hoặc nhập ngày sinh để tự xác định.</span>
+              </li>
+              <li>
+                <strong>Gắn với ngày</strong>
+                <span>Mỗi cung mỗi ngày là một lời nhắn riêng.</span>
+              </li>
+              <li>
+                <strong>Đọc bốn mục</strong>
+                <span>Tình cảm, công việc, năng lượng và một chút cảm hứng.</span>
+              </li>
+              <li>
+                <strong>Giữ lại nếu hợp</strong>
+                <span>Lưu vào bộ sưu tập để đọc lại sau.</span>
+              </li>
+            </ol>
+          </section>
+        </div>
+      </section>
+
+      <div className="tarot-afterword">
+        <h3>Một lời nhắn cho hôm nay, không phải lời tiên đoán</h3>
+      </div>
+      <div className="tarot-principles">
+        <div>
+          <span><Sun size={28} strokeWidth={1.2} /></span>
+          <div>
+            <h4>Theo cung Mặt Trời</h4>
+            <p>Chỉ cần ngày tháng sinh, không cần giờ hay nơi sinh.</p>
+          </div>
+        </div>
+        <div>
+          <span><Moon size={28} strokeWidth={1.2} /></span>
+          <div>
+            <h4>Không phải Tử Vi</h4>
+            <p>Đây là chiêm tinh phương Tây, khác hệ với Tử Vi Việt Nam.</p>
+          </div>
+        </div>
+        <div>
+          <span><Check size={28} strokeWidth={1.2} /></span>
+          <div>
+            <h4>Quyết định vẫn ở bạn</h4>
+            <p>Giữ lại điều hữu ích và tự chọn bước tiếp theo.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -789,8 +929,13 @@ export function ReportView({
     dialogContentRef.current?.scrollTo({ top: 0, behavior: "auto" });
   }, [deepening]);
 
+  // Hai loại này hiển thị thẳng trong trang, nên gợi ý đi ra ngoài thẻ.
+  useRelatedTools(
+    report.type === "daily" || report.type === "personality" ? report.type : null,
+  );
+
   if (report.type === "daily") {
-    return <DailyResultModal report={report} saved={saved} onSave={onSave} onShare={onShare} onRestart={onRestart} loading={loading} />;
+    return <DailyResultView report={report} saved={saved} onSave={onSave} onShare={onShare} onRestart={onRestart} />;
   }
   if (report.type === "lenormand") {
     return <Dialog open onOpenChange={open => { if (!open && !loading) onRestart(); }}>
@@ -818,6 +963,7 @@ export function ReportView({
             {report.source === "fallback" ? <Button variant="outline" disabled={loading} onClick={() => onSubmit({ type: "lenormand", topic: report.subtitle, question: report.context, cards: report.cards })}>{loading ? <LoaderCircle className="spin" size={16}/> : <RotateCcw size={16}/>} {loading ? "Đang thử lại…" : "Thử lại diễn giải AI với bộ bài này"}</Button> : null}
             <div className="report-actions"><Button onClick={onSave} disabled={saved}>{saved ? <Check size={16}/> : <Bookmark size={16}/>} {saved ? "Đã lưu kết quả" : "Lưu kết quả"}</Button><Button variant="outline" onClick={onShare}><Share2 size={16}/> Chia sẻ</Button></div>
             <button className="skip-button" onClick={onRestart}><RotateCcw size={14}/> Trải bài mới</button>
+            <RelatedTools current="lenormand" className="text-left" />
           </div>
         </div>
       </DialogContent>
@@ -940,6 +1086,11 @@ export function ReportView({
         <button className="skip-button" onClick={onRestart}>
           <RotateCcw size={14} /> Khám phá lại
         </button>
+        {/* Tarot hiện trong modal nên gợi ý nằm luôn trong thân modal.
+            Lenormand thoát sớm ở trên, không đi qua `body`. */}
+        {report.type === "tarot" ? (
+          <RelatedTools current="tarot" className="text-left" />
+        ) : null}
       </div>
     </div>
   );
@@ -970,23 +1121,33 @@ const zodiacDetails: Record<string, { dates: string; traits: string }> = {
   "Song Ngư": { dates: "19/02 – 20/03", traits: "Nhạy cảm · Mộng mơ · Đồng cảm" },
 };
 
-function DailyResultModal({ report, saved, onSave, onShare, onRestart, loading }: {
+/**
+ * Kết quả chiêm tinh, hiển thị thẳng trong trang như các feature còn lại
+ * (Bát Tự, Thần số học, Human Design…) chứ không bung modal nữa.
+ *
+ * Phần CSS của khối này vốn viết cho một hộp thoại cao cố định, nên ở đây phải
+ * gỡ hai ràng buộc của hộp thoại: chiều cao 100% và vùng cuộn riêng bên trong.
+ * Bỏ chúng đi thì khối cao theo nội dung và cuộn chung với trang. Hậu tố `!`
+ * là bắt buộc — phần lớn globals.css nằm ngoài layer nên thắng Tailwind.
+ */
+function DailyResultView({ report, saved, onSave, onShare, onRestart }: {
   report: Report;
   saved: boolean;
   onSave: () => void;
   onShare: () => void;
   onRestart: () => void;
-  loading: boolean;
 }) {
   const [sign, day] = report.subtitle.split(" · ");
   const signIndex = zodiac.indexOf(sign);
   const details = zodiacDetails[sign];
   const sectionIcons = [Target, BriefcaseBusiness, Heart, Sparkles];
 
-  return <Dialog open onOpenChange={(open) => { if (!open && !loading) onRestart(); }}>
-    <DialogContent className="luna-dialog daily-reading-dialog" showCloseButton={!loading} data-lenis-prevent>
-      <DialogTitle className="sr-only">Thông điệp chiêm tinh hôm nay của {sign}</DialogTitle>
-      <div className="daily-reading-layout">
+  return <div>
+    <h2 className="sr-only">Thông điệp chiêm tinh hôm nay của {sign}</h2>
+    {/* Chỉ bo góc + cắt tràn: khung thẻ đã do .experience-surface lo, thêm
+        viền hay nền ở đây sẽ thành hai lớp hộp lồng nhau. */}
+    <div className="overflow-hidden rounded-[18px]">
+      <div className="daily-reading-layout h-auto!">
         <aside className="daily-reading-art" aria-label={`Thông điệp ngày ${day}`}>
           <span className="daily-reading-moon" aria-hidden="true">☾</span>
           <div className="daily-reading-heading">
@@ -997,7 +1158,7 @@ function DailyResultModal({ report, saved, onSave, onShare, onRestart, loading }
           <Image src="/images/zodiac-bust.png" alt="Nữ thần giữa quầng sao và mây" width={816} height={1024} priority />
           <span className="daily-reading-art-caption">A BRIGHTER YOU<br />EVERY DAY</span>
         </aside>
-        <div className="daily-reading-content">
+        <div className="daily-reading-content overflow-visible!">
           <div className="daily-reading-sign">
             <span className="daily-reading-symbol" aria-hidden="true">{zodiacSymbols[signIndex] || "✦"}</span>
             <div><h3>{sign}</h3><p>{details?.dates || day}</p></div>
@@ -1024,8 +1185,8 @@ function DailyResultModal({ report, saved, onSave, onShare, onRestart, loading }
           </div>
         </div>
       </div>
-    </DialogContent>
-  </Dialog>;
+    </div>
+  </div>;
 }
 
 function TarotCardSpread({

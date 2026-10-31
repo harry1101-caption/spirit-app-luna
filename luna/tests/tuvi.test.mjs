@@ -10,10 +10,11 @@ const urlFor = async (path, imports = {}) => {
   return `data:text/javascript;base64,${Buffer.from(code).toString('base64')}`;
 };
 const tuviUrl = await urlFor('../src/lib/tuvi.ts');
-const readingUrl = await urlFor('../src/lib/tuvi-reading.ts', { './tuvi': tuviUrl });
+const readingUrl = await urlFor('../src/lib/tuvi-reading.ts', { './tuvi.ts': tuviUrl });
 const { tuViPalaceOrder } = await import(tuviUrl);
 const { tuViReadingTopics, tuViPalaceRelations } = await import(readingUrl);
-const { POST } = await import(await urlFor('../src/app/api/tuvi/route.ts', { '@/lib/tuvi': tuviUrl, '@/lib/tuvi-reading': readingUrl, zod: import.meta.resolve('zod') }));
+const styleUrl = await urlFor('../src/lib/interpretation-style.ts');
+const { POST } = await import(await urlFor('../src/app/api/tuvi/route.ts', { '@/lib/tuvi': tuviUrl, '@/lib/tuvi-reading': readingUrl, '@/lib/interpretation-style': styleUrl, zod: import.meta.resolve('zod') }));
 const branches = ['Mão','Thìn','Tỵ','Ngọ','Mùi','Thân','Dậu','Tuất','Hợi','Tý','Sửu','Dần'];
 const input = { fullName: 'Test Person', birthDate: '1999-01-11', birthTime: '17h – 17h30', gender: 'Nam', readingYear: 2028, showDecadeFortune: true, showAnnualFortune: true, occupation: 'Đi làm', relationship: 'Độc thân' };
 const provider = {

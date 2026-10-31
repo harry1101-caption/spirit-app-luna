@@ -9,19 +9,23 @@ import {
 } from "@/components/experiences";
 import { CelestialHome, ExperienceCard } from "@/components/celestial-home";
 import { LenormandFlow } from "@/components/lenormand-flow";
+import { BatTuFlow } from "@/components/bat-tu-flow";
+import { ThanSoHocFlow } from "@/components/than-so-hoc-flow";
+import { GiacMoFlow } from "@/components/giac-mo-flow";
+import { HumanDesignFlow } from "@/components/human-design-flow";
+import { ChiTayFlow } from "@/components/chi-tay-flow";
+import { AllToolsMenu } from "@/components/all-tools-menu";
+import { toolGroups } from "@/components/tool-groups";
+import type { Topic } from "@/components/topic-picker";
 import {
-  ArrowUpRight,
-  ArrowLeft,
   ChevronDown,
   Menu,
-  Layers,
-  Orbit,
   ArrowRight,
   Bookmark,
   Check,
+  ArrowUpRight,
   Compass,
   Heart,
-  Home,
   Leaf,
   Moon,
   ShieldCheck,
@@ -52,21 +56,35 @@ import {
   type Report,
 } from "@/lib/engine";
 import { track } from "@/lib/analytics";
-type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand";
+import { DailyCardModal } from "@/components/daily-card-modal";
+import { RelatedToolsSlot } from "@/components/related-tools";
+import { LogoMark } from "@/components/logo-mark";
+
+import { buildDailyCardReport, drawDailyCard } from "@/lib/daily-card";
+type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay";
+type DailyCardState = { id: number; day: string; revealed: boolean };
+/** Lá bài hôm nay được khoá theo ngày, nên cần một seed ổn định cho mỗi thiết bị. */
+const DAILY_CARD_KEY = "luna:dailycard:v1";
+function deviceSeed() {
+  let seed = localStorage.getItem("luna:device:v1");
+  if (!seed) {
+    seed = crypto.randomUUID();
+    localStorage.setItem("luna:device:v1", seed);
+  }
+  return seed;
+}
 type Preferences = { intent: string; sign: string; onboarded: boolean };
 const defaultPrefs: Preferences = {
   intent: "",
   sign: "Thiên Bình",
   onboarded: false,
 };
-const nav: { label: string; icon: typeof Home; tab?: Tab; method?: Method }[] =
-  [
-    { label: "Trang chủ", icon: Home, tab: "home" },
-    { label: "Tử vi", icon: Orbit, tab: "tuvi" },
-    { label: "Tarot", icon: Layers, method: "tarot" },
-    { label: "Chiêm tinh", icon: Orbit, method: "daily" },
-    { label: "Tính cách", icon: UserRound, method: "personality" },
-  ];
+const nav: { label: string; action: string }[] = [
+  { label: "Trang chủ", action: "home" },
+  { label: "Tử vi", action: "tuvi" },
+  { label: "Tarot", action: "tarot" },
+  { label: "Thần số học", action: "than-so-hoc" },
+];
 function readLocal<T>(key: string, defaultValue: T): T {
   try {
     const v = localStorage.getItem(key);
@@ -96,6 +114,9 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
   const [toast, setToast] = useState("");
   const [analytics, setAnalytics] = useState(false);
   const [savedStatus, setSavedStatus] = useState(false);
+  const [dailyCard, setDailyCard] = useState<DailyCardState | null>(null);
+  /** Chủ đề + câu hỏi điền sẵn khi vào từ khối "Chọn một chủ đề để bắt đầu". */
+  const [tarotSeed, setTarotSeed] = useState<{ topic: string; question: string } | null>(null);
   const mainRef = useRef<HTMLElement>(null);
   // Reconcile browser-only persistence once after SSR; never write personal data implicitly.
   useEffect(() => {
@@ -199,6 +220,26 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
       window.location.assign("/lenormand");
       return;
     }
+    if (next === "bat-tu" && window.location.pathname !== "/bat-tu") {
+      window.location.assign("/bat-tu");
+      return;
+    }
+    if (next === "than-so-hoc" && window.location.pathname !== "/than-so-hoc") {
+      window.location.assign("/than-so-hoc");
+      return;
+    }
+    if (next === "giac-mo" && window.location.pathname !== "/giac-mo") {
+      window.location.assign("/giac-mo");
+      return;
+    }
+    if (next === "human-design" && window.location.pathname !== "/human-design") {
+      window.location.assign("/human-design");
+      return;
+    }
+    if (next === "chi-tay" && window.location.pathname !== "/chi-tay") {
+      window.location.assign("/chi-tay");
+      return;
+    }
     if (next === "home" && window.location.pathname !== "/") {
       window.location.assign("/");
       return;
@@ -220,10 +261,36 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
       setToast("Trình duyệt chưa cho phép lưu tùy chọn.");
     }
   }
+  /**
+   * Mở một công cụ theo `action` trong toolGroups. Gom về một chỗ để header,
+   * lưới trang chủ và menu "Trải nghiệm" không phải lặp lại chuỗi điều kiện.
+   */
+  /** Mục nào trên header đang ứng với thứ người dùng đang xem. */
+  function isToolActive(action: string) {
+    if (action === "home") return tab === "home" && !flow && !report;
+    if (action === "tarot" || action === "daily" || action === "personality")
+      return flow === action && !report;
+    return tab === action && !flow && !report;
+  }
+  function openTool(action: string) {
+    setMobileMenu(false);
+    if (action === "dailycard") return openDailyCard();
+    if (action === "tarot" || action === "daily" || action === "personality")
+      return openMethod(action as Method);
+    return navigateTab(action as Tab);
+  }
   function openMethod(method: Method) {
     setMobileMenu(false);
     if (method === "tarot" && window.location.pathname !== "/tarot") {
       window.location.assign("/tarot");
+      return;
+    }
+    if (method === "daily" && window.location.pathname !== "/chiem-tinh") {
+      window.location.assign("/chiem-tinh");
+      return;
+    }
+    if (method === "personality" && window.location.pathname !== "/tinh-cach") {
+      window.location.assign("/tinh-cach");
       return;
     }
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -290,6 +357,51 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
       setLoading(false);
     }
   }
+  function openDailyCard() {
+    const day = today();
+    const stored = readLocal<{
+      day: string;
+      id: number;
+      recent: number[];
+    } | null>(DAILY_CARD_KEY, null);
+    track("daily_card_open");
+    // Lá của ngày thì cố định, nhưng luôn mở ở mặt úp để thao tác lật được lặp lại.
+    if (stored?.day === day) {
+      setDailyCard({ id: stored.id, day, revealed: false });
+      return;
+    }
+    // Tránh lặp lá đã ra trong 10 ngày gần nhất.
+    const recent = stored?.recent ?? [];
+    const id = drawDailyCard(deviceSeed(), day, recent.slice(0, 10));
+    writeLocal(DAILY_CARD_KEY, {
+      day,
+      id,
+      recent: [id, ...recent].slice(0, 10),
+    });
+    setDailyCard({ id, day, revealed: false });
+  }
+  function revealDailyCard() {
+    if (!dailyCard) return;
+    setDailyCard({ ...dailyCard, revealed: true });
+    track("daily_card_reveal");
+  }
+  function saveDailyCard() {
+    if (!dailyCard) return;
+    const next = buildDailyCardReport(dailyCard.id, dailyCard.day);
+    if (history.some((r) => r.id === next.id)) {
+      setToast("Lá bài hôm nay đã có trong bộ sưu tập.");
+      return;
+    }
+    const updated = [next, ...history];
+    try {
+      writeLocal("luna:history:v1", updated);
+      setHistory(updated);
+      setToast("Đã lưu lá bài hôm nay.");
+      track("daily_card_save");
+    } catch {
+      setToast("Không lưu được. Bộ nhớ trình duyệt có thể đã đầy.");
+    }
+  }
   function saveReport() {
     if (!report) return;
     if (history.some((r) => r.id === report.id)) {
@@ -340,6 +452,26 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
       setToast("Chưa xóa được dữ liệu.");
     }
   }
+  /**
+   * Mở phương pháp hợp với chủ đề người dùng bấm. "Bản thân" đi thẳng vào trắc
+   * nghiệm tính cách vì câu hỏi của nó đúng là thứ bài trắc nghiệm trả lời;
+   * ba chủ đề còn lại mở Tarot với chủ đề đã chọn sẵn.
+   */
+  function openTopic(topic: Topic) {
+    track("home_topic_select", { topic: topic.key });
+    if (topic.key === "self") {
+      setTarotSeed(null);
+      openMethod("personality");
+      return;
+    }
+    const tarotTopic =
+      topic.key === "love" ? "Tình cảm"
+      : topic.key === "work" ? "Công việc & học tập"
+      : "Tổng quan";
+    setTarotSeed({ topic: tarotTopic, question: topic.question });
+    openMethod("tarot");
+  }
+
   function chooseIntent(value: string) {
     setIntent(value);
     setOnboardStep(1);
@@ -358,26 +490,24 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
           <button
             className="brand"
             onClick={() => navigateTab("home")}
-            aria-label="Luna, trang chủ"
+            aria-label="Lunara, trang chủ"
           >
-            <span className="brand-compass">
-              <Compass size={36} strokeWidth={1} />
-            </span>
-            <span>Hành Trình Nội Tâm</span>
+            {/* Không bọc .brand-compass: class đó vẽ hai vòng tròn viền vàng
+                (border + :before), chồng lên icon vốn đã có bố cục tròn riêng. */}
+            <LogoMark />
+            <span>Lunara</span>
           </button>
           <nav aria-label="Điều hướng chính">
             {nav.map((n) => (
               <button
                 key={n.label}
-                className={`nav-item ${(n.method ? flow === n.method : tab === n.tab && !flow && !report) ? "active" : ""}`}
-                onClick={() =>
-                  n.method ? openMethod(n.method) : navigateTab(n.tab!)
-                }
+                className={`nav-item ${isToolActive(n.action) ? "active" : ""}`}
+                onClick={() => openTool(n.action)}
               >
-                <n.icon size={23} strokeWidth={1.25} />
                 {n.label}
               </button>
             ))}
+            <AllToolsMenu onPick={openTool} isActive={isToolActive} />
           </nav>
           <div className="header-tools">
             <button
@@ -417,17 +547,28 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
             aria-label="Điều hướng di động"
           >
             {nav.map((n) => (
-              <button
-                key={n.label}
-                onClick={() =>
-                  n.method ? openMethod(n.method) : navigateTab(n.tab!)
-                }
-              >
-                <n.icon size={19} />
+              <button key={n.label} onClick={() => openTool(n.action)}>
                 {n.label}
                 <ArrowRight size={16} />
               </button>
             ))}
+            {/* Mobile không có hover nên đổ phẳng toàn bộ công cụ thay vì menu thả xuống */}
+            {toolGroups.flatMap((group) =>
+              group.tools
+                .filter((tool) => "action" in tool && tool.action)
+                .map((tool) => {
+                  const action = (tool as { action: string }).action;
+                  if (nav.some((n) => n.action === action)) return null;
+                  const Icon = tool.icon;
+                  return (
+                    <button key={tool.title} onClick={() => openTool(action)}>
+                      <Icon size={19} strokeWidth={1.4} />
+                      {tool.title}
+                      <ArrowRight size={16} />
+                    </button>
+                  );
+                }),
+            )}
             <button onClick={() => navigateTab("history")}>
               <Bookmark size={19} />
               Khám phá của tôi
@@ -446,49 +587,16 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
             onMethod={openMethod}
             onTuVi={() => navigateTab("tuvi")}
             onLenormand={() => navigateTab("lenormand")}
-            onIntent={chooseIntent}
-            onExplore={() => navigateTab("explore")}
+            onDailyCard={openDailyCard}
+            onBatTu={() => navigateTab("bat-tu")}
+            onThanSoHoc={() => navigateTab("than-so-hoc")}
+            onGiacMo={() => navigateTab("giac-mo")}
+            onHumanDesign={() => navigateTab("human-design")}
+            onChiTay={() => navigateTab("chi-tay")}
+            onTopic={openTopic}
             date={ready ? dateLabel() : ""}
             sign={prefs.sign}
-          >
-            {history.length ? (
-              <>
-                <div className="saved-grid">
-                  {history.slice(0, 3).map((r) => (
-                    <SavedCard
-                      key={r.id}
-                      report={r}
-                      onOpen={() => {
-                        setReport(r);
-                        setSavedStatus(true);
-                        window.scrollTo({ top: 0, behavior: "auto" });
-                        track("saved_result_view");
-                      }}
-                      onDelete={() => deleteReport(r.id)}
-                    />
-                  ))}
-                </div>
-                <button
-                  className="text-link library-all"
-                  onClick={() => navigateTab("history")}
-                >
-                  Mở bộ sưu tập của tôi <ArrowRight size={17} />
-                </button>
-              </>
-            ) : (
-              <div className="library-empty">
-                <Bookmark size={30} strokeWidth={1} />
-                <h3>Mỗi hành trình bắt đầu từ một khám phá nhỏ</h3>
-                <p>Lưu những lời nhắn chạm đến bạn, để trở lại khi bạn cần.</p>
-                <button
-                  className="text-link"
-                  onClick={() => navigateTab("explore")}
-                >
-                  Khám phá trải nghiệm đầu tiên <ArrowRight size={17} />
-                </button>
-              </div>
-            )}
-          </CelestialHome>
+          />
         ) : null}
         {tab === "explore" && !flow && !report ? (
           <>
@@ -602,12 +710,44 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
           </>
         ) : null}
         {tab === "tuvi" && !flow && !report ? <TuViFlow /> : null}
+        {tab === "chi-tay" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-chitay">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Những đường trên bàn tay</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><ChiTayFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "human-design" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-humandesign">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Bản đồ năng lượng của bạn</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><HumanDesignFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "giac-mo" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-giacmo">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Lắng nghe giấc mơ</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><GiacMoFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "than-so-hoc" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-thansohoc">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Những con số của bạn</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><ThanSoHocFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "bat-tu" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-battu">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Tám chữ của đời bạn</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><BatTuFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
         {tab === "lenormand" && !flow && !report ? (
           <section className="experience-page experience-page-tarot experience-page-lenormand">
             <div className="tarot-page-background" aria-hidden="true" />
-            <button className="back-link" onClick={() => navigateTab("home")}>
-              <ArrowLeft size={16} /> Trở về trang chủ
-            </button>
             <div className="page-heading tarot-title-only"><h1>Lắng nghe những biểu tượng</h1></div>
             <div className="experience-surface"><LenormandFlow onSubmit={interpret} loading={loading} />{error ? <div role="alert" className="error-box">{error}</div> : null}</div>
           </section>
@@ -709,8 +849,11 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
         ) : null}
         {flow || report ? (
           <section
-            className={`experience-page ${report ? "is-report" : ""} experience-page-${report?.type || flow}`}
+            className={`experience-page ${report ? "is-report" : ""} ${flow === "daily" && !report ? "experience-page-tarot" : ""} experience-page-${report?.type || flow}`}
           >
+            {flow === "daily" || report?.type === "daily" ? (
+              <div className="tarot-page-background" aria-hidden="true" />
+            ) : null}
             {flow === "tarot" || report?.type === "tarot" ? (
               <>
                 <div className="tarot-page-background" aria-hidden="true" />
@@ -736,18 +879,15 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
                 </aside>
               </>
             ) : null}
-            <button
-              className="back-link"
-              onClick={() => navigateTab("home")}
-              disabled={loading}
-            >
-              <ArrowLeft size={16} /> Trở về trang chủ
-            </button>
             {flow === "tarot" && !report ? (
               <div className="page-heading tarot-title-only">
                 <h1>Lắng nghe những lá bài</h1>
               </div>
-            ) : flow === "daily" && !report ? null : (
+            ) : flow === "daily" && !report ? (
+              <div className="page-heading tarot-title-only">
+                <h1>Nhịp điệu của hôm nay</h1>
+              </div>
+            ) : (
               <PageHeading
                 eyebrow={
                   report
@@ -772,6 +912,7 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
                 }
               />
             )}
+            <RelatedToolsSlot panel="experience-surface">
             <div className="experience-surface">
               {" "}
               {report ? (
@@ -787,39 +928,31 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
                     if (report.type === "lenormand") {
                       setFlow(null);
                       setTab("lenormand");
+                    } else if (report.type === "dailycard") {
+                      setFlow(null);
+                      openDailyCard();
                     } else setFlow(report.type);
                     setReport(null);
                     setError("");
                   }}
                 />
               ) : flow === "tarot" ? (
-                <TarotFlow onSubmit={interpret} loading={loading} />
+                <TarotFlow
+                  onSubmit={interpret}
+                  loading={loading}
+                  initialTopic={tarotSeed?.topic}
+                  initialQuestion={tarotSeed?.question}
+                />
               ) : flow === "daily" ? (
-                <Dialog
-                  open
-                  onOpenChange={(open) => {
-                    if (!open && !loading) {
-                      setFlow(null);
-                      setError("");
-                    }
+                <DailyFlow
+                  sign={prefs.sign}
+                  error={error}
+                  onSubmit={(sign) => {
+                    updatePrefs({ ...prefs, sign });
+                    interpret({ type: "daily", sign });
                   }}
-                >
-                  <DialogContent className="luna-dialog daily-picker-modal" showCloseButton={!loading} data-lenis-prevent>
-                    <DialogHeader>
-                      <DialogTitle>Chiêm tinh hằng ngày</DialogTitle>
-                      <DialogDescription>Chọn cung hoàng đạo hoặc ngày sinh để nhận thông điệp riêng cho hôm nay.</DialogDescription>
-                    </DialogHeader>
-                    <DailyFlow
-                      sign={prefs.sign}
-                      error={error}
-                      onSubmit={(sign) => {
-                        updatePrefs({ ...prefs, sign });
-                        interpret({ type: "daily", sign });
-                      }}
-                      loading={loading}
-                    />
-                  </DialogContent>
-                </Dialog>
+                  loading={loading}
+                />
               ) : flow === "personality" ? (
                 <PersonalityFlow
                   onSubmit={(scores) =>
@@ -838,9 +971,29 @@ export default function LunaApp({ initialFlow, initialTab = "home" }: { initialF
                 </div>
               ) : null}
             </div>
+            </RelatedToolsSlot>
           </section>
         ) : null}
       </main>
+      <DailyCardModal
+        open={!!dailyCard}
+        onOpenChange={(open) => {
+          if (!open) setDailyCard(null);
+        }}
+        cardId={dailyCard?.id ?? 0}
+        revealed={!!dailyCard?.revealed}
+        onReveal={revealDailyCard}
+        onSave={saveDailyCard}
+        onOpenTarot={() => {
+          track("daily_card_to_tarot");
+          setDailyCard(null);
+          openMethod("tarot");
+        }}
+        saved={
+          !!dailyCard &&
+          history.some((r) => r.id === `dailycard-${dailyCard.day}-${dailyCard.id}`)
+        }
+      />
       <Dialog open={onboard} onOpenChange={setOnboard}>
         <DialogContent className="luna-dialog" data-lenis-prevent>
           <DialogHeader>
@@ -1006,14 +1159,19 @@ function SavedCard({
             <Sparkles />
           ) : report.type === "lenormand" ? (
             <Compass />
-          ) : report.type === "daily" ? (
+          ) : report.type === "daily" || report.type === "dailycard" ? (
             <Sun />
           ) : (
             <Leaf />
           )}
         </span>
         <small>
-          {report.type === "lenormand" ? "LENORMAND" : methods.find((m) => m.id === report.type)?.tag} ·{" "}
+          {report.type === "lenormand"
+            ? "LENORMAND"
+            : report.type === "dailycard"
+              ? "LÁ BÀI HÔM NAY"
+              : methods.find((m) => m.id === report.type)?.tag}{" "}
+          ·{" "}
           {new Date(report.date).toLocaleDateString("vi-VN")}
         </small>
         <h3>{report.title}</h3>

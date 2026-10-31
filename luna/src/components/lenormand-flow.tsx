@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Check, Compass, Heart, Leaf, LockKeyhole, RotateCcw, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Compass, Heart, Leaf, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { drawLenormandCards, lenormandCards, lenormandTopics } from "@/lib/lenormand";
+import { ReadingSetup } from "@/components/reading-setup";
 import type { InterpretationInput } from "@/lib/engine";
+
+const topicChips = lenormandTopics.map(label => ({ label, icon: Compass }));
 
 const suggestions: Record<string, string[]> = {
   "Tình cảm": ["Điều gì đang ảnh hưởng đến mối quan hệ của tôi?", "Tôi có thể làm gì để kết nối chân thành hơn?"],
@@ -23,19 +25,22 @@ export function LenormandFlow({ onSubmit, loading }: { onSubmit: (input: Interpr
 
   return <div className={`flow-body lenormand-reading-flow ${started ? "has-started" : "is-configuring"}`}>
     {!started ? <div className="tarot-setup-panel">
-      <label className="tarot-field-label">Điều bạn muốn tìm hiểu</label>
-      <div className="chips tarot-topic-options">
-        {lenormandTopics.map(value => <button key={value} className={topic === value ? "selected" : ""} aria-pressed={topic === value} onClick={() => setTopic(value)}><Compass size={16} strokeWidth={1.4}/><span>{value}</span></button>)}
-      </div>
-      <div className="tarot-question-layout">
-        <div className="tarot-question-entry">
-          <div className="tarot-question-heading"><label htmlFor="lenormand-question">Câu hỏi của bạn <small>bắt buộc</small></label><span>{question.length}/300</span></div>
-          <div className="tarot-question-wrap"><Textarea id="lenormand-question" placeholder="Bạn muốn nhìn rõ điều gì trong hoàn cảnh hiện tại?" maxLength={300} value={question} onChange={event => setQuestion(event.target.value)} /></div>
-        </div>
-        <div className="tarot-question-suggestions"><p>Thử một câu hỏi về {topic.toLowerCase()} <small>Bấm để điền, bạn có thể sửa lại</small></p><div>{suggestions[topic].map(value => <button key={value} onClick={() => { setQuestion(value); document.getElementById("lenormand-question")?.focus(); }}><span>{value}</span><ArrowRight size={15}/></button>)}</div></div>
-      </div>
-      <div className="tarot-setup-actions is-overview-actions"><div className="tarot-begin-row"><Button className="tarot-begin-button" disabled={!question.trim()} onClick={() => setStarted(true)}><Sparkles size={20} strokeWidth={1.1}/> Bắt đầu trải bài</Button></div></div>
-      <p className="tarot-private-note"><LockKeyhole size={14} strokeWidth={1.4}/> Riêng tư · Chỉ lưu khi bạn chọn “Lưu kết quả”</p>
+      <ReadingSetup
+        fieldLabel="Điều bạn muốn tìm hiểu"
+        topics={topicChips}
+        topicColumns="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
+        topic={topic}
+        onTopicChange={setTopic}
+        questionId="lenormand-question"
+        question={question}
+        onQuestionChange={setQuestion}
+        placeholder="Bạn muốn nhìn rõ điều gì trong hoàn cảnh hiện tại?"
+        suggestionsLabel={`Thử một câu hỏi về ${topic.toLowerCase()}`}
+        suggestions={suggestions[topic]}
+        submitLabel="Bắt đầu trải bài"
+        submitDisabled={!question.trim()}
+        onSubmit={() => setStarted(true)}
+      />
     </div> : <div className="tarot-selection-panel lenormand-selection-panel">
       <div className="tarot-selection-summary"><span><Heart size={15}/>{topic}</span><span>3 lá bài</span><button onClick={() => { setStarted(false); setDrawn([]); }}><RotateCcw size={13}/> Chọn lại</button></div>
       <div className="deck-instruction"><span>{drawn.length ? "Ba biểu tượng dành cho bạn" : "Chậm lại và mở ba lá bài"}</span><p>{drawn.length ? "Đọc từng lá và nhìn cách các biểu tượng kết nối với câu hỏi của bạn." : "Lenormand gợi ý nghĩa qua sự kết hợp giữa các lá."}</p></div>

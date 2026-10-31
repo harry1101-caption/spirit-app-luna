@@ -1,7 +1,7 @@
-import { lenormandFallback } from "@/lib/lenormand";
+import { lenormandFallback } from "./lenormand.ts";
 
 export type Method = "tarot" | "daily" | "personality";
-export type ReadingType = Method | "lenormand";
+export type ReadingType = Method | "lenormand" | "dailycard";
 export type Report = {
   id: string;
   type: ReadingType;

@@ -1,0 +1,7 @@
+# Project thật nằm trong luna/ và dùng npm. Hai thứ dưới đây là rác còn lại từ
+# một lần lỡ chạy yarn ở thư mục gốc: node_modules/ chỉ chứa .yarn-integrity,
+# yarn.lock rỗng. Giữ ở đây để lần sau không ai commit nhầm.
+node_modules/
+yarn.lock
+
+.DS_Store
