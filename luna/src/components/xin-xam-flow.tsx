@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   ArrowRight, Check, LoaderCircle, LockKeyhole, RotateCcw, Scroll, Sparkles,
 } from "lucide-react";
+import { FieldMessage, FormIntro, TEXTAREA } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRelatedTools } from "@/components/related-tools";
@@ -12,6 +13,7 @@ import {
 } from "@/lib/xin-xam";
 import { KeoToss } from "@/components/keo-toss";
 import { track } from "@/lib/analytics";
+import { deviceSeed } from "@/lib/seeded";
 
 type Stick = { so: number; cap: Grade; tho: string[]; dienTich: string };
 type Chart = { stick: number; question: string; day: string; card: Stick };
@@ -22,16 +24,6 @@ type Interpretation = {
   sections: { title: string; takeaway?: string; text: string; evidence: string[] }[];
   source: "ai" | "guide";
 };
-
-/** Chuỗi ổn định mỗi máy, để hai người hỏi cùng câu không nhận chung một quẻ. */
-function deviceSeed() {
-  let seed = localStorage.getItem("luna:device:v1");
-  if (!seed) {
-    seed = crypto.randomUUID();
-    localStorage.setItem("luna:device:v1", seed);
-  }
-  return seed;
-}
 
 /**
  * Xin Xăm Quan Âm.
@@ -47,6 +39,8 @@ export function XinXamFlow() {
   const [loading, setLoading] = useState(false);
   const [readingLoading, setReadingLoading] = useState(false);
   const [error, setError] = useState("");
+  /** Lỗi của ô câu hỏi, hiện ngay dưới ô — tách khỏi `error` là lỗi máy chủ (quy tắc form chung, form-field.tsx). */
+  const [questionError, setQuestionError] = useState("");
 
   useRelatedTools(chart ? "xin-xam" : null);
 
@@ -106,16 +100,17 @@ export function XinXamFlow() {
     setReading(null);
     setQuestion("");
     setError("");
+    setQuestionError("");
   }
 
   if (!chart) {
     return (
       <div className="flow-body is-configuring">
         <div className="tuvi-form tarot-setup-panel">
-          <p className="tuvi-note mb-1">
+          <FormIntro>
             Nghĩ rõ một việc đang bận lòng rồi viết thành một câu hỏi gọn. Mỗi
             câu hỏi trong ngày chỉ ứng một quẻ.
-          </p>
+          </FormIntro>
 
           <label className="mt-2 block">
             Bạn muốn hỏi điều gì?
@@ -123,20 +118,22 @@ export function XinXamFlow() {
               value={question}
               onChange={(e) => {
                 setQuestion(e.target.value);
-                setError("");
+                setQuestionError("");
               }}
-              rows={3}
               maxLength={300}
               placeholder="Chuyện gì đang khiến bạn phân vân?"
-              className="mt-2"
+              className={`${TEXTAREA} mt-2 ${questionError ? "border-[#c4566a]!" : ""}`}
               id="xin-xam-question"
+              aria-invalid={questionError ? true : undefined}
+              aria-describedby={questionError ? "xin-xam-question-error" : undefined}
             />
+            {questionError ? <FieldMessage id="xin-xam-question-error">{questionError}</FieldMessage> : null}
           </label>
 
           {/* Dùng lại .tarot-question-suggestions của Tarot cho cùng kiểu chip. */}
-          <div className="tarot-question-suggestions">
+          <div className="tarot-question-suggestions mt-5!">
             <p>
-              Chưa biết hỏi gì? <small>Bấm để điền, bạn có thể sửa lại</small>
+              Chưa biết hỏi gì?
             </p>
             <div className="sm:grid-cols-2!">
               {sampleQuestions.map((q) => (
@@ -145,7 +142,7 @@ export function XinXamFlow() {
                   type="button"
                   onClick={() => {
                     setQuestion(q);
-                    setError("");
+                    setQuestionError("");
                     document.getElementById("xin-xam-question")?.focus();
                   }}
                 >
@@ -162,10 +159,11 @@ export function XinXamFlow() {
             onBeforeToss={() => {
               const check = checkQuestion(question);
               if (!check.ok) {
-                setError(check.error);
+                setQuestionError(check.error);
+                document.getElementById("xin-xam-question")?.focus();
                 return false;
               }
-              setError("");
+              setQuestionError("");
               return true;
             }}
             onAccepted={receiveStick}

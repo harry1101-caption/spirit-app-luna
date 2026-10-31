@@ -117,12 +117,6 @@ select:focus-visible {
 }
 h1,
 h2,
-h3,
-p {
-  margin: 0;
-}
-h1,
-h2,
 h3 {
   font-family: var(--font-serif-app), serif;
   font-weight: 500;

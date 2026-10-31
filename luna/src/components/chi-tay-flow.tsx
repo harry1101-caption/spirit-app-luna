@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
-import { IconSelect } from "@/components/form-field";
+import { IconSelect, FormIntro, ValidatedForm, FieldError, useFieldError } from "@/components/form-field";
 import { PalmDiagram, PalmLegend } from "@/components/palm-diagram";
 import {
   hands, palmLineGuide, palmLines, photoTips, type ChiTayResult, type Hand as HandSide,
@@ -32,19 +32,22 @@ async function prepareImage(file: File, maxSide = 1280): Promise<string> {
 }
 
 function UploadSlot({
-  label, value, onPick, mirrored,
+  name, label, value, onPick, mirrored,
 }: {
+  name: string;
   label: HandSide;
   value: string;
   onPick: (file?: File | null) => void;
   mirrored: boolean;
 }) {
   const ref = useRef<HTMLInputElement>(null);
+  const error = useFieldError(name);
   return (
-    <div>
+    <div data-field={name}>
       <p className="mb-2 text-xs font-medium tracking-[0.12em] text-[#654280] uppercase">{label}</p>
       <input
         ref={ref}
+        name={name}
         type="file"
         accept="image/jpeg,image/png,image/webp"
         capture="environment"
@@ -54,7 +57,8 @@ function UploadSlot({
       <button
         type="button"
         onClick={() => ref.current?.click()}
-        className="relative flex h-[200px] w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl border border-dashed border-[#d5c4e8] bg-[#faf7ff] p-3 text-[#6a5c7a] transition-colors hover:border-[#ac88cf] sm:h-[240px]"
+        aria-describedby={error ? `${name}-error` : undefined}
+        className={`relative flex h-[200px] w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl border border-dashed bg-[#faf7ff] p-3 text-[#6a5c7a] transition-colors hover:border-[#ac88cf] sm:h-[240px] ${error ? "border-[#c4566a]" : "border-[#d5c4e8]"}`}
       >
         {value ? (
           <Image src={value} alt={`Ảnh ${label}`} fill className="object-contain" unoptimized />
@@ -73,6 +77,7 @@ function UploadSlot({
           Chụp lại {label.toLowerCase()}
         </button>
       ) : null}
+      <FieldError name={name} />
     </div>
   );
 }
@@ -96,10 +101,8 @@ export function ChiTayFlow() {
     }
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!left || !right) return setError("Cần ảnh của cả hai tay.");
-    const data = new FormData(event.currentTarget);
+  async function submit(form: HTMLFormElement) {
+    const data = new FormData(form);
     setLoading(true);
     setError("");
     track("chi_tay_submit");
@@ -141,13 +144,14 @@ export function ChiTayFlow() {
   if (!result) {
     return (
       <div className="flow-body chi-tay-flow is-configuring">
-        <form className="tuvi-form tarot-setup-panel" onSubmit={submit}>
-          <p className="tuvi-note mb-1">
+        <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void submit(form)}
+          check={() => ({ ...(left ? {} : { leftImage: "Cần ảnh tay trái." }), ...(right ? {} : { rightImage: "Cần ảnh tay phải." }) })}>
+          <FormIntro>
             Chụp lòng bàn tay của cả hai bên. Tay thuận và tay không thuận nói
             hai chuyện khác nhau, nên có đủ hai ảnh mới so sánh được. Ảnh được
             thu nhỏ ngay trên máy bạn và bỏ toàn bộ thông tin kèm theo như vị
             trí GPS, rồi mới gửi đi.
-          </p>
+          </FormIntro>
 
           {/* Sơ đồ minh hoạ: chỉ rõ đường nào nằm ở đâu */}
           <div className="mt-5 flex items-center gap-5 rounded-2xl border border-[#e8ddef] bg-white/60 p-4">
@@ -162,8 +166,8 @@ export function ChiTayFlow() {
           </div>
 
           <div className="mt-5 grid grid-cols-2 items-start gap-3">
-            <UploadSlot label="Tay trái" value={left} mirrored onPick={(f) => void pick("left", f)} />
-            <UploadSlot label="Tay phải" value={right} mirrored={false} onPick={(f) => void pick("right", f)} />
+            <UploadSlot name="leftImage" label="Tay trái" value={left} mirrored onPick={(f) => void pick("left", f)} />
+            <UploadSlot name="rightImage" label="Tay phải" value={right} mirrored={false} onPick={(f) => void pick("right", f)} />
           </div>
 
           <ul className="mt-5 flex list-none flex-col gap-1 p-0">
@@ -179,7 +183,7 @@ export function ChiTayFlow() {
 
           {error ? <p className="tuvi-form-error" role="alert">{error}</p> : null}
 
-          <Button className="tuvi-submit" type="submit" disabled={loading || !left || !right}>
+          <Button className="tuvi-submit" type="submit" disabled={loading}>
             {loading ? <LoaderCircle className="spin" size={18} /> : null}
             {loading ? "Đang đọc hai bàn tay…" : "Xem chỉ tay"}
             {loading ? null : <ArrowRight size={18} />}
@@ -189,7 +193,7 @@ export function ChiTayFlow() {
             Ảnh được gửi tới dịch vụ AI để đọc và không lưu lại trên máy chủ.
             Nếu bạn không muốn gửi ảnh bàn tay đi, hãy bỏ qua tính năng này.
           </p>
-        </form>
+        </ValidatedForm>
 
         <section className="tarot-introduction" aria-label="Tìm hiểu về xem chỉ tay">
           <div className="tarot-introduction-body">

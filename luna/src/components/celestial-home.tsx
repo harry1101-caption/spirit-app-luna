@@ -148,7 +148,7 @@ export function CelestialHome({
         />
       </div>
       <section
-        className="web-hero"
+        className="web-hero max-[760px]:h-auto!"
         aria-labelledby="hero-title"
         onPointerMove={move}
         onPointerLeave={() => {
@@ -211,8 +211,9 @@ export function CelestialHome({
         </div>
         </div>
       </section>
+      {/* Màn hẹp: cột chữ co được (minmax 0), không để hàng chủ đề đẩy cột tượng ra ngoài thẻ. */}
       <section
-        className="daily-feature page-container"
+        className="daily-feature page-container max-[1050px]:grid-cols-[minmax(0,1fr)_192px]! max-[760px]:grid-cols-[minmax(0,1fr)]!"
         data-reveal
         aria-label="Chiêm tinh hôm nay"
       >
@@ -249,8 +250,9 @@ export function CelestialHome({
           <span className="zodiac-sign">
             {zodiacSymbols[zodiac.indexOf(sign)]}
           </span>
-          <strong>{sign}</strong>
-          <small>Góc nhìn dành riêng cho bạn</small>
+          {/* Màn hẹp tượng nằm đè góc phải khối chữ; tên cung sẽ bị nút che, giữ lại biểu tượng là đủ. */}
+          <strong className="max-[760px]:hidden!">{sign}</strong>
+          <small className="max-[760px]:hidden!">Góc nhìn dành riêng cho bạn</small>
         </button>
         <div className="daily-message">
           <h3>
@@ -259,14 +261,14 @@ export function CelestialHome({
           <button className="message-quote" onClick={() => onMethod("daily")}>
             <span className="quote-mark">“</span>
             <p>
-              Hãy tin vào nhịp độ riêng của bạn.
+              Hãy tin vào nhịp độ riêng của bạn.{" "}
               <br />
               Mỗi bước nhỏ đều có ý nghĩa trên
               <br className="desktop-break" /> hành trình trở về với chính mình.
             </p>
             <ArrowRight size={20} />
           </button>
-          <div className="daily-topics">
+          <div className="daily-topics max-[1050px]:grid-cols-3!">
             {[
               { icon: Heart, title: "Tình yêu", text: "Mở lòng hơn" },
               {
@@ -277,8 +279,8 @@ export function CelestialHome({
               { icon: Leaf, title: "Cuộc sống", text: "Cân bằng và tích cực" },
             ].map((t) => (
               <div key={t.title} className="daily-topic">
-                <t.icon size={27} strokeWidth={1.2} />
-                <span>
+                <t.icon size={27} strokeWidth={1.2} className="max-[760px]:hidden!" />
+                <span className="max-[1050px]:whitespace-normal!">
                   <strong>{t.title}</strong>
                   <small>{t.text}</small>
                 </span>

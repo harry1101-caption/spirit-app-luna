@@ -59,7 +59,7 @@ export const toolGroups = [
     icon: Leaf,
     tools: [
       { title: "Xin Xăm Quan Âm", description: "Một lời gợi mở để suy ngẫm.", icon: XinXamIcon, action: "xin-xam", bare: true },
-      { title: "Xem Kinh Dịch", description: "Khám phá ý nghĩa của các quẻ.", icon: IChingIcon, bare: true },
+      { title: "Xem Kinh Dịch", description: "Khám phá ý nghĩa của các quẻ.", icon: IChingIcon, action: "kinh-dich", bare: true },
       { title: "Cung mặt trăng", description: "Tìm hiểu thế giới cảm xúc.", icon: MoonSignIcon, bare: true },
       { title: "Trắc nghiệm tính cách", description: "Hiểu rõ hơn xu hướng của bạn.", icon: UserRound, action: "personality" },
     ],
@@ -84,4 +84,5 @@ export const toolRoutes: Record<string, string> = {
   "chi-tay": "/chi-tay",
   personality: "/tinh-cach",
   "xin-xam": "/xin-xam",
+  "kinh-dich": "/kinh-dich",
 };

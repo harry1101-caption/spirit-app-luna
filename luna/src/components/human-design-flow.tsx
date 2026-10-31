@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
-import { IconField, IconSelect } from "@/components/form-field";
+import { IconField, IconSelect, FormIntro, ValidatedForm } from "@/components/form-field";
 import { centers, type HumanDesignChart } from "@/lib/human-design";
 import { track } from "@/lib/analytics";
 
@@ -56,9 +56,8 @@ export function HumanDesignFlow() {
     }
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  async function submit(form: HTMLFormElement) {
+    const data = new FormData(form);
     setLoading(true);
     setError("");
     track("human_design_submit");
@@ -97,12 +96,12 @@ export function HumanDesignFlow() {
   if (!chart) {
     return (
       <div className="flow-body human-design-flow is-configuring">
-        <form className="tuvi-form tarot-setup-panel" onSubmit={submit}>
-          <p className="tuvi-note mb-1">
+        <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void submit(form)}>
+          <FormIntro>
             Human Design lấy vị trí các hành tinh tại đúng thời khắc bạn sinh ra.
             Giờ sinh càng chính xác càng tốt — Mặt Trăng đi khoảng 13° mỗi ngày
             nên lệch mười lăm phút đã có thể đổi kết quả.
-          </p>
+          </FormIntro>
 
           <div className="tuvi-grid">
             <label>Ngày sinh (dương lịch)
@@ -132,7 +131,7 @@ export function HumanDesignFlow() {
             <LockKeyhole size={13} strokeWidth={1.4} className="inline align-[-2px] mr-1" />
             Ngày giờ sinh chỉ dùng để lập biểu đồ, không lưu lại trên máy chủ.
           </p>
-        </form>
+        </ValidatedForm>
 
         <section className="tarot-introduction" aria-label="Tìm hiểu về Human Design">
           <div className="tarot-introduction-body">

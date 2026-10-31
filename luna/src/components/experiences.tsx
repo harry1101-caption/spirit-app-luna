@@ -30,10 +30,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RelatedTools, useRelatedTools } from "@/components/related-tools";
-import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
@@ -61,9 +58,8 @@ import {
 import { track } from "@/lib/analytics";
 import { TuViChartView } from "@/components/tuvi-chart";
 import { ReadingSetup } from "@/components/reading-setup";
-import { IconField, IconSelect as TuViSelect } from "@/components/form-field";
+import { IconField, IconSelect as TuViSelect, FormIntro, ValidatedForm, TEXTAREA } from "@/components/form-field";
 import { tuViTimeSlots, type TuViChart, type TuViInput } from "@/lib/tuvi";
-import { vi } from "date-fns/locale";
 import { lenormandCards } from "@/lib/lenormand";
 const tarotQuestionSuggestions: Record<string, string[]> = {
   "Tình cảm": [
@@ -127,42 +123,8 @@ function normalizeTarotTopic(topic?: string) {
   return topic && topic in tarotQuestionSuggestions ? topic : "Tình cảm";
 }
 
-function TuViBirthDate({ value, onChange, currentYear }: { value: string; onChange: (date: string) => void; currentYear: number | null }) {
-  const [open, setOpen] = useState(false);
-  const [year, month, day] = value.split("-").map(Number);
-  const selected = value ? new Date(year, month - 1, day) : undefined;
-  const today = currentYear ? new Date() : undefined;
-  return <div className="tuvi-birth-date">
-    <label id="tuvi-birth-date-label">Ngày sinh</label>
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger type="button" className="tuvi-date-trigger" aria-labelledby="tuvi-birth-date-label" aria-required="true">
-        <CalendarDays className="tuvi-control-icon" size={17} aria-hidden="true" />
-        <span className={selected ? "" : "is-placeholder"}>{selected ? `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}` : "Chọn ngày sinh"}</span>
-      </PopoverTrigger>
-      <PopoverContent className="tuvi-calendar-popover" align="start" sideOffset={8}>
-        <Calendar
-          mode="single"
-          selected={selected}
-          onSelect={(date) => {
-            if (!date) return;
-            onChange(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`);
-            setOpen(false);
-          }}
-          locale={vi}
-          captionLayout="dropdown"
-          startMonth={new Date(1900, 0, 1)}
-          endMonth={today}
-          disabled={{ after: today ?? new Date(1900, 0, 1) }}
-          defaultMonth={selected ?? new Date((currentYear ?? 2000) - 25, 0, 1)}
-        />
-      </PopoverContent>
-    </Popover>
-  </div>;
-}
-
 export function TuViFlow() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
-  const [birthDate, setBirthDate] = useState("");
   const [chart, setChart] = useState<TuViChart | null>(null);
   const [formValues, setFormValues] = useState<TuViInput | null>(null);
   const [showDecadeFortune, setShowDecadeFortune] = useState(true);
@@ -174,16 +136,11 @@ export function TuViFlow() {
     setCurrentYear(new Date().getFullYear());
   }, []);
 
-  async function createChart(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!birthDate) {
-      setError("Hãy chọn ngày sinh dương lịch.");
-      return;
-    }
-    const values = new FormData(event.currentTarget);
+  async function createChart(form: HTMLFormElement) {
+    const values = new FormData(form);
     const input: TuViInput = {
       fullName: String(values.get("fullName") || "").trim(),
-      birthDate,
+      birthDate: String(values.get("birthDate") || ""),
       birthTime: String(values.get("birthTime") || ""),
       gender: String(values.get("gender") || "") as TuViInput["gender"],
       readingYear: Number(values.get("readingYear")),
@@ -225,10 +182,14 @@ export function TuViFlow() {
       </div>
       <div className="experience-surface">
       <div className="flow-body tuvi-flow is-configuring">
-      <form className="tuvi-form tarot-setup-panel" onSubmit={createChart}>
-        <label>Họ và tên<span className="tuvi-input-wrap"><UserRound className="tuvi-control-icon" size={17} aria-hidden="true" /><Input required name="fullName" placeholder="Nguyễn Văn An" defaultValue={formValues?.fullName} className="tuvi-input-with-icon" /></span></label>
+      <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void createChart(form)}>
+        <label>Họ và tên<IconField icon={UserRound} required name="fullName" placeholder="Nguyễn Văn An" defaultValue={formValues?.fullName} /></label>
         <div className="tuvi-grid">
-          <TuViBirthDate value={birthDate} onChange={(date) => { setBirthDate(date); setError(""); }} currentYear={currentYear} />
+          {/* Cùng kiểu ô ngày với Bát tự, Thần số học, Chiêm tinh. Không cho chọn ngày tương lai. */}
+          <label>Ngày sinh (dương lịch)
+            <IconField icon={CalendarDays} type="date" name="birthDate" required min="1900-01-01"
+              max={currentYear ? new Date().toISOString().slice(0, 10) : undefined} defaultValue={formValues?.birthDate} />
+          </label>
           <label>Giờ sinh
             <TuViSelect required name="birthTime" placeholder="Chọn khung giờ" options={tuViTimeSlots} defaultValue={formValues?.birthTime} icon={Clock3} />
           </label>
@@ -249,10 +210,10 @@ export function TuViFlow() {
             <div className="tuvi-fortune-option"><Checkbox id="tuvi-annual-fortune" name="showAnnualFortune" checked={showAnnualFortune} onCheckedChange={setShowAnnualFortune} /><label htmlFor="tuvi-annual-fortune">An lưu tiểu vận</label></div>
           </div>
         </div>
-        <Button className="tuvi-submit" type="submit" disabled={loading || !currentYear}>{loading ? <LoaderCircle className="spin" size={18} /> : null}{loading ? "Đang lập lá số…" : "Lập lá số"}{!loading ? <ArrowRight size={18} /> : null}</Button>
         {error ? <p className="tuvi-form-error" role="alert">{error}</p> : null}
+        <Button className="tuvi-submit" type="submit" disabled={loading || !currentYear}>{loading ? <LoaderCircle className="spin" size={18} /> : null}{loading ? "Đang lập lá số…" : "Lập lá số"}{!loading ? <ArrowRight size={18} /> : null}</Button>
         <p className="tuvi-provider-note">Lá số được an sao ngay trên máy chủ Lunara, ngày giờ sinh không gửi tới dịch vụ an sao bên ngoài.</p>
-      </form>
+      </ValidatedForm>
 
       <section className="tarot-introduction" aria-label="Tìm hiểu về Tử Vi">
         <div className="tarot-introduction-body">
@@ -417,7 +378,7 @@ export function TarotFlow({
             <p className="tarot-deep-intro">Chỉnh 5 câu hỏi theo điều bạn muốn hiểu rõ hơn. Cả 3 lá mới sẽ được dùng để trả lời từng câu.</p>
             {deepQuestions.map((value, index) => <div className="tarot-deep-field" key={index}>
               <label htmlFor={`deep-question-${index}`}>Câu hỏi {index + 1}</label>
-              <Textarea id={`deep-question-${index}`} value={value} maxLength={300} minLength={5} required onChange={event => setDeepQuestions(current => current.map((item, i) => i === index ? event.target.value : item))} />
+              <Textarea id={`deep-question-${index}`} className={TEXTAREA} value={value} maxLength={300} minLength={5} required onChange={event => setDeepQuestions(current => current.map((item, i) => i === index ? event.target.value : item))} />
             </div>)}
           </div> : null}
           {previous ? (
@@ -457,7 +418,6 @@ export function TarotFlow({
             suggestions={tarotQuestionSuggestions[topic]}
             option={reversedOption}
             submitLabel="Bắt đầu trải bài"
-            submitDisabled={!question.trim()}
             onSubmit={() => setStarted(true)}
           />
           )}
@@ -705,10 +665,10 @@ export function DailyFlow({
           onSubmit(selected);
         }}
       >
-        <p className="tuvi-note mb-1">
+        <FormIntro>
           Chọn cung hoàng đạo của bạn, hoặc nhập ngày sinh để hệ thống tự xác
           định cung. Đây là chiêm tinh phương Tây, không phải Tử Vi Việt Nam.
-        </p>
+        </FormIntro>
 
         <label>Cung hoàng đạo</label>
         <div className="zodiac-grid">

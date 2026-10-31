@@ -114,12 +114,13 @@ export function IntentionIntro({ onStartTarot }: { onStartTarot: () => void }) {
           />
         </Button>
 
+        {/* Màn hẹp: bỏ hai đường kẻ để câu được xuống dòng thay vì tràn khỏi thẻ. */}
         <div className="mt-5 flex items-center gap-4">
-          <span className="h-px flex-1 bg-[#d9c4a4]/70" />
-          <p className="shrink-0 text-center text-[12px] leading-[1.6] text-[#6b6287] sm:text-[13px]">
+          <span className="hidden h-px flex-1 bg-[#d9c4a4]/70 sm:block" />
+          <p className="text-center text-[12px] leading-[1.6] text-[#6b6287] sm:shrink-0 sm:text-[13px]">
             Chỉ cần đặt câu hỏi, rút bài và đón nhận thông điệp dành cho bạn
           </p>
-          <span className="h-px flex-1 bg-[#d9c4a4]/70" />
+          <span className="hidden h-px flex-1 bg-[#d9c4a4]/70 sm:block" />
         </div>
       </div>
     </div>

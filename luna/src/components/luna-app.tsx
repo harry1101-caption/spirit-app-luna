@@ -15,6 +15,7 @@ import { GiacMoFlow } from "@/components/giac-mo-flow";
 import { HumanDesignFlow } from "@/components/human-design-flow";
 import { ChiTayFlow } from "@/components/chi-tay-flow";
 import { XinXamFlow } from "@/components/xin-xam-flow";
+import { KinhDichFlow } from "@/components/kinh-dich-flow";
 import { AllToolsMenu } from "@/components/all-tools-menu";
 import { toolGroups } from "@/components/tool-groups";
 import { topicByKey, type Topic } from "@/components/topic-picker";
@@ -67,7 +68,7 @@ import { RelatedToolsSlot } from "@/components/related-tools";
 import { LogoMark } from "@/components/logo-mark";
 
 import { buildDailyCardReport, drawDailyCard } from "@/lib/daily-card";
-type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam";
+type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich";
 type DailyCardState = { id: number; day: string; revealed: boolean };
 /** Lá bài hôm nay được khoá theo ngày, nên cần một seed ổn định cho mỗi thiết bị. */
 const DAILY_CARD_KEY = "luna:dailycard:v1";
@@ -277,6 +278,10 @@ export default function LunaApp({
     }
     if (next === "xin-xam" && window.location.pathname !== "/xin-xam") {
       window.location.assign("/xin-xam");
+      return;
+    }
+    if (next === "kinh-dich" && window.location.pathname !== "/kinh-dich") {
+      window.location.assign("/kinh-dich");
       return;
     }
     if (next === "home" && window.location.pathname !== "/") {
@@ -757,6 +762,13 @@ export default function LunaApp({
             <div className="tarot-page-background" aria-hidden="true" />
             <div className="page-heading tarot-title-only"><h1>Một lời gợi mở từ quẻ xăm</h1></div>
             <RelatedToolsSlot><div className="experience-surface"><XinXamFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "kinh-dich" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-kinhdich">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Gieo một quẻ Kinh Dịch</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><KinhDichFlow /></div></RelatedToolsSlot>
           </section>
         ) : null}
         {tab === "chi-tay" && !flow && !report ? (

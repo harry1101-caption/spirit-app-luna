@@ -5,7 +5,7 @@ import { ArrowRight, CalendarClock, CalendarDays, Check, Clock3, LoaderCircle, L
 import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
 import { Checkbox } from "@/components/ui/checkbox";
-import { IconField, IconSelect } from "@/components/form-field";
+import { IconField, IconSelect, FormIntro, ValidatedForm } from "@/components/form-field";
 import { elements, type BatTuChart } from "@/lib/bat-tu";
 import { track } from "@/lib/analytics";
 
@@ -52,9 +52,8 @@ export function BatTuFlow() {
     }
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  async function submit(form: HTMLFormElement) {
+    const data = new FormData(form);
     setLoading(true);
     setError("");
     track("bat_tu_submit");
@@ -93,11 +92,11 @@ export function BatTuFlow() {
   if (!chart) {
     return (
       <div className="flow-body bat-tu-flow is-configuring">
-      <form className="tuvi-form tarot-setup-panel" onSubmit={submit}>
-        <p className="tuvi-note mb-1">
+      <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void submit(form)}>
+        <FormIntro>
           Bát Tự lập từ ngày giờ sinh dương lịch. Lá số đổi trụ tại tiết khí,
           không theo tháng âm lịch — nên bạn chỉ cần nhập đúng ngày dương.
-        </p>
+        </FormIntro>
 
         <label>Họ và tên
           <IconField icon={UserRound} name="name" maxLength={80} placeholder="Nguyễn Văn An" />
@@ -140,7 +139,7 @@ export function BatTuFlow() {
           <LockKeyhole size={13} strokeWidth={1.4} className="inline align-[-2px] mr-1" />
           Ngày giờ sinh chỉ dùng để lập lá số, không lưu lại trên máy chủ.
         </p>
-      </form>
+      </ValidatedForm>
 
       <section className="tarot-introduction" aria-label="Tìm hiểu về Bát Tự">
         <div className="tarot-introduction-body">

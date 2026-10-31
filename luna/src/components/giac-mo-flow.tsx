@@ -4,8 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Check, LoaderCircle, LockKeyhole, Moon, RotateCcw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
-import { Textarea } from "@/components/ui/textarea";
-import { IconField, IconSelect } from "@/components/form-field";
+import { IconField, IconSelect, FormIntro, ValidatedForm, FieldTextarea } from "@/components/form-field";
 import { CalendarClock, Smile } from "lucide-react";
 import { dreamMoods, dreamRecurrences, type GiacMoChart } from "@/lib/giac-mo";
 import { track } from "@/lib/analytics";
@@ -44,9 +43,8 @@ export function GiacMoFlow() {
     }
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  async function submit(form: HTMLFormElement) {
+    const data = new FormData(form);
     setLoading(true);
     setError("");
     track("giac_mo_submit");
@@ -85,22 +83,22 @@ export function GiacMoFlow() {
   if (!chart) {
     return (
       <div className="flow-body giac-mo-flow is-configuring">
-        <form className="tuvi-form tarot-setup-panel" onSubmit={submit}>
-          <p className="tuvi-note mb-1">
+        <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void submit(form)}
+          check={(): Record<string, string> => (dream.trim() && dream.trim().length < 10 ? { dream: "Hãy kể giấc mơ dài hơn một chút, ít nhất 10 ký tự." } : {})}>
+          <FormIntro>
             Kể lại giấc mơ bằng lời của bạn, càng nhiều chi tiết càng tốt. Không
             cần ngày sinh hay họ tên — giấc mơ không đọc theo dữ liệu đó.
-          </p>
+          </FormIntro>
 
           <label>
             Giấc mơ của bạn
-            <Textarea
+            <FieldTextarea
               name="dream"
               required
               maxLength={2000}
               value={dream}
               onChange={(e) => setDream(e.target.value)}
               placeholder="Tôi mơ thấy mình đang đi trên một cây cầu dài, phía dưới là nước…"
-              className="min-h-[150px]"
             />
           </label>
           <p className="tuvi-note">{dream.trim().length}/2000 ký tự · tối thiểu 10</p>
@@ -123,7 +121,7 @@ export function GiacMoFlow() {
 
           {error ? <p className="tuvi-form-error" role="alert">{error}</p> : null}
 
-          <Button className="tuvi-submit" type="submit" disabled={loading || dream.trim().length < 10}>
+          <Button className="tuvi-submit" type="submit" disabled={loading}>
             {loading ? <LoaderCircle className="spin" size={18} /> : null}
             {loading ? "Đang đọc giấc mơ…" : "Giải mã giấc mơ"}
             {loading ? null : <ArrowRight size={18} />}
@@ -133,7 +131,7 @@ export function GiacMoFlow() {
             Nội dung giấc mơ được gửi tới dịch vụ AI để diễn giải, và không lưu
             lại trên máy chủ. Chỉ lưu khi bạn chủ động bấm lưu.
           </p>
-        </form>
+        </ValidatedForm>
 
         <section className="tarot-introduction" aria-label="Tìm hiểu về giải mã giấc mơ">
           <div className="tarot-introduction-body">
