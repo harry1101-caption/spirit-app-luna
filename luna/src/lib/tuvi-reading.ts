@@ -1,4 +1,4 @@
-import { tuViBranches, tuViPalaceOrder, type TuViChart } from "./tuvi";
+import { tuViBranches, tuViPalaceOrder, type TuViChart } from "./tuvi.ts";
 
 export const tuViReadingTopics = ["Tính cách, ưu điểm và điểm cần cải thiện", "Sự nghiệp và khả năng phát triển", "Tài chính và tích lũy tài sản", "Tình duyên và hôn nhân", "Đại hạn hiện tại và kế tiếp", "Xu hướng năm xem"] as const;
 export type TuViChartData = Omit<TuViChart, "interpretation">;

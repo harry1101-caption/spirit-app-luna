@@ -13,7 +13,7 @@ const serif = Cormorant_Garamond({
   style: ["normal", "italic"],
 });
 export const metadata: Metadata = {
-  title: "Luna — Hành Trình Nội Tâm",
+  title: "Lunara — Hành trình nội tâm",
   description:
     "Khám phá bản thân qua Tarot, chiêm tinh hằng ngày và những trải nghiệm tính cách. Không gian riêng dành cho bạn.",
 };

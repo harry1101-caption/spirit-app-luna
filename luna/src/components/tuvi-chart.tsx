@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { ArrowLeft, Download, LoaderCircle, Radar, BookOpenText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RelatedTools } from "@/components/related-tools";
 import { tuViBranches, type TuViChart, type TuViPalace } from "@/lib/tuvi";
 import { orderedTuViPalaces, tuViPalaceRelations, tuViReadingEvidence } from "@/lib/tuvi-reading";
 
@@ -181,13 +182,13 @@ function ChartInterpretation({ chart }: { chart: TuViChart }) {
         return <article className="tuvi-reading-palace" key={palace.name}>
           <h4>{index + 1}. Cung {palace.name} – {palace.branch}{palace.isBodyPalace ? " · Thân cư tại đây" : ""}</h4>
           <dl className="tuvi-reading-facts">{data.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-          {reading ? <div className="tuvi-reading-analysis"><h5>Luận giải</h5><p>{reading.text}</p>{sources(reading.evidence)}</div> : null}
+          {reading ? <div className="tuvi-reading-analysis"><h5>Luận giải</h5>{reading.takeaway ? <p className="font-medium text-[#3e357e]">{reading.takeaway}</p> : null}<p>{reading.text}</p>{sources(reading.evidence)}</div> : null}
         </article>;
       })}
     </section>
     <section className="tuvi-reading-section" aria-labelledby="tuvi-topics-title">
       <h3 id="tuvi-topics-title">III. Luận giải chuyên sâu</h3>
-      {interpretation.topics.length ? interpretation.topics.map((topic, index) => <article className="tuvi-reading-topic" key={topic.title}><h4>{index + 1}. {topic.title === "Xu hướng năm xem" ? `Xu hướng năm ${input.readingYear}` : topic.title}</h4><p>{topic.text}</p>{sources(topic.evidence)}</article>) : <p className="tuvi-reading-data-note">Luận giải chuyên sâu chưa khả dụng cho lần lập này. Dữ liệu lá số bên trên vẫn đầy đủ.</p>}
+      {interpretation.topics.length ? interpretation.topics.map((topic, index) => <article className="tuvi-reading-topic" key={topic.title}><h4>{index + 1}. {topic.title === "Xu hướng năm xem" ? `Xu hướng năm ${input.readingYear}` : topic.title}</h4>{topic.takeaway ? <p className="font-medium text-[#3e357e]">{topic.takeaway}</p> : null}<p>{topic.text}</p>{sources(topic.evidence)}</article>) : <p className="tuvi-reading-data-note">Luận giải chuyên sâu chưa khả dụng cho lần lập này. Dữ liệu lá số bên trên vẫn đầy đủ.</p>}
     </section>
     <p className="tuvi-interpretation-note">Phần luận giải sử dụng cách diễn giải Tử Vi truyền thống, mang tính tham khảo; các xu hướng được nêu không phải sự kiện chắc chắn xảy ra.</p>
   </section>;
@@ -259,6 +260,9 @@ export function TuViChartView({ chart, onEdit }: { chart: TuViChart; onEdit: () 
       </section>
       <TwelvePalaceChart chart={chart} />
       <ChartInterpretation chart={chart} />
+      <div className="tuvi-interpretation">
+        <RelatedTools current="tuvi" />
+      </div>
     </section>
   );
 }

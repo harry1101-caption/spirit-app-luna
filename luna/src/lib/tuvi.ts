@@ -44,8 +44,8 @@ export type TuViChart = {
   annualFortune: { age: number; palace: string; direction: string };
   interpretation: {
     summary: string;
-    sections: { title: string; text: string; evidence: string[] }[];
-    topics: { title: string; text: string; evidence: string[] }[];
+    sections: { title: string; takeaway?: string; text: string; evidence: string[] }[];
+    topics: { title: string; takeaway?: string; text: string; evidence: string[] }[];
     source: "ai" | "guide";
   };
   palaces: TuViPalace[];

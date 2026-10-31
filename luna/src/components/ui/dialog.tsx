@@ -65,12 +65,12 @@ function DialogContent({
             render={
               <Button
                 variant="ghost"
-                className="absolute top-2 right-2"
+                className="group absolute top-2 right-2"
                 size="icon-sm"
               />
             }
           >
-            <XIcon />
+            <XIcon className="transition-transform duration-300 ease-[cubic-bezier(.2,0,0,1)] group-hover:rotate-90 group-focus-visible:rotate-90 motion-reduce:transition-none motion-reduce:group-hover:rotate-0" />
             <span className="sr-only">Đóng</span>
           </DialogPrimitive.Close>
         )}

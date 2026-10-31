@@ -1,29 +1,27 @@
 "use client";
-import { useRef, type ReactNode } from "react";
+import { useRef } from "react";
 import Image from "next/image";
+import { IntentionIntro } from "@/components/intention-intro";
+import { SectionDivider } from "@/components/section-divider";
+import { TopicPicker, type Topic } from "@/components/topic-picker";
+import { WhyLunara } from "@/components/why-lunara";
+import { SiteFooter } from "@/components/site-footer";
+import { FeedbackSection } from "@/components/feedback-section";
+import { toolGroups } from "@/components/tool-groups";
 import {
   ArrowRight,
-  Bookmark,
-  BookOpen,
   BriefcaseBusiness,
   CalendarDays,
-  CircleHelp,
-  Hand,
   Layers,
   Orbit,
   Compass,
   Heart,
   Leaf,
   Moon,
-  Sparkle,
   Sparkles,
-  Sun,
-  UserRound,
-  UsersRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  intents,
   methods,
   zodiac,
   zodiacSymbols,
@@ -55,50 +53,7 @@ const pillars = [
     method: "personality" as Method,
   },
 ];
-const intentIcons = [Sun, Heart, BriefcaseBusiness, Leaf, Compass];
-const toolGroups = [
-  {
-    title: "Bói bài",
-    icon: Layers,
-    tools: [
-      { title: "Xem Tarot cùng AI", description: "Lắng nghe góc nhìn từ ba lá bài.", icon: Layers, action: "tarot" },
-      { title: "Bói bài Lenormand", description: "Đọc những biểu tượng đời thường.", icon: Compass, action: "lenormand" },
-      { title: "Bói bài Tây", description: "Một cách khác để soi chiếu câu hỏi.", icon: Heart },
-      { title: "Lá bài hôm nay", description: "Một lá bài cho ngày mới.", icon: Sun },
-    ],
-  },
-  {
-    title: "Lá số & Ngày sinh",
-    icon: Orbit,
-    tools: [
-      { title: "Xem Tử Vi", description: "Lập và luận giải lá số của bạn.", icon: Orbit, action: "tuvi" },
-      { title: "Bát tự (Tứ trụ)", description: "Tìm hiểu bốn trụ ngày giờ sinh.", icon: Compass },
-      { title: "Thần số học", description: "Khám phá những con số cá nhân.", icon: Sparkle },
-      { title: "Chiêm tinh", description: "Thông điệp theo cung hoàng đạo.", icon: Moon, action: "daily" },
-      { title: "Human Design", description: "Tìm hiểu bản đồ năng lượng.", icon: CircleHelp },
-    ],
-  },
-  {
-    title: "Soi tướng & Hình ảnh",
-    icon: Hand,
-    tools: [
-      { title: "Xem chỉ tay", description: "Quan sát dấu hiệu trên bàn tay.", icon: Hand },
-      { title: "Nhân tướng học", description: "Tìm hiểu các nét trên khuôn mặt.", icon: UserRound },
-      { title: "Khuôn mặt kiếp trước", description: "Một trải nghiệm khám phá hình ảnh.", icon: UsersRound },
-      { title: "Giải mã giấc mơ", description: "Ghi lại những biểu tượng trong mơ.", icon: Moon },
-    ],
-  },
-  {
-    title: "Gieo quẻ & Lễ Việt Nam",
-    icon: Leaf,
-    tools: [
-      { title: "Xin Xăm Quan Âm", description: "Một lời gợi mở để suy ngẫm.", icon: Sparkles },
-      { title: "Xem Kinh Dịch", description: "Khám phá ý nghĩa của các quẻ.", icon: BookOpen },
-      { title: "Cung mặt trăng", description: "Tìm hiểu thế giới cảm xúc.", icon: Moon },
-      { title: "Trắc nghiệm tính cách", description: "Hiểu rõ hơn xu hướng của bạn.", icon: UserRound, action: "personality" },
-    ],
-  },
-] as const;
+
 export function ExperienceCard({
   method,
   index,
@@ -151,23 +106,18 @@ export function ExperienceCard({
 export function CelestialHome({
   onStart,
   onMethod,
-  onTuVi,
-  onLenormand,
-  onIntent,
-  onExplore,
+  onTool,
+  onTopic,
   date,
   sign,
-  children,
 }: {
   onStart: () => void;
   onMethod: (method: Method) => void;
-  onTuVi: () => void;
-  onLenormand: () => void;
-  onIntent: (intent: string) => void;
-  onExplore: () => void;
+  /** Một cửa duy nhất cho mọi công cụ — xem openTool trong luna-app. */
+  onTool: (action: string) => void;
+  onTopic: (topic: Topic) => void;
   date: string;
   sign: string;
-  children: ReactNode;
 }) {
   const visual = useRef<HTMLDivElement>(null);
   function move(e: React.PointerEvent<HTMLElement>) {
@@ -206,7 +156,12 @@ export function CelestialHome({
           visual.current?.style.setProperty("--pointer-y", "0px");
         }}
       >
-        <div className="hero-editorial" data-reveal>
+        {/* Khung kính mờ bọc toàn bộ nội dung hero và canh giữa. Trước đây
+            chữ nằm trần sát mép trái, đè lên hình nền nên chỗ đậm chỗ nhạt,
+            khó đọc. Dùng `!` vì .hero-editorial, .hero-actions và
+            .hero-pillars đều nằm ngoài cascade layer. */}
+        <div className="relative z-[2] mx-auto w-full max-w-[880px] rounded-[26px] border border-white/55 bg-white/38 px-[clamp(24px,4vw,56px)] py-[clamp(30px,3.6vw,46px)] shadow-[0_18px_50px_#6b4b8218] backdrop-blur-xl">
+        <div className="hero-editorial w-full! text-center" data-reveal>
           <p className="hero-eyebrow">
             KHÁM PHÁ · THẤU HIỂU · SỐNG TRỌN VẸN HƠN
           </p>
@@ -220,7 +175,7 @@ export function CelestialHome({
             <br className="desktop-break" /> một góc nhìn mới về bản thân và
             cuộc sống.
           </p>
-          <div className="hero-actions">
+          <div className="hero-actions justify-center! flex-wrap!">
             <Button onClick={onStart}>
               Bắt đầu khám phá <ArrowRight size={19} />
             </Button>
@@ -240,16 +195,20 @@ export function CelestialHome({
             </Button>
           </div>
         </div>
-        <div className="hero-pillars" data-reveal>
+        <div
+          className="hero-pillars static! mt-9 justify-center! gap-0! border-t border-[#e6d9ef]/70 pt-7"
+          data-reveal
+        >
           {pillars.map((p) => (
-            <button key={p.title} onClick={() => onMethod(p.method)}>
-              <span className="pillar-icon">
+            <button key={p.title} onClick={() => onMethod(p.method)} className="items-center! text-center! after:right-0!">
+              <span className="pillar-icon mx-auto!">
                 <p.icon size={23} strokeWidth={1.25} />
               </span>
               <strong>{p.title}</strong>
               <small>{p.text}</small>
             </button>
           ))}
+        </div>
         </div>
       </section>
       <section
@@ -345,12 +304,12 @@ export function CelestialHome({
                     const Icon = tool.icon;
                     const action = "action" in tool ? tool.action : undefined;
                     const content = <>
-                      <span className="tool-icon"><Icon size={29} strokeWidth={1.35} aria-hidden="true" /></span>
+                      <span className={`tool-icon${"bare" in tool && tool.bare ? " bg-transparent!" : ""}${"clip" in tool && tool.clip ? " overflow-hidden" : ""}`}><Icon size={("bare" in tool && tool.bare) || ("clip" in tool && tool.clip) ? 54 : 29} strokeWidth={1.35} aria-hidden="true" /></span>
                       <span className="tool-copy"><strong>{tool.title}</strong><small>{tool.description}</small></span>
                       {action ? <ArrowRight className="tool-arrow" size={16} aria-hidden="true" /> : <span className="tool-upcoming">Sắp ra mắt</span>}
                     </>;
                     return action ? (
-                      <button className="tool-card is-available" key={tool.title} onClick={() => action === "tuvi" ? onTuVi() : action === "lenormand" ? onLenormand() : onMethod(action as Method)} aria-label={`Mở ${tool.title}`}>
+                      <button className="tool-card is-available" key={tool.title} onClick={() => onTool(action)} aria-label={`Mở ${tool.title}`}>
                         {content}
                       </button>
                     ) : <div className="tool-card is-upcoming" key={tool.title}>{content}</div>;
@@ -360,8 +319,9 @@ export function CelestialHome({
             ))}
           </div>
         </section>
+        <SectionDivider index={0} className="mt-[46px]" />
         <section
-          className="intention-section page-container"
+          className="intention-section page-container mt-[46px]!"
           data-reveal
           aria-labelledby="intention-title"
         >
@@ -372,91 +332,24 @@ export function CelestialHome({
             fill
             sizes="(max-width: 760px) 100vw, 1280px"
           />
-          <div className="intention-heading">
-            <span className="eyebrow">BẮT ĐẦU TỪ ĐIỀU BẠN CẦN</span>
-            <h2 id="intention-title">
-              Bạn đang muốn
-              <br />
-              <em>khám phá điều gì?</em>
-            </h2>
-            <p>
-              Chọn điều đang ở trong tâm trí bạn.
-              <br />
-              Luna sẽ cùng bạn tìm một lối mở phù hợp.
-            </p>
-            <button className="text-link" onClick={onExplore}>
-              Xem tất cả trải nghiệm <ArrowRight size={18} />
-            </button>
-            <blockquote>
-              “Mỗi câu hỏi là một cánh cửa,
-              <br />
-              dẫn bạn đến gần hơn với chính mình.”
-            </blockquote>
-          </div>
-          <div className="intention-choices">
-            <div className="intention-options">
-              {[1, 2, 3, 0, 4].map((i) => {
-                const Icon = intentIcons[i];
-                const description = [
-                  "Thông điệp dành riêng cho ngày mới.",
-                  "Thấu hiểu trái tim, kết nối sâu sắc hơn.",
-                  "Tìm hướng đi phù hợp với năng lượng của bạn.",
-                  "Hiểu rõ con người thật của bạn.",
-                  "Mở thêm góc nhìn cho hành trình phía trước.",
-                ][i];
-                return (
-                  <button
-                    className={`intention-choice intention-choice-${i}`}
-                    key={intents[i]}
-                    onClick={() => onIntent(intents[i])}
-                  >
-                    <span className="intention-icon">
-                      <Icon size={30} strokeWidth={1.15} />
-                    </span>
-                    <span className="intention-label">
-                      <strong>{intents[i]}</strong>
-                      <small>{description}</small>
-                    </span>
-                    <span className="intention-arrow">
-                      <ArrowRight size={17} />
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="intention-bottom">
-              <div aria-hidden="true">
-                <span />
-                <Moon size={18} strokeWidth={1} />
-                <Sparkles size={27} strokeWidth={1} />
-                <Moon size={18} strokeWidth={1} />
-                <span />
-              </div>
-              <p>LẮNG NGHE BẢN THÂN · SỐNG TRỌN VẸN HƠN</p>
-            </div>
-          </div>
+          <IntentionIntro onStartTarot={() => onMethod("tarot")} />
         </section>
-        <section className="web-library page-container" data-reveal>
-          <div className="library-heading">
-            <div>
-              <span className="eyebrow">NHỮNG DẤU CHÂN TRÊN HÀNH TRÌNH</span>
-              <h2>Khám phá của tôi</h2>
-            </div>
-            <Bookmark size={26} strokeWidth={1} />
-          </div>
-          {children}
-        </section>
-        <section className="closing-note page-container" data-reveal>
-          <Sparkles size={22} strokeWidth={1} />
-          <p>
-            Thế giới rộng lớn ngoài kia.
-            <br />
-            <em>Một vũ trụ khác, ở ngay trong bạn.</em>
-          </p>
-          <button className="text-link" onClick={onStart}>
-            Bắt đầu hành trình của bạn <ArrowRight size={17} />
-          </button>
-        </section>
+        <SectionDivider index={1} className="mt-[46px]" />
+        <FeedbackSection />
+        {/* Dải cuối trang: "Vì sao chọn Lunara" và lời kết dùng CHUNG một nền
+            trải hết bề ngang, nên phải bọc lại thành một khối. Mẹo full-bleed
+            (w-screen + dịch trái nửa màn hình) là cách repo vẫn dùng để thoát
+            khỏi bề ngang bị bó của luồng trang. */}
+        <SectionDivider index={2} className="mt-[46px]" />
+        <div className="relative mt-[46px] overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-1/2 -z-10 w-screen -translate-x-1/2 bg-[#f3edfa] bg-[url('/images/celestial-band.webp')] bg-cover bg-center [mask-image:linear-gradient(#0000,#000_9%,#000_88%,#0000)]"
+          />
+          <WhyLunara />
+          <TopicPicker onPick={onTopic} />
+        </div>
+        <SiteFooter />
       </div>
     </>
   );
