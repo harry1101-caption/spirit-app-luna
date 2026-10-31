@@ -156,7 +156,12 @@ export function CelestialHome({
           visual.current?.style.setProperty("--pointer-y", "0px");
         }}
       >
-        <div className="hero-editorial" data-reveal>
+        {/* Khung kính mờ bọc toàn bộ nội dung hero và canh giữa. Trước đây
+            chữ nằm trần sát mép trái, đè lên hình nền nên chỗ đậm chỗ nhạt,
+            khó đọc. Dùng `!` vì .hero-editorial, .hero-actions và
+            .hero-pillars đều nằm ngoài cascade layer. */}
+        <div className="relative z-[2] mx-auto w-full max-w-[880px] rounded-[26px] border border-white/55 bg-white/38 px-[clamp(24px,4vw,56px)] py-[clamp(30px,3.6vw,46px)] shadow-[0_18px_50px_#6b4b8218] backdrop-blur-xl">
+        <div className="hero-editorial w-full! text-center" data-reveal>
           <p className="hero-eyebrow">
             KHÁM PHÁ · THẤU HIỂU · SỐNG TRỌN VẸN HƠN
           </p>
@@ -170,7 +175,7 @@ export function CelestialHome({
             <br className="desktop-break" /> một góc nhìn mới về bản thân và
             cuộc sống.
           </p>
-          <div className="hero-actions">
+          <div className="hero-actions justify-center! flex-wrap!">
             <Button onClick={onStart}>
               Bắt đầu khám phá <ArrowRight size={19} />
             </Button>
@@ -190,16 +195,20 @@ export function CelestialHome({
             </Button>
           </div>
         </div>
-        <div className="hero-pillars" data-reveal>
+        <div
+          className="hero-pillars static! mt-9 justify-center! gap-0! border-t border-[#e6d9ef]/70 pt-7"
+          data-reveal
+        >
           {pillars.map((p) => (
-            <button key={p.title} onClick={() => onMethod(p.method)}>
-              <span className="pillar-icon">
+            <button key={p.title} onClick={() => onMethod(p.method)} className="items-center! text-center! after:right-0!">
+              <span className="pillar-icon mx-auto!">
                 <p.icon size={23} strokeWidth={1.25} />
               </span>
               <strong>{p.title}</strong>
               <small>{p.text}</small>
             </button>
           ))}
+        </div>
         </div>
       </section>
       <section

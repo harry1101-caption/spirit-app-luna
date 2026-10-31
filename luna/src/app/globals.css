@@ -355,8 +355,12 @@ button:disabled {
   width: calc(100% - 168px);
   margin: auto;
   position: relative;
-  height: 640px;
+  /* Trước đây cao cố định 640px vì .hero-pillars neo absolute ở đáy. Giờ nội
+     dung nằm trong một khung theo luồng thường nên để cao tự do, không thì
+     khung bị tràn ra ngoài ở màn hẹp. */
+  min-height: 640px;
   padding-top: 100px;
+  padding-bottom: 40px;
 }
 .hero-editorial {
   position: relative;
