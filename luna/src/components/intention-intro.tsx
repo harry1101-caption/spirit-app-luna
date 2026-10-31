@@ -110,7 +110,7 @@ export function IntentionIntro({ onStartTarot }: { onStartTarot: () => void }) {
           <ArrowRight
             size={22}
             strokeWidth={1.6}
-            className="transition-transform duration-500 ease-out group-hover:rotate-[360deg]"
+            className="transition-transform duration-300 ease-out group-hover:rotate-[360deg]"
           />
         </Button>
 

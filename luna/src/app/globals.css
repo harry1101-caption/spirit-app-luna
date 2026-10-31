@@ -358,9 +358,9 @@ button:disabled {
   /* Trước đây cao cố định 640px vì .hero-pillars neo absolute ở đáy. Giờ nội
      dung nằm trong một khung theo luồng thường nên để cao tự do, không thì
      khung bị tràn ra ngoài ở màn hẹp. */
-  min-height: 640px;
-  padding-top: 100px;
-  padding-bottom: 40px;
+  min-height: 590px;
+  padding-top: 46px;
+  padding-bottom: 28px;
 }
 .hero-editorial {
   position: relative;
@@ -375,29 +375,29 @@ button:disabled {
   line-height: 1.7;
 }
 .hero-editorial h1 {
-  font-size: 96px;
-  line-height: 0.91;
-  letter-spacing: -4.2px;
+  font-size: clamp(62px, 4.4vw, 72px);
+  line-height: 0.94;
+  letter-spacing: -3.6px;
   color: #1b0739;
-  margin-top: 18px;
+  margin-top: 12px;
   font-weight: 500;
 }
 .hero-description {
-  font-size: 21px;
+  font-size: 16px;
   color: #6f5e91;
   line-height: 1.55;
-  margin-top: 27px;
+  margin-top: 14px;
   letter-spacing: -0.25px;
 }
 .hero-actions {
   display: flex;
   gap: 14px;
-  margin-top: 29px;
+  margin-top: 16px;
 }
 .hero-actions > [data-slot="button"] {
   min-width: 262px;
-  height: 56px;
-  font-size: 15px;
+  height: 46px;
+  font-size: 13px;
 }
 .hero-actions > [data-slot="button"]:nth-child(2) {
   background: #fff9f58f;
@@ -451,8 +451,8 @@ button:disabled {
   background: #ddd1ed;
 }
 .pillar-icon {
-  width: 37px;
-  height: 37px;
+  width: 34px;
+  height: 34px;
   display: grid;
   place-items: center;
   border: 1px solid #d8b185;
@@ -462,7 +462,7 @@ button:disabled {
   transition:
     transform 0.3s,
     background 0.3s;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 .hero-pillars > button:hover .pillar-icon {
   transform: translateY(-4px);
@@ -470,14 +470,14 @@ button:disabled {
 }
 .hero-pillars strong {
   font-family: var(--font-serif-app);
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.25;
   color: #352050;
 }
 .hero-pillars small {
   font-family: var(--font-serif-app);
-  font-size: 14px;
+  font-size: 12px;
   color: #8f78a6;
   line-height: 1.4;
 }
@@ -552,6 +552,13 @@ button:disabled {
   font-size: 12px;
   padding: 0 37px;
   gap: 26px;
+}
+.daily-feature-copy > [data-slot="button"].daily-message-cta,
+.daily-feature-copy > [data-slot="button"].daily-message-cta:hover,
+.daily-feature-copy > [data-slot="button"].daily-message-cta:active {
+  transform: none !important;
+  background: linear-gradient(115deg, #7d55a8, #4d3276) !important;
+  box-shadow: 0 8px 22px #5d387c0d !important;
 }
 .daily-zodiac {
   height: 218px;
@@ -652,7 +659,7 @@ button:disabled {
   gap: 10px;
   margin-top: 13px;
 }
-.daily-topics > button {
+.daily-topic {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -660,21 +667,22 @@ button:disabled {
   border: 1px solid #e5daee;
   border-radius: 8px;
   padding: 8px 12px;
-  transition: background 0.25s;
 }
-.daily-topics > button:hover {
-  background: #f2e9fb;
-}
-.daily-topics > button > svg {
+.daily-topic > svg {
   color: #a58cb9;
   fill: #e2d4ed;
   stroke-width: 1;
 }
-.daily-topics > button > span {
+.daily-topic > span {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
+  min-width: 0;
   white-space: nowrap;
+}
+.daily-topic strong,
+.daily-topic small {
+  display: block;
 }
 .daily-topics strong {
   font-size: 12px;
@@ -2077,11 +2085,12 @@ select {
     height: 1200px;
   }
   .web-hero {
-    height: 700px;
-    padding-top: 120px;
+    height: auto;
+    min-height: 610px;
+    padding-top: 48px;
   }
   .hero-editorial h1 {
-    font-size: 104px;
+    font-size: 72px;
   }
   .hero-aside {
     top: 70px;
@@ -2212,11 +2221,11 @@ select {
   .daily-topics {
     gap: 7px;
   }
-  .daily-topics > button {
+  .daily-topic {
     padding: 7px;
     gap: 6px;
   }
-  .daily-topics > button > svg {
+  .daily-topic > svg {
     width: 21px;
   }
   .daily-topics small {
@@ -2352,7 +2361,7 @@ select {
   .daily-topics {
     margin-top: 11px;
   }
-  .daily-topics > button {
+  .daily-topic {
     padding: 9px 12px;
     gap: 10px;
   }
@@ -2711,18 +2720,18 @@ select {
     gap: 7px;
     margin-top: 11px;
   }
-  .daily-topics > button {
+  .daily-topic {
     padding: 9px 7px;
     gap: 6px;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
   }
-  .daily-topics > button > svg {
+  .daily-topic > svg {
     width: 20px;
     height: 20px;
   }
-  .daily-topics > button > span {
-    white-space: normal;
+  .daily-topic > span {
+    white-space: nowrap;
   }
   .daily-topics strong {
     font-size: 12px;
@@ -6104,4 +6113,3 @@ select {
 .tuvi-calendar-popover [data-slot="calendar"] { --cell-size: 34px; }
 .tuvi-calendar-popover [data-slot="calendar"] select { color: #654280; cursor: pointer; }
 .tuvi-calendar-popover [data-selected-single="true"] { background: #795493; color: #fff; }
-

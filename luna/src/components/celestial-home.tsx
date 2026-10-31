@@ -160,7 +160,7 @@ export function CelestialHome({
             chữ nằm trần sát mép trái, đè lên hình nền nên chỗ đậm chỗ nhạt,
             khó đọc. Dùng `!` vì .hero-editorial, .hero-actions và
             .hero-pillars đều nằm ngoài cascade layer. */}
-        <div className="relative z-[2] mx-auto w-full max-w-[880px] rounded-[26px] border border-white/55 bg-white/38 px-[clamp(24px,4vw,56px)] py-[clamp(30px,3.6vw,46px)] shadow-[0_18px_50px_#6b4b8218] backdrop-blur-xl">
+        <div className="hero-glass relative z-[2] mx-auto w-full max-w-[880px] rounded-[26px] border border-white/55 bg-white/38 px-[clamp(24px,4vw,56px)] py-[clamp(16px,1.8vw,26px)] shadow-[0_18px_50px_#6b4b8218] backdrop-blur-xl">
         <div className="hero-editorial w-full! text-center" data-reveal>
           <p className="hero-eyebrow">
             KHÁM PHÁ · THẤU HIỂU · SỐNG TRỌN VẸN HƠN
@@ -182,7 +182,7 @@ export function CelestialHome({
             <Button
               variant="outline"
               onClick={() =>
-                document.getElementById("trai-nghiem")?.scrollIntoView({
+                document.getElementById("cong-cu-hieu-minh")?.scrollIntoView({
                   behavior: window.matchMedia(
                     "(prefers-reduced-motion: reduce)",
                   ).matches
@@ -196,7 +196,7 @@ export function CelestialHome({
           </div>
         </div>
         <div
-          className="hero-pillars static! mt-9 justify-center! gap-0! border-t border-[#e6d9ef]/70 pt-7"
+          className="hero-pillars static! mt-4 justify-center! gap-0! border-t border-[#e6d9ef]/70 pt-4"
           data-reveal
         >
           {pillars.map((p) => (
@@ -223,8 +223,16 @@ export function CelestialHome({
           </span>
           <h2>Hôm nay có điều gì dành cho bạn?</h2>
           <p>Vũ trụ đang nhắn nhủ điều đặc biệt dành riêng cho bạn.</p>
-          <Button onClick={() => onMethod("daily")}>
-            Khám phá thông điệp hôm nay <ArrowRight size={18} />
+          <Button
+            className="daily-message-cta group"
+            onClick={() => onTool("dailycard")}
+            aria-haspopup="dialog"
+          >
+            Khám phá thông điệp hôm nay
+            <ArrowRight
+              size={18}
+              className="transition-transform duration-300 ease-out group-hover:rotate-[360deg]"
+            />
           </Button>
         </div>
         <button
@@ -268,20 +276,20 @@ export function CelestialHome({
               },
               { icon: Leaf, title: "Cuộc sống", text: "Cân bằng và tích cực" },
             ].map((t) => (
-              <button key={t.title} onClick={() => onMethod("daily")}>
+              <div key={t.title} className="daily-topic">
                 <t.icon size={27} strokeWidth={1.2} />
                 <span>
                   <strong>{t.title}</strong>
                   <small>{t.text}</small>
                 </span>
-              </button>
+              </div>
             ))}
           </div>
         </div>
       </section>
       <div className="below-hero">
         <section
-          id="trai-nghiem"
+          id="cong-cu-hieu-minh"
           className="experiences-section page-container"
           data-reveal
         >
