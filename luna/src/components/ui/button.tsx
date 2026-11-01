@@ -9,7 +9,9 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50 " +
+          // Icon xoay một vòng khi rê chuột hoặc focus bằng bàn phím; tắt khi người dùng bật giảm chuyển động
+          "[&_svg]:transition-transform [&_svg]:duration-250 [&_svg]:ease-out hover:[&_svg]:-rotate-360 focus-visible:[&_svg]:-rotate-360 motion-reduce:[&_svg]:transition-none",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:

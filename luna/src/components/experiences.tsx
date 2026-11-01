@@ -886,15 +886,29 @@ export function ReportView({
 }) {
   const [feedback, setFeedback] = useState(false);
   const [deepening, setDeepening] = useState(false);
-  const dialogContentRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLElement>(null);
 
+  // Kết quả Tarot hiển thị thẳng trên trang: đưa người đọc về đầu phần kết quả
+  // khi vừa có kết quả và khi chuyển qua lại giữa tổng quan / đào sâu.
+  // So với lần render trước: deepening không đổi = vừa mở kết quả → về đầu trang;
+  // deepening đổi = người dùng chuyển tổng quan/đào sâu → về đầu khung kết quả.
+  // (Không dùng cờ "lần đầu" vì StrictMode chạy effect hai lần ở dev.)
+  const shownDeepening = useRef(deepening);
   useEffect(() => {
-    dialogContentRef.current?.scrollTo({ top: 0, behavior: "auto" });
-  }, [deepening]);
+    if (report.type !== "tarot") return;
+    const switched = shownDeepening.current !== deepening;
+    shownDeepening.current = deepening;
+    // Chờ modal lật bài đóng xong: lúc đóng, trình duyệt trả focus về phần tử cũ và tự cuộn tới đó.
+    const timer = window.setTimeout(() => {
+      const top = switched && resultRef.current ? resultRef.current.getBoundingClientRect().top + window.scrollY - 120 : 0;
+      window.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+    }, switched ? 0 : 120);
+    return () => window.clearTimeout(timer);
+  }, [deepening, report.type]);
 
-  // Hai loại này hiển thị thẳng trong trang, nên gợi ý đi ra ngoài thẻ.
+  // Các loại này hiển thị thẳng trong trang, nên gợi ý đi ra ngoài thẻ.
   useRelatedTools(
-    report.type === "daily" || report.type === "personality" ? report.type : null,
+    report.type === "daily" || report.type === "personality" || report.type === "tarot" ? report.type : null,
   );
 
   if (report.type === "daily") {
@@ -996,20 +1010,18 @@ export function ReportView({
           <span>MỘT CÂU HỎI CHO BẠN</span>
           <h3>{report.reflection}</h3>
         </div>
+        {report.type === "tarot" && report.source === "fallback" ? <Button variant="outline" disabled={loading} onClick={() => onSubmit({type:"tarot", topic:report.subtitle, question:report.context, cards:report.cards, reversed:report.reversed, deepQuestions:report.deepQuestions, previousReading:report.previousReading})}>
+          {loading ? <LoaderCircle className="spin" size={16}/> : <RotateCcw size={16}/>} {loading ? "Đang thử lại…" : "Thử lại diễn giải AI với bộ bài này"}
+        </Button> : null}
+        {/* Tarot: kết quả gọn, chỉ giữ phần diễn giải — bỏ ghi chú AI, đào sâu, lưu/chia sẻ,
+            hỏi cảm nhận và "Khám phá lại". Các loại kết quả khác (trắc nghiệm) vẫn giữ. */}
+        {report.type !== "tarot" ? <>
         <p className="source-note">
           {report.source === "ai"
             ? "Diễn giải được hỗ trợ bởi AI."
             : "Bản diễn giải dự phòng · AI chưa được cấu hình hoặc tạm thời không khả dụng."}{" "}
           Dành cho tự suy ngẫm, không thay thế lời khuyên chuyên môn.
         </p>
-        {report.type === "tarot" && !report.deepQuestions && report.cards?.length === 3 ? <div className="tarot-deepen-invite">
-          <h3>Còn điều gì bạn muốn hiểu rõ hơn?</h3>
-          <p>Tiếp nối câu chuyện này với 5 câu hỏi của bạn và 3 lá bài mới.</p>
-          <Button onClick={() => setDeepening(true)}><Sparkles size={17}/> Mình muốn hiểu sâu hơn</Button>
-        </div> : null}
-        {report.type === "tarot" && report.source === "fallback" ? <Button variant="outline" disabled={loading} onClick={() => onSubmit({type:"tarot", topic:report.subtitle, question:report.context, cards:report.cards, reversed:report.reversed, deepQuestions:report.deepQuestions, previousReading:report.previousReading})}>
-          {loading ? <LoaderCircle className="spin" size={16}/> : <RotateCcw size={16}/>} {loading ? "Đang thử lại…" : "Thử lại diễn giải AI với bộ bài này"}
-        </Button> : null}
         <div className="report-actions">
           <Button onClick={onSave} disabled={saved}>
             {saved ? <Check size={16} /> : <Bookmark size={16} />}{" "}
@@ -1049,24 +1061,30 @@ export function ReportView({
         <button className="skip-button" onClick={onRestart}>
           <RotateCcw size={14} /> Khám phá lại
         </button>
-        {/* Tarot hiện trong modal nên gợi ý nằm luôn trong thân modal.
-            Lenormand thoát sớm ở trên, không đi qua `body`. */}
-        {report.type === "tarot" ? (
-          <RelatedTools current="tarot" className="text-left" />
-        ) : null}
+        </> : null}
       </div>
     </div>
   );
   if (report.type === "personality") return body;
-  return <Dialog open onOpenChange={(open) => { if (!open && !loading) onRestart(); }}>
-    <DialogContent ref={dialogContentRef} className={`luna-dialog tarot-result-modal ${deepening ? "is-deepening" : ""}`} showCloseButton={!loading} data-lenis-prevent>
-      <DialogHeader>
-        <DialogTitle>{deepening ? "Khám phá sâu hơn" : report.deepQuestions ? "Trải bài của bạn" : "Câu chuyện từ ba lá bài"}</DialogTitle>
-        <DialogDescription>{report.context || report.subtitle}</DialogDescription>
-      </DialogHeader>
-      {body}
-    </DialogContent>
-  </Dialog>;
+  // Kết quả Tarot hiển thị ngay trên trang (không dùng modal). Giữ class
+  // `tarot-result-modal` để dùng lại toàn bộ style đã có cho phần kết quả.
+  return <section ref={resultRef} className={`tarot-result-modal tarot-result-inline ${deepening ? "is-deepening" : ""}`} aria-labelledby="tarot-result-title">
+    <header className="tarot-result-inline-header">
+      {/* Cùng kiểu đầu khung kết quả với Thần số học / Bát tự: eyebrow + tiêu đề + nút bên phải */}
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <p className="eyebrow">TAROT</p>
+          <h2 id="tarot-result-title" className="mt-1! text-[30px] leading-tight text-[#1d1133]">{deepening ? "Khám phá sâu hơn" : report.deepQuestions ? "Trải bài của bạn" : "Câu chuyện từ ba lá bài"}</h2>
+          <p className="mt-1! text-[12px] text-[#6a5c7a]">{report.context || report.subtitle}</p>
+        </div>
+        {/* Cùng vị trí và kiểu với "Tính lại" / "Vẽ lại" ở các form khác */}
+        <Button variant="outline" disabled={loading} onClick={onRestart}>
+          <RotateCcw size={15} /> Khám phá lại
+        </Button>
+      </div>
+    </header>
+    {body}
+  </section>;
 }
 
 const zodiacDetails: Record<string, { dates: string; traits: string }> = {

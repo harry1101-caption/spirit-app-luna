@@ -126,6 +126,7 @@ export const HumanDesignIcon = imageIcon("/icons/tools/human-design.png", "Human
 export const PlayingCardsIcon = imageIcon("/icons/tools/playing-cards.png", "PlayingCardsIcon");
 /** Ảnh phủ kín khung, không có rìa trong suốt → cắt tròn thay vì thả nổi. */
 export const PastLifeIcon = imageIcon("/icons/tools/past-life.png", "PastLifeIcon", true);
+export const PhacHoaIcon = imageIcon("/icons/tools/phac-hoa-nguoi-ay.png", "PhacHoaIcon");
 export const XinXamIcon = imageIcon("/icons/tools/xin-xam.png", "XinXamIcon");
 export const IChingIcon = imageIcon("/icons/tools/i-ching.png", "IChingIcon");
 export const MoonSignIcon = imageIcon("/icons/tools/moon-sign.png", "MoonSignIcon");

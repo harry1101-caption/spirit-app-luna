@@ -111,7 +111,8 @@ export function ReadingSetup({
         {option}
         <div className="tarot-begin-row col-span-full!">
           <Button
-            className="tarot-begin-button"
+            // Dùng chung style CTA với form Thần số học / Tử vi / Bát tự
+            className="tuvi-submit mt-0!"
             onClick={() => {
               if (question.trim()) return onSubmit();
               setMissing(true);

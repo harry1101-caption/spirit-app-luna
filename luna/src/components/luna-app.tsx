@@ -12,6 +12,7 @@ import { LenormandFlow } from "@/components/lenormand-flow";
 import { BatTuFlow } from "@/components/bat-tu-flow";
 import { ThanSoHocFlow } from "@/components/than-so-hoc-flow";
 import { GiacMoFlow } from "@/components/giac-mo-flow";
+import { PhacHoaFlow } from "@/components/phac-hoa-flow";
 import { HumanDesignFlow } from "@/components/human-design-flow";
 import { ChiTayFlow } from "@/components/chi-tay-flow";
 import { XinXamFlow } from "@/components/xin-xam-flow";
@@ -68,7 +69,7 @@ import { RelatedToolsSlot } from "@/components/related-tools";
 import { LogoMark } from "@/components/logo-mark";
 
 import { buildDailyCardReport, drawDailyCard } from "@/lib/daily-card";
-type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich";
+type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich" | "phac-hoa";
 type DailyCardState = { id: number; day: string; revealed: boolean };
 /** Lá bài hôm nay được khoá theo ngày, nên cần một seed ổn định cho mỗi thiết bị. */
 const DAILY_CARD_KEY = "luna:dailycard:v1";
@@ -88,7 +89,7 @@ const defaultPrefs: Preferences = {
 };
 const nav: { label: string; action: string }[] = [
   { label: "Trang chủ", action: "home" },
-  { label: "Tử vi", action: "tuvi" },
+  { label: "Phác hoạ người ấy", action: "phac-hoa" },
   { label: "Tarot", action: "tarot" },
   { label: "Thần số học", action: "than-so-hoc" },
 ];
@@ -282,6 +283,10 @@ export default function LunaApp({
     }
     if (next === "kinh-dich" && window.location.pathname !== "/kinh-dich") {
       window.location.assign("/kinh-dich");
+      return;
+    }
+    if (next === "phac-hoa" && window.location.pathname !== "/phac-hoa") {
+      window.location.assign("/phac-hoa");
       return;
     }
     if (next === "home" && window.location.pathname !== "/") {
@@ -785,6 +790,13 @@ export default function LunaApp({
             <RelatedToolsSlot><div className="experience-surface"><HumanDesignFlow /></div></RelatedToolsSlot>
           </section>
         ) : null}
+        {tab === "phac-hoa" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-phachoa">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Phác hoạ người ấy</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><PhacHoaFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
         {tab === "giac-mo" && !flow && !report ? (
           <section className="experience-page experience-page-tarot experience-page-giacmo">
             <div className="tarot-page-background" aria-hidden="true" />
@@ -918,6 +930,8 @@ export default function LunaApp({
             {flow === "tarot" || report?.type === "tarot" ? (
               <>
                 <div className="tarot-page-background" aria-hidden="true" />
+                {/* Khung kết quả rộng hơn form nên sẽ đè lên hai câu trích → chỉ hiện ở bước trải bài */}
+                {!report ? <>
                 <aside className="tarot-page-quote tarot-quote-left">
                   <span>“</span>
                   <p>
@@ -938,9 +952,11 @@ export default function LunaApp({
                     bạn mới là người lựa chọn.
                   </p>
                 </aside>
+                </> : null}
               </>
             ) : null}
-            {flow === "tarot" && !report ? (
+            {/* Kết quả Tarot giữ tiêu đề trang như lúc trải bài, giống các form khác */}
+            {(flow === "tarot" && !report) || report?.type === "tarot" ? (
               <div className="page-heading tarot-title-only">
                 <h1>Lắng nghe những lá bài</h1>
               </div>

@@ -6106,3 +6106,9 @@ select {
 .tuvi-calendar-popover [data-slot="calendar"] { --cell-size: 34px; }
 .tuvi-calendar-popover [data-slot="calendar"] select { color: #654280; cursor: pointer; }
 .tuvi-calendar-popover [data-selected-single="true"] { background: #795493; color: #fff; }
+
+/* Kết quả Tarot hiển thị trên trang thay vì modal */
+.tarot-result-inline{display:flex;flex-direction:column;gap:18px;width:100%;min-width:0}
+.tarot-result-inline-header{display:grid;gap:8px}
+.tarot-result-inline-header h2{margin:0}
+.tarot-result-inline-header{margin-bottom:8px}

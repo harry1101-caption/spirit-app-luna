@@ -16,6 +16,7 @@ import {
   NumerologyIcon,
   PalmistryIcon,
   PastLifeIcon,
+  PhacHoaIcon,
   PlayingCardsIcon,
   TarotCardsIcon,
   XinXamIcon,
@@ -50,6 +51,7 @@ export const toolGroups = [
     tools: [
       { title: "Xem chỉ tay", description: "Quan sát dấu hiệu trên bàn tay.", icon: PalmistryIcon, action: "chi-tay", bare: true },
       { title: "Nhân tướng học", description: "Tìm hiểu các nét trên khuôn mặt.", icon: FaceReadingIcon, bare: true },
+      { title: "Phác hoạ người ấy", description: "Bức chân dung người dành cho bạn.", icon: PhacHoaIcon, action: "phac-hoa", bare: true },
       { title: "Khuôn mặt kiếp trước", description: "Một trải nghiệm khám phá hình ảnh.", icon: PastLifeIcon, clip: true },
       { title: "Giải mã giấc mơ", description: "Ghi lại những biểu tượng trong mơ.", icon: DreamIcon, action: "giac-mo", bare: true },
     ],
@@ -85,4 +87,5 @@ export const toolRoutes: Record<string, string> = {
   personality: "/tinh-cach",
   "xin-xam": "/xin-xam",
   "kinh-dich": "/kinh-dich",
+  "phac-hoa": "/phac-hoa",
 };
