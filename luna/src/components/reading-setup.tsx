@@ -1,10 +1,11 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ArrowRight, LockKeyhole, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { TopicChips, type TopicChip } from "@/components/topic-chips";
+import { FieldMessage, TEXTAREA } from "@/components/form-field";
 
 /**
  * Form chuẩn bị trải bài, dùng chung cho Tarot và Lenormand để hai trang có
@@ -30,7 +31,6 @@ export function ReadingSetup({
   suggestions,
   option,
   submitLabel,
-  submitDisabled,
   onSubmit,
 }: {
   fieldLabel: string;
@@ -46,9 +46,15 @@ export function ReadingSetup({
   suggestions: readonly string[];
   option?: ReactNode;
   submitLabel: string;
-  submitDisabled: boolean;
   onSubmit: () => void;
 }) {
+  // Quy tắc form chung (xem form-field.tsx): nút luôn bấm được, thiếu câu hỏi
+  // thì báo ngay dưới ô và đưa con trỏ về ô, không khoá nút.
+  const [missing, setMissing] = useState(false);
+  const change = (value: string) => {
+    if (value.trim()) setMissing(false);
+    onQuestionChange(value);
+  };
   return (
     <>
       <label className="tarot-field-label">{fieldLabel}</label>
@@ -72,21 +78,25 @@ export function ReadingSetup({
               placeholder={placeholder}
               maxLength={300}
               value={question}
-              onChange={(event) => onQuestionChange(event.target.value)}
+              onChange={(event) => change(event.target.value)}
+              aria-invalid={missing ? true : undefined}
+              aria-describedby={missing ? `${questionId}-error` : undefined}
+              className={`${TEXTAREA} pr-10! ${missing ? "border-[#c4566a]!" : ""}`}
             />
             <Pencil size={18} strokeWidth={1.3} aria-hidden="true" />
           </div>
+          {missing ? <FieldMessage id={`${questionId}-error`}>Hãy viết câu hỏi bạn muốn hỏi.</FieldMessage> : null}
         </div>
         <div className="tarot-question-suggestions">
           <p>
-            {suggestionsLabel} <small>Bấm để điền, bạn có thể sửa lại</small>
+            {suggestionsLabel}
           </p>
           <div>
             {suggestions.map((suggestion) => (
               <button
                 key={suggestion}
                 onClick={() => {
-                  onQuestionChange(suggestion);
+                  change(suggestion);
                   document.getElementById(questionId)?.focus();
                 }}
               >
@@ -101,9 +111,13 @@ export function ReadingSetup({
         {option}
         <div className="tarot-begin-row col-span-full!">
           <Button
-            className="tarot-begin-button"
-            disabled={submitDisabled}
-            onClick={onSubmit}
+            // Dùng chung style CTA với form Thần số học / Tử vi / Bát tự
+            className="tuvi-submit mt-0!"
+            onClick={() => {
+              if (question.trim()) return onSubmit();
+              setMissing(true);
+              document.getElementById(questionId)?.focus();
+            }}
           >
             {submitLabel}
             <ArrowRight size={18} />

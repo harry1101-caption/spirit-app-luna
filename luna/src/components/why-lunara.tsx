@@ -72,11 +72,10 @@ function ReasonCard({ item, className = "" }: { item: (typeof reasons)[number]; 
 
 export function WhyLunara() {
   return (
-    // pt nhỏ thôi: phía trên đã có SectionDivider và margin của dải nền gánh
-    // khoảng cách rồi. Trước đây để pt-[78px] vì khối này từng là thứ đầu tiên
-    // trong dải, giờ cộng thêm vào thành gap gần 130px.
+    // Không pt: SectionDivider phía trên và margin 46px của dải nền đã gánh
+    // khoảng cách, giống mọi section khác trên trang chủ (46px trên/dưới hoạ tiết).
     <section
-      className="page-container relative pt-[18px]"
+      className="page-container relative"
       data-reveal
       aria-labelledby="why-lunara"
     >

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { PLAIN_STYLE, TAKEAWAY_RULE, EVIDENCE_RULE, softenSection } from "@/lib/interpretation-style";
 import { tuViBranches, tuViTimeSlots, type TuViChart, tuViPalaceOrder, type TuViInput } from "@/lib/tuvi";
 
+import { tuViEngine } from "@/lib/tuvi-engine";
 import { orderedTuViPalaces, tuViPalaceRelations, tuViReadingEvidence, tuViReadingTopics, type TuViChartData } from "@/lib/tuvi-reading";
 
 const inputSchema = z.object({
@@ -127,21 +128,15 @@ export async function POST(request: Request) {
 
   const [year, month, day] = input.birthDate.split("-").map(Number);
   const time = /^(\d{1,2})h(30)?/.exec(input.birthTime)!;
-  const params = new URLSearchParams({
-    d: String(day), m: String(month), y: String(year),
-    h: time[1], p: time[2] ? "45" : "15",
-    gt: input.gender === "Nam" ? "nam" : "nu",
-    nam: String(input.readingYear),
-  });
 
   try {
-    const response = await fetch(`https://huyenminh.com.vn/api/tuvi?${params}`, {
-      signal: AbortSignal.timeout(15000),
-      headers: { Accept: "application/json" },
-      cache: "no-store",
-    });
-    if (!response.ok) throw new Error(`provider status ${response.status}`);
-    const raw = providerSchema.parse(await response.json());
+    // An sao tại chỗ: API Huyền Minh chặn IP máy chủ cloud nên không gọi được từ Vercel.
+    const raw = providerSchema.parse(tuViEngine({
+      day, month, year,
+      hour: Number(time[1]), minute: time[2] ? 45 : 15,
+      gender: input.gender === "Nam" ? "nam" : "nu",
+      readingYear: input.readingYear,
+    }));
     if (new Set(raw.cung.map((palace) => palace.vi_tri)).size !== 12 ||
         !tuViPalaceOrder.every((name) => raw.cung.some((palace) => palace.ten === name)) ||
         !tuViBranches.every((branch) => raw.cung.some((palace) => palace.vi_tri === branch))) {
@@ -182,7 +177,7 @@ export async function POST(request: Request) {
         decadeEndAge: raw.dai_van.find((period) => period.cung === palace.ten)?.tuoi_ket_thuc,
         isBodyPalace: palace.la_cung_than,
       })),
-      source: { name: "Huyền Minh", url: "https://huyenminh.com.vn" },
+      source: { name: "Lunara · phái Thiên Lương", url: "" },
     };
     const chart: TuViChart = { ...chartBase, interpretation: await explainChart(chartBase) };
     return Response.json(chart, { headers: { "Cache-Control": "no-store" } });

@@ -5,8 +5,9 @@ import { ArrowRight, CalendarClock, CalendarDays, Check, Clock3, LoaderCircle, L
 import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
 import { Checkbox } from "@/components/ui/checkbox";
-import { IconField, IconSelect } from "@/components/form-field";
+import { IconField, IconSelect, FormIntro, ValidatedForm } from "@/components/form-field";
 import { elements, type BatTuChart } from "@/lib/bat-tu";
+import { track } from "@/lib/analytics";
 
 type Interpretation = {
   summary: string;
@@ -42,18 +43,20 @@ export function BatTuFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "bat_tu_interpret_complete" : "bat_tu_interpret_fail");
     } catch {
       setReading(null);
+      track("bat_tu_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  async function submit(form: HTMLFormElement) {
+    const data = new FormData(form);
     setLoading(true);
     setError("");
+    track("bat_tu_submit");
     const body = {
       name: String(data.get("name") || "").trim() || undefined,
       birthDate: String(data.get("birthDate") || ""),
@@ -69,12 +72,15 @@ export function BatTuFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Không lập được lá số.");
       setChart(payload.chart);
+      track("bat_tu_result_view");
+      track("experience_complete", { method: "bat-tu" });
       setLastInput(body);
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body); // không await: lá số hiện ngay, luận giải tới sau
     } catch (err) {
       setError((err as Error).message);
+      track("bat_tu_error");
     } finally {
       setLoading(false);
     }
@@ -86,11 +92,11 @@ export function BatTuFlow() {
   if (!chart) {
     return (
       <div className="flow-body bat-tu-flow is-configuring">
-      <form className="tuvi-form tarot-setup-panel" onSubmit={submit}>
-        <p className="tuvi-note mb-1">
+      <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void submit(form)}>
+        <FormIntro>
           Bát Tự lập từ ngày giờ sinh dương lịch. Lá số đổi trụ tại tiết khí,
           không theo tháng âm lịch — nên bạn chỉ cần nhập đúng ngày dương.
-        </p>
+        </FormIntro>
 
         <label>Họ và tên
           <IconField icon={UserRound} name="name" maxLength={80} placeholder="Nguyễn Văn An" />
@@ -133,7 +139,7 @@ export function BatTuFlow() {
           <LockKeyhole size={13} strokeWidth={1.4} className="inline align-[-2px] mr-1" />
           Ngày giờ sinh chỉ dùng để lập lá số, không lưu lại trên máy chủ.
         </p>
-      </form>
+      </ValidatedForm>
 
       <section className="tarot-introduction" aria-label="Tìm hiểu về Bát Tự">
         <div className="tarot-introduction-body">
@@ -221,7 +227,7 @@ export function BatTuFlow() {
             {chart.input.name ? `Lá số của ${chart.input.name}` : "Tứ trụ của bạn"}
           </h2>
         </div>
-        <Button variant="outline" onClick={() => { setChart(null); setReading(null); setLastInput(null); }}>
+        <Button variant="outline" onClick={() => { track("bat_tu_restart"); setChart(null); setReading(null); setLastInput(null); }}>
           <RotateCcw size={15} /> Lập lại
         </Button>
       </div>
@@ -339,7 +345,7 @@ export function BatTuFlow() {
             bằng toán lịch nên vẫn đầy đủ và chính xác.
           </p>
           {lastInput ? (
-            <Button variant="outline" className="mt-3" onClick={() => void loadReading(lastInput)}>
+            <Button variant="outline" className="mt-3" onClick={() => { track("bat_tu_interpret_retry"); void loadReading(lastInput); }}>
               <RotateCcw size={15} /> Thử luận giải lại
             </Button>
           ) : null}

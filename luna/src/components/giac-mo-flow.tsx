@@ -4,10 +4,10 @@ import { useState } from "react";
 import { ArrowRight, Check, LoaderCircle, LockKeyhole, Moon, RotateCcw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
-import { Textarea } from "@/components/ui/textarea";
-import { IconField, IconSelect } from "@/components/form-field";
+import { IconField, IconSelect, FormIntro, ValidatedForm, FieldTextarea } from "@/components/form-field";
 import { CalendarClock, Smile } from "lucide-react";
 import { dreamMoods, dreamRecurrences, type GiacMoChart } from "@/lib/giac-mo";
+import { track } from "@/lib/analytics";
 
 type Interpretation = {
   summary: string;
@@ -34,18 +34,20 @@ export function GiacMoFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "giac_mo_interpret_complete" : "giac_mo_interpret_fail");
     } catch {
       setReading(null);
+      track("giac_mo_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  async function submit(form: HTMLFormElement) {
+    const data = new FormData(form);
     setLoading(true);
     setError("");
+    track("giac_mo_submit");
     const body = {
       dream: dream.trim(),
       mood: String(data.get("mood") || ""),
@@ -61,12 +63,15 @@ export function GiacMoFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Chưa đọc được giấc mơ này.");
       setChart(payload.chart);
+      track("giac_mo_result_view");
+      track("experience_complete", { method: "giac-mo" });
       setLastInput(body);
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body);
     } catch (err) {
       setError((err as Error).message);
+      track("giac_mo_error");
     } finally {
       setLoading(false);
     }
@@ -78,22 +83,22 @@ export function GiacMoFlow() {
   if (!chart) {
     return (
       <div className="flow-body giac-mo-flow is-configuring">
-        <form className="tuvi-form tarot-setup-panel" onSubmit={submit}>
-          <p className="tuvi-note mb-1">
+        <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void submit(form)}
+          check={(): Record<string, string> => (dream.trim() && dream.trim().length < 10 ? { dream: "Hãy kể giấc mơ dài hơn một chút, ít nhất 10 ký tự." } : {})}>
+          <FormIntro>
             Kể lại giấc mơ bằng lời của bạn, càng nhiều chi tiết càng tốt. Không
             cần ngày sinh hay họ tên — giấc mơ không đọc theo dữ liệu đó.
-          </p>
+          </FormIntro>
 
           <label>
             Giấc mơ của bạn
-            <Textarea
+            <FieldTextarea
               name="dream"
               required
               maxLength={2000}
               value={dream}
               onChange={(e) => setDream(e.target.value)}
               placeholder="Tôi mơ thấy mình đang đi trên một cây cầu dài, phía dưới là nước…"
-              className="min-h-[150px]"
             />
           </label>
           <p className="tuvi-note">{dream.trim().length}/2000 ký tự · tối thiểu 10</p>
@@ -116,7 +121,7 @@ export function GiacMoFlow() {
 
           {error ? <p className="tuvi-form-error" role="alert">{error}</p> : null}
 
-          <Button className="tuvi-submit" type="submit" disabled={loading || dream.trim().length < 10}>
+          <Button className="tuvi-submit" type="submit" disabled={loading}>
             {loading ? <LoaderCircle className="spin" size={18} /> : null}
             {loading ? "Đang đọc giấc mơ…" : "Giải mã giấc mơ"}
             {loading ? null : <ArrowRight size={18} />}
@@ -126,7 +131,7 @@ export function GiacMoFlow() {
             Nội dung giấc mơ được gửi tới dịch vụ AI để diễn giải, và không lưu
             lại trên máy chủ. Chỉ lưu khi bạn chủ động bấm lưu.
           </p>
-        </form>
+        </ValidatedForm>
 
         <section className="tarot-introduction" aria-label="Tìm hiểu về giải mã giấc mơ">
           <div className="tarot-introduction-body">
@@ -214,7 +219,7 @@ export function GiacMoFlow() {
               : "Một giấc mơ riêng của bạn"}
           </h2>
         </div>
-        <Button variant="outline" onClick={() => { setChart(null); setReading(null); setLastInput(null); }}>
+        <Button variant="outline" onClick={() => { track("giac_mo_restart"); setChart(null); setReading(null); setLastInput(null); }}>
           <RotateCcw size={15} /> Kể giấc mơ khác
         </Button>
       </div>
@@ -284,7 +289,7 @@ export function GiacMoFlow() {
             trên được tra tại chỗ nên vẫn đọc được.
           </p>
           {lastInput ? (
-            <Button variant="outline" className="mt-3" onClick={() => void loadReading(lastInput)}>
+            <Button variant="outline" className="mt-3" onClick={() => { track("giac_mo_interpret_retry"); void loadReading(lastInput); }}>
               <RotateCcw size={15} /> Thử diễn giải lại
             </Button>
           ) : null}

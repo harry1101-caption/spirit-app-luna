@@ -38,7 +38,6 @@ export function LenormandFlow({ onSubmit, loading }: { onSubmit: (input: Interpr
         suggestionsLabel={`Thử một câu hỏi về ${topic.toLowerCase()}`}
         suggestions={suggestions[topic]}
         submitLabel="Bắt đầu trải bài"
-        submitDisabled={!question.trim()}
         onSubmit={() => setStarted(true)}
       />
     </div> : <div className="tarot-selection-panel lenormand-selection-panel">

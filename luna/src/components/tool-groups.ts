@@ -16,6 +16,7 @@ import {
   NumerologyIcon,
   PalmistryIcon,
   PastLifeIcon,
+  PhacHoaIcon,
   PlayingCardsIcon,
   TarotCardsIcon,
   XinXamIcon,
@@ -50,6 +51,7 @@ export const toolGroups = [
     tools: [
       { title: "Xem chỉ tay", description: "Quan sát dấu hiệu trên bàn tay.", icon: PalmistryIcon, action: "chi-tay", bare: true },
       { title: "Nhân tướng học", description: "Tìm hiểu các nét trên khuôn mặt.", icon: FaceReadingIcon, bare: true },
+      { title: "Phác hoạ người ấy", description: "Bức chân dung người dành cho bạn.", icon: PhacHoaIcon, action: "phac-hoa", bare: true },
       { title: "Khuôn mặt kiếp trước", description: "Một trải nghiệm khám phá hình ảnh.", icon: PastLifeIcon, clip: true },
       { title: "Giải mã giấc mơ", description: "Ghi lại những biểu tượng trong mơ.", icon: DreamIcon, action: "giac-mo", bare: true },
     ],
@@ -59,7 +61,7 @@ export const toolGroups = [
     icon: Leaf,
     tools: [
       { title: "Xin Xăm Quan Âm", description: "Một lời gợi mở để suy ngẫm.", icon: XinXamIcon, action: "xin-xam", bare: true },
-      { title: "Xem Kinh Dịch", description: "Khám phá ý nghĩa của các quẻ.", icon: IChingIcon, bare: true },
+      { title: "Xem Kinh Dịch", description: "Khám phá ý nghĩa của các quẻ.", icon: IChingIcon, action: "kinh-dich", bare: true },
       { title: "Cung mặt trăng", description: "Tìm hiểu thế giới cảm xúc.", icon: MoonSignIcon, bare: true },
       { title: "Trắc nghiệm tính cách", description: "Hiểu rõ hơn xu hướng của bạn.", icon: UserRound, action: "personality" },
     ],
@@ -84,4 +86,6 @@ export const toolRoutes: Record<string, string> = {
   "chi-tay": "/chi-tay",
   personality: "/tinh-cach",
   "xin-xam": "/xin-xam",
+  "kinh-dich": "/kinh-dich",
+  "phac-hoa": "/phac-hoa",
 };

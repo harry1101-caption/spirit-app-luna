@@ -12,9 +12,11 @@ import { LenormandFlow } from "@/components/lenormand-flow";
 import { BatTuFlow } from "@/components/bat-tu-flow";
 import { ThanSoHocFlow } from "@/components/than-so-hoc-flow";
 import { GiacMoFlow } from "@/components/giac-mo-flow";
+import { PhacHoaFlow } from "@/components/phac-hoa-flow";
 import { HumanDesignFlow } from "@/components/human-design-flow";
 import { ChiTayFlow } from "@/components/chi-tay-flow";
 import { XinXamFlow } from "@/components/xin-xam-flow";
+import { KinhDichFlow } from "@/components/kinh-dich-flow";
 import { AllToolsMenu } from "@/components/all-tools-menu";
 import { toolGroups } from "@/components/tool-groups";
 import { topicByKey, type Topic } from "@/components/topic-picker";
@@ -56,13 +58,18 @@ import {
   type Method,
   type Report,
 } from "@/lib/engine";
-import { track } from "@/lib/analytics";
+import {
+  clearAnalytics,
+  hasAnalyticsConsent,
+  setAnalyticsConsent,
+  track,
+} from "@/lib/analytics";
 import { DailyCardModal } from "@/components/daily-card-modal";
 import { RelatedToolsSlot } from "@/components/related-tools";
 import { LogoMark } from "@/components/logo-mark";
 
 import { buildDailyCardReport, drawDailyCard } from "@/lib/daily-card";
-type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam";
+type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich" | "phac-hoa";
 type DailyCardState = { id: number; day: string; revealed: boolean };
 /** Lá bài hôm nay được khoá theo ngày, nên cần một seed ổn định cho mỗi thiết bị. */
 const DAILY_CARD_KEY = "luna:dailycard:v1";
@@ -82,7 +89,7 @@ const defaultPrefs: Preferences = {
 };
 const nav: { label: string; action: string }[] = [
   { label: "Trang chủ", action: "home" },
-  { label: "Tử vi", action: "tuvi" },
+  { label: "Phác hoạ người ấy", action: "phac-hoa" },
   { label: "Tarot", action: "tarot" },
   { label: "Thần số học", action: "than-so-hoc" },
 ];
@@ -126,7 +133,7 @@ export default function LunaApp({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
-  const [analytics, setAnalytics] = useState(false);
+  const [analytics, setAnalytics] = useState(true);
   const [savedStatus, setSavedStatus] = useState(false);
   const [dailyCard, setDailyCard] = useState<DailyCardState | null>(null);
   /**
@@ -143,12 +150,17 @@ export default function LunaApp({
       : null,
   );
   const mainRef = useRef<HTMLElement>(null);
+  // Vào thẳng /tarot, /chiem-tinh, /tinh-cach (kể cả khi openMethod chuyển trang)
+  // không đi qua openMethod, nên bắn sự kiện bắt đầu ở đây.
+  useEffect(() => {
+    if (initialFlow) trackMethodStart(initialFlow);
+  }, [initialFlow]);
   // Reconcile browser-only persistence once after SSR; never write personal data implicitly.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Hydrate an external browser store after the SSR snapshot.
     setPrefs(readLocal("luna:prefs:v1", defaultPrefs));
     setHistory(readLocal("luna:history:v1", []));
-    setAnalytics(localStorage.getItem("luna:analytics:v1") === "true");
+    setAnalytics(hasAnalyticsConsent());
     setReady(true);
     track("session_start");
   }, []);
@@ -269,6 +281,14 @@ export default function LunaApp({
       window.location.assign("/xin-xam");
       return;
     }
+    if (next === "kinh-dich" && window.location.pathname !== "/kinh-dich") {
+      window.location.assign("/kinh-dich");
+      return;
+    }
+    if (next === "phac-hoa" && window.location.pathname !== "/phac-hoa") {
+      window.location.assign("/phac-hoa");
+      return;
+    }
     if (next === "home" && window.location.pathname !== "/") {
       window.location.assign("/");
       return;
@@ -326,10 +346,7 @@ export default function LunaApp({
     setFlow(method);
     setReport(null);
     setError("");
-    track("experience_start", { method });
-    if (method === "tarot") track("tarot_start");
-    if (method === "daily") track("daily_guidance_view");
-    if (method === "personality") track("personality_test_start");
+    trackMethodStart(method);
   }
   function startOnboard() {
     setIntent(prefs.intent || intents[0]);
@@ -625,7 +642,7 @@ export default function LunaApp({
       >
         {tab === "home" && !flow && !report ? (
           <CelestialHome
-            onStart={startOnboard}
+            onStart={() => openMethod("tarot")}
             onMethod={openMethod}
             onTool={openTool}
             onTopic={openTopic}
@@ -737,7 +754,7 @@ export default function LunaApp({
                   <br />
                   Chỉ có bạn, trên thiết bị này, xem được chúng.
                 </p>
-                <Button onClick={() => navigateTab("explore")}>
+                <Button onClick={() => openMethod("tarot")}>
                   Bắt đầu khám phá <ArrowRight size={16} />
                 </Button>
               </div>
@@ -752,6 +769,13 @@ export default function LunaApp({
             <RelatedToolsSlot><div className="experience-surface"><XinXamFlow /></div></RelatedToolsSlot>
           </section>
         ) : null}
+        {tab === "kinh-dich" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-kinhdich">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Gieo một quẻ Kinh Dịch</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><KinhDichFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
         {tab === "chi-tay" && !flow && !report ? (
           <section className="experience-page experience-page-tarot experience-page-chitay">
             <div className="tarot-page-background" aria-hidden="true" />
@@ -764,6 +788,13 @@ export default function LunaApp({
             <div className="tarot-page-background" aria-hidden="true" />
             <div className="page-heading tarot-title-only"><h1>Bản đồ năng lượng của bạn</h1></div>
             <RelatedToolsSlot><div className="experience-surface"><HumanDesignFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "phac-hoa" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-phachoa">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Phác hoạ người ấy</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><PhacHoaFlow /></div></RelatedToolsSlot>
           </section>
         ) : null}
         {tab === "giac-mo" && !flow && !report ? (
@@ -858,7 +889,7 @@ export default function LunaApp({
                     checked={analytics}
                     onCheckedChange={(v) => {
                       setAnalytics(v);
-                      localStorage.setItem("luna:analytics:v1", String(v));
+                      setAnalyticsConsent(v);
                     }}
                   />
                 </div>
@@ -874,11 +905,11 @@ export default function LunaApp({
                         "luna:history:v1",
                         "luna:prefs:v1",
                         "luna:daily:v1",
-                        "luna:analytics:v1",
                       ].forEach((k) => localStorage.removeItem(k));
+                      clearAnalytics();
                       setHistory([]);
                       setPrefs(defaultPrefs);
-                      setAnalytics(false);
+                      setAnalytics(true);
                       setToast("Đã xóa dữ liệu Luna trên thiết bị này.");
                     }
                   }}
@@ -899,6 +930,8 @@ export default function LunaApp({
             {flow === "tarot" || report?.type === "tarot" ? (
               <>
                 <div className="tarot-page-background" aria-hidden="true" />
+                {/* Khung kết quả rộng hơn form nên sẽ đè lên hai câu trích → chỉ hiện ở bước trải bài */}
+                {!report ? <>
                 <aside className="tarot-page-quote tarot-quote-left">
                   <span>“</span>
                   <p>
@@ -919,9 +952,11 @@ export default function LunaApp({
                     bạn mới là người lựa chọn.
                   </p>
                 </aside>
+                </> : null}
               </>
             ) : null}
-            {flow === "tarot" && !report ? (
+            {/* Kết quả Tarot giữ tiêu đề trang như lúc trải bài, giống các form khác */}
+            {(flow === "tarot" && !report) || report?.type === "tarot" ? (
               <div className="page-heading tarot-title-only">
                 <h1>Lắng nghe những lá bài</h1>
               </div>
@@ -954,8 +989,9 @@ export default function LunaApp({
                 }
               />
             )}
-            <RelatedToolsSlot panel="experience-surface">
-            <div className="experience-surface">
+            <RelatedToolsSlot panel={report?.type === "daily" ? "tarot-setup-panel" : "experience-surface"}>
+            {/* Kết quả chiêm tinh tự vẽ panel như các tool khác, nên bỏ khung ngoài. */}
+            <div className={`experience-surface ${report?.type === "daily" ? "max-w-none! rounded-none! border-0! bg-transparent! p-0! shadow-none!" : ""}`}>
               {" "}
               {report ? (
                 <ReportView
@@ -967,6 +1003,7 @@ export default function LunaApp({
                   onSave={saveReport}
                   onShare={shareReport}
                   onRestart={() => {
+                    track("experience_restart", { method: report.type });
                     if (report.type === "lenormand") {
                       setFlow(null);
                       setTab("lenormand");
@@ -1167,6 +1204,13 @@ export default function LunaApp({
     </div>
   );
 }
+function trackMethodStart(method: Method) {
+  track("experience_start", { method });
+  if (method === "tarot") track("tarot_start");
+  if (method === "daily") track("daily_guidance_view");
+  if (method === "personality") track("personality_test_start");
+}
+
 function PageHeading({
   eyebrow,
   title,

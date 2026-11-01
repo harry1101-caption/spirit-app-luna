@@ -36,8 +36,8 @@ export function TopicChips({
               // `!` vì globals.css đặt `button { font-family/font-size: inherit }` ngoài cascade layer.
               "font-[family-name:var(--font-serif-app)]! text-[13px]! leading-tight transition-colors",
               selected
-                ? "border-[#ac88cf] bg-[#eae0f7] text-[#744f93]"
-                : "border-[#e4d6f2] bg-[#f6f0fd] text-[#795493] hover:border-[#c9a9e0]",
+                ? "border-[#ac88cf] bg-[#eae0f7] text-[#221c2b]"
+                : "border-[#e4d6f2] bg-[#f6f0fd] text-[#2e2838] hover:border-[#c9a9e0]",
             )}
           >
             <Icon size={15} strokeWidth={1.4} className="shrink-0" />

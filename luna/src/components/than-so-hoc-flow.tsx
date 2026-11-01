@@ -4,8 +4,9 @@ import { useState } from "react";
 import { ArrowRight, CalendarDays, Check, Hash, LoaderCircle, LockKeyhole, RotateCcw, Sparkles, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
-import { IconField } from "@/components/form-field";
+import { IconField, FormIntro, ValidatedForm } from "@/components/form-field";
 import { numberMeanings, type ThanSoHocChart } from "@/lib/than-so-hoc";
+import { track } from "@/lib/analytics";
 
 type Interpretation = {
   summary: string;
@@ -32,18 +33,20 @@ export function ThanSoHocFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "than_so_hoc_interpret_complete" : "than_so_hoc_interpret_fail");
     } catch {
       setReading(null);
+      track("than_so_hoc_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  async function submit(form: HTMLFormElement) {
+    const data = new FormData(form);
     setLoading(true);
     setError("");
+    track("than_so_hoc_submit");
     const body = {
       fullName: String(data.get("fullName") || "").trim(),
       birthDate: String(data.get("birthDate") || ""),
@@ -58,12 +61,15 @@ export function ThanSoHocFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Không tính được các con số.");
       setChart(payload.chart);
+      track("than_so_hoc_result_view");
+      track("experience_complete", { method: "than-so-hoc" });
       setLastInput(body);
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body);
     } catch (err) {
       setError((err as Error).message);
+      track("than_so_hoc_error");
     } finally {
       setLoading(false);
     }
@@ -75,11 +81,11 @@ export function ThanSoHocFlow() {
   if (!chart) {
     return (
       <div className="flow-body than-so-hoc-flow is-configuring">
-        <form className="tuvi-form tarot-setup-panel" onSubmit={submit}>
-          <p className="tuvi-note mb-1">
+        <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void submit(form)}>
+          <FormIntro>
             Thần số học quy họ tên và ngày sinh thành những con số. Hãy nhập
             đúng họ tên khai sinh — ba trong sáu con số được tính từ tên.
-          </p>
+          </FormIntro>
 
           <label>Họ và tên khai sinh
             <IconField icon={UserRound} name="fullName" required maxLength={80} placeholder="Nguyễn Văn An" />
@@ -104,7 +110,7 @@ export function ThanSoHocFlow() {
             <LockKeyhole size={13} strokeWidth={1.4} className="inline align-[-2px] mr-1" />
             Họ tên và ngày sinh chỉ dùng để tính, không lưu lại trên máy chủ.
           </p>
-        </form>
+        </ValidatedForm>
 
         <section className="tarot-introduction" aria-label="Tìm hiểu về Thần số học">
           <div className="tarot-introduction-body">
@@ -199,7 +205,7 @@ export function ThanSoHocFlow() {
             Tên quy ra chữ cái: {chart.normalizedName}
           </p>
         </div>
-        <Button variant="outline" onClick={() => { setChart(null); setReading(null); setLastInput(null); }}>
+        <Button variant="outline" onClick={() => { track("than_so_hoc_restart"); setChart(null); setReading(null); setLastInput(null); }}>
           <RotateCcw size={15} /> Tính lại
         </Button>
       </div>
@@ -309,7 +315,7 @@ export function ThanSoHocFlow() {
             tại chỗ nên vẫn đầy đủ và chính xác.
           </p>
           {lastInput ? (
-            <Button variant="outline" className="mt-3" onClick={() => void loadReading(lastInput)}>
+            <Button variant="outline" className="mt-3" onClick={() => { track("than_so_hoc_interpret_retry"); void loadReading(lastInput); }}>
               <RotateCcw size={15} /> Thử luận giải lại
             </Button>
           ) : null}

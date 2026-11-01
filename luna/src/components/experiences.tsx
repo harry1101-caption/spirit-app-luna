@@ -26,15 +26,11 @@ import {
   Share2,
   Sparkles,
   Sun,
-  Target,
   UsersRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RelatedTools, useRelatedTools } from "@/components/related-tools";
-import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
@@ -62,9 +58,8 @@ import {
 import { track } from "@/lib/analytics";
 import { TuViChartView } from "@/components/tuvi-chart";
 import { ReadingSetup } from "@/components/reading-setup";
-import { IconField, IconSelect as TuViSelect } from "@/components/form-field";
+import { IconField, IconSelect as TuViSelect, FormIntro, ValidatedForm, TEXTAREA } from "@/components/form-field";
 import { tuViTimeSlots, type TuViChart, type TuViInput } from "@/lib/tuvi";
-import { vi } from "date-fns/locale";
 import { lenormandCards } from "@/lib/lenormand";
 const tarotQuestionSuggestions: Record<string, string[]> = {
   "Tình cảm": [
@@ -128,42 +123,8 @@ function normalizeTarotTopic(topic?: string) {
   return topic && topic in tarotQuestionSuggestions ? topic : "Tình cảm";
 }
 
-function TuViBirthDate({ value, onChange, currentYear }: { value: string; onChange: (date: string) => void; currentYear: number | null }) {
-  const [open, setOpen] = useState(false);
-  const [year, month, day] = value.split("-").map(Number);
-  const selected = value ? new Date(year, month - 1, day) : undefined;
-  const today = currentYear ? new Date() : undefined;
-  return <div className="tuvi-birth-date">
-    <label id="tuvi-birth-date-label">Ngày sinh</label>
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger type="button" className="tuvi-date-trigger" aria-labelledby="tuvi-birth-date-label" aria-required="true">
-        <CalendarDays className="tuvi-control-icon" size={17} aria-hidden="true" />
-        <span className={selected ? "" : "is-placeholder"}>{selected ? `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}` : "Chọn ngày sinh"}</span>
-      </PopoverTrigger>
-      <PopoverContent className="tuvi-calendar-popover" align="start" sideOffset={8}>
-        <Calendar
-          mode="single"
-          selected={selected}
-          onSelect={(date) => {
-            if (!date) return;
-            onChange(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`);
-            setOpen(false);
-          }}
-          locale={vi}
-          captionLayout="dropdown"
-          startMonth={new Date(1900, 0, 1)}
-          endMonth={today}
-          disabled={{ after: today ?? new Date(1900, 0, 1) }}
-          defaultMonth={selected ?? new Date((currentYear ?? 2000) - 25, 0, 1)}
-        />
-      </PopoverContent>
-    </Popover>
-  </div>;
-}
-
 export function TuViFlow() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
-  const [birthDate, setBirthDate] = useState("");
   const [chart, setChart] = useState<TuViChart | null>(null);
   const [formValues, setFormValues] = useState<TuViInput | null>(null);
   const [showDecadeFortune, setShowDecadeFortune] = useState(true);
@@ -175,16 +136,11 @@ export function TuViFlow() {
     setCurrentYear(new Date().getFullYear());
   }, []);
 
-  async function createChart(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!birthDate) {
-      setError("Hãy chọn ngày sinh dương lịch.");
-      return;
-    }
-    const values = new FormData(event.currentTarget);
+  async function createChart(form: HTMLFormElement) {
+    const values = new FormData(form);
     const input: TuViInput = {
       fullName: String(values.get("fullName") || "").trim(),
-      birthDate,
+      birthDate: String(values.get("birthDate") || ""),
       birthTime: String(values.get("birthTime") || ""),
       gender: String(values.get("gender") || "") as TuViInput["gender"],
       readingYear: Number(values.get("readingYear")),
@@ -196,6 +152,7 @@ export function TuViFlow() {
     setFormValues(input);
     setError("");
     setLoading(true);
+    track("tuvi_submit");
     try {
       const response = await fetch("/api/tuvi", {
         method: "POST",
@@ -205,15 +162,18 @@ export function TuViFlow() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Không thể lập lá số lúc này.");
       setChart(data as TuViChart);
+      track("tuvi_result_view");
+      track("experience_complete", { method: "tuvi" });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Không thể lập lá số lúc này.");
+      track("tuvi_error");
     } finally {
       setLoading(false);
     }
   }
 
-  if (chart?.formatVersion === 2) return <TuViChartView chart={chart} onEdit={() => setChart(null)} />;
+  if (chart?.formatVersion === 2) return <TuViChartView chart={chart} onEdit={() => { track("tuvi_restart"); setChart(null); }} />;
   return (
     <section className="experience-page experience-page-tarot tuvi-page pt-[35px]! max-[1250px]:pt-[45px]! min-[1600px]:pt-[45px]!" aria-labelledby="tuvi-title">
       <div className="tarot-page-background left-1/2! right-auto! w-screen! -translate-x-1/2!" aria-hidden="true" />
@@ -222,10 +182,14 @@ export function TuViFlow() {
       </div>
       <div className="experience-surface">
       <div className="flow-body tuvi-flow is-configuring">
-      <form className="tuvi-form tarot-setup-panel" onSubmit={createChart}>
-        <label>Họ và tên<span className="tuvi-input-wrap"><UserRound className="tuvi-control-icon" size={17} aria-hidden="true" /><Input required name="fullName" placeholder="Nguyễn Văn An" defaultValue={formValues?.fullName} className="tuvi-input-with-icon" /></span></label>
+      <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void createChart(form)}>
+        <label>Họ và tên<IconField icon={UserRound} required name="fullName" placeholder="Nguyễn Văn An" defaultValue={formValues?.fullName} /></label>
         <div className="tuvi-grid">
-          <TuViBirthDate value={birthDate} onChange={(date) => { setBirthDate(date); setError(""); }} currentYear={currentYear} />
+          {/* Cùng kiểu ô ngày với Bát tự, Thần số học, Chiêm tinh. Không cho chọn ngày tương lai. */}
+          <label>Ngày sinh (dương lịch)
+            <IconField icon={CalendarDays} type="date" name="birthDate" required min="1900-01-01"
+              max={currentYear ? new Date().toISOString().slice(0, 10) : undefined} defaultValue={formValues?.birthDate} />
+          </label>
           <label>Giờ sinh
             <TuViSelect required name="birthTime" placeholder="Chọn khung giờ" options={tuViTimeSlots} defaultValue={formValues?.birthTime} icon={Clock3} />
           </label>
@@ -246,10 +210,10 @@ export function TuViFlow() {
             <div className="tuvi-fortune-option"><Checkbox id="tuvi-annual-fortune" name="showAnnualFortune" checked={showAnnualFortune} onCheckedChange={setShowAnnualFortune} /><label htmlFor="tuvi-annual-fortune">An lưu tiểu vận</label></div>
           </div>
         </div>
-        <Button className="tuvi-submit" type="submit" disabled={loading || !currentYear}>{loading ? <LoaderCircle className="spin" size={18} /> : null}{loading ? "Đang lập lá số…" : "Lập lá số"}{!loading ? <ArrowRight size={18} /> : null}</Button>
         {error ? <p className="tuvi-form-error" role="alert">{error}</p> : null}
-        <p className="tuvi-provider-note">Ngày, giờ sinh, giới tính và năm lập được gửi tới Huyền Minh để an sao. Họ tên và thông tin cá nhân khác không gửi tới dịch vụ này.</p>
-      </form>
+        <Button className="tuvi-submit" type="submit" disabled={loading || !currentYear}>{loading ? <LoaderCircle className="spin" size={18} /> : null}{loading ? "Đang lập lá số…" : "Lập lá số"}{!loading ? <ArrowRight size={18} /> : null}</Button>
+        <p className="tuvi-provider-note">Lá số được an sao ngay trên máy chủ Lunara, ngày giờ sinh không gửi tới dịch vụ an sao bên ngoài.</p>
+      </ValidatedForm>
 
       <section className="tarot-introduction" aria-label="Tìm hiểu về Tử Vi">
         <div className="tarot-introduction-body">
@@ -414,7 +378,7 @@ export function TarotFlow({
             <p className="tarot-deep-intro">Chỉnh 5 câu hỏi theo điều bạn muốn hiểu rõ hơn. Cả 3 lá mới sẽ được dùng để trả lời từng câu.</p>
             {deepQuestions.map((value, index) => <div className="tarot-deep-field" key={index}>
               <label htmlFor={`deep-question-${index}`}>Câu hỏi {index + 1}</label>
-              <Textarea id={`deep-question-${index}`} value={value} maxLength={300} minLength={5} required onChange={event => setDeepQuestions(current => current.map((item, i) => i === index ? event.target.value : item))} />
+              <Textarea id={`deep-question-${index}`} className={TEXTAREA} value={value} maxLength={300} minLength={5} required onChange={event => setDeepQuestions(current => current.map((item, i) => i === index ? event.target.value : item))} />
             </div>)}
           </div> : null}
           {previous ? (
@@ -454,7 +418,6 @@ export function TarotFlow({
             suggestions={tarotQuestionSuggestions[topic]}
             option={reversedOption}
             submitLabel="Bắt đầu trải bài"
-            submitDisabled={!question.trim()}
             onSubmit={() => setStarted(true)}
           />
           )}
@@ -702,10 +665,10 @@ export function DailyFlow({
           onSubmit(selected);
         }}
       >
-        <p className="tuvi-note mb-1">
+        <FormIntro>
           Chọn cung hoàng đạo của bạn, hoặc nhập ngày sinh để hệ thống tự xác
           định cung. Đây là chiêm tinh phương Tây, không phải Tử Vi Việt Nam.
-        </p>
+        </FormIntro>
 
         <label>Cung hoàng đạo</label>
         <div className="zodiac-grid">
@@ -923,15 +886,29 @@ export function ReportView({
 }) {
   const [feedback, setFeedback] = useState(false);
   const [deepening, setDeepening] = useState(false);
-  const dialogContentRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLElement>(null);
 
+  // Kết quả Tarot hiển thị thẳng trên trang: đưa người đọc về đầu phần kết quả
+  // khi vừa có kết quả và khi chuyển qua lại giữa tổng quan / đào sâu.
+  // So với lần render trước: deepening không đổi = vừa mở kết quả → về đầu trang;
+  // deepening đổi = người dùng chuyển tổng quan/đào sâu → về đầu khung kết quả.
+  // (Không dùng cờ "lần đầu" vì StrictMode chạy effect hai lần ở dev.)
+  const shownDeepening = useRef(deepening);
   useEffect(() => {
-    dialogContentRef.current?.scrollTo({ top: 0, behavior: "auto" });
-  }, [deepening]);
+    if (report.type !== "tarot") return;
+    const switched = shownDeepening.current !== deepening;
+    shownDeepening.current = deepening;
+    // Chờ modal lật bài đóng xong: lúc đóng, trình duyệt trả focus về phần tử cũ và tự cuộn tới đó.
+    const timer = window.setTimeout(() => {
+      const top = switched && resultRef.current ? resultRef.current.getBoundingClientRect().top + window.scrollY - 120 : 0;
+      window.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+    }, switched ? 0 : 120);
+    return () => window.clearTimeout(timer);
+  }, [deepening, report.type]);
 
-  // Hai loại này hiển thị thẳng trong trang, nên gợi ý đi ra ngoài thẻ.
+  // Các loại này hiển thị thẳng trong trang, nên gợi ý đi ra ngoài thẻ.
   useRelatedTools(
-    report.type === "daily" || report.type === "personality" ? report.type : null,
+    report.type === "daily" || report.type === "personality" || report.type === "tarot" ? report.type : null,
   );
 
   if (report.type === "daily") {
@@ -1033,20 +1010,18 @@ export function ReportView({
           <span>MỘT CÂU HỎI CHO BẠN</span>
           <h3>{report.reflection}</h3>
         </div>
+        {report.type === "tarot" && report.source === "fallback" ? <Button variant="outline" disabled={loading} onClick={() => onSubmit({type:"tarot", topic:report.subtitle, question:report.context, cards:report.cards, reversed:report.reversed, deepQuestions:report.deepQuestions, previousReading:report.previousReading})}>
+          {loading ? <LoaderCircle className="spin" size={16}/> : <RotateCcw size={16}/>} {loading ? "Đang thử lại…" : "Thử lại diễn giải AI với bộ bài này"}
+        </Button> : null}
+        {/* Tarot: kết quả gọn, chỉ giữ phần diễn giải — bỏ ghi chú AI, đào sâu, lưu/chia sẻ,
+            hỏi cảm nhận và "Khám phá lại". Các loại kết quả khác (trắc nghiệm) vẫn giữ. */}
+        {report.type !== "tarot" ? <>
         <p className="source-note">
           {report.source === "ai"
             ? "Diễn giải được hỗ trợ bởi AI."
             : "Bản diễn giải dự phòng · AI chưa được cấu hình hoặc tạm thời không khả dụng."}{" "}
           Dành cho tự suy ngẫm, không thay thế lời khuyên chuyên môn.
         </p>
-        {report.type === "tarot" && !report.deepQuestions && report.cards?.length === 3 ? <div className="tarot-deepen-invite">
-          <h3>Còn điều gì bạn muốn hiểu rõ hơn?</h3>
-          <p>Tiếp nối câu chuyện này với 5 câu hỏi của bạn và 3 lá bài mới.</p>
-          <Button onClick={() => setDeepening(true)}><Sparkles size={17}/> Mình muốn hiểu sâu hơn</Button>
-        </div> : null}
-        {report.type === "tarot" && report.source === "fallback" ? <Button variant="outline" disabled={loading} onClick={() => onSubmit({type:"tarot", topic:report.subtitle, question:report.context, cards:report.cards, reversed:report.reversed, deepQuestions:report.deepQuestions, previousReading:report.previousReading})}>
-          {loading ? <LoaderCircle className="spin" size={16}/> : <RotateCcw size={16}/>} {loading ? "Đang thử lại…" : "Thử lại diễn giải AI với bộ bài này"}
-        </Button> : null}
         <div className="report-actions">
           <Button onClick={onSave} disabled={saved}>
             {saved ? <Check size={16} /> : <Bookmark size={16} />}{" "}
@@ -1086,24 +1061,30 @@ export function ReportView({
         <button className="skip-button" onClick={onRestart}>
           <RotateCcw size={14} /> Khám phá lại
         </button>
-        {/* Tarot hiện trong modal nên gợi ý nằm luôn trong thân modal.
-            Lenormand thoát sớm ở trên, không đi qua `body`. */}
-        {report.type === "tarot" ? (
-          <RelatedTools current="tarot" className="text-left" />
-        ) : null}
+        </> : null}
       </div>
     </div>
   );
   if (report.type === "personality") return body;
-  return <Dialog open onOpenChange={(open) => { if (!open && !loading) onRestart(); }}>
-    <DialogContent ref={dialogContentRef} className={`luna-dialog tarot-result-modal ${deepening ? "is-deepening" : ""}`} showCloseButton={!loading} data-lenis-prevent>
-      <DialogHeader>
-        <DialogTitle>{deepening ? "Khám phá sâu hơn" : report.deepQuestions ? "Trải bài của bạn" : "Câu chuyện từ ba lá bài"}</DialogTitle>
-        <DialogDescription>{report.context || report.subtitle}</DialogDescription>
-      </DialogHeader>
-      {body}
-    </DialogContent>
-  </Dialog>;
+  // Kết quả Tarot hiển thị ngay trên trang (không dùng modal). Giữ class
+  // `tarot-result-modal` để dùng lại toàn bộ style đã có cho phần kết quả.
+  return <section ref={resultRef} className={`tarot-result-modal tarot-result-inline ${deepening ? "is-deepening" : ""}`} aria-labelledby="tarot-result-title">
+    <header className="tarot-result-inline-header">
+      {/* Cùng kiểu đầu khung kết quả với Thần số học / Bát tự: eyebrow + tiêu đề + nút bên phải */}
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <p className="eyebrow">TAROT</p>
+          <h2 id="tarot-result-title" className="mt-1! text-[30px] leading-tight text-[#1d1133]">{deepening ? "Khám phá sâu hơn" : report.deepQuestions ? "Trải bài của bạn" : "Câu chuyện từ ba lá bài"}</h2>
+          <p className="mt-1! text-[12px] text-[#6a5c7a]">{report.context || report.subtitle}</p>
+        </div>
+        {/* Cùng vị trí và kiểu với "Tính lại" / "Vẽ lại" ở các form khác */}
+        <Button variant="outline" disabled={loading} onClick={onRestart}>
+          <RotateCcw size={15} /> Khám phá lại
+        </Button>
+      </div>
+    </header>
+    {body}
+  </section>;
 }
 
 const zodiacDetails: Record<string, { dates: string; traits: string }> = {
@@ -1140,53 +1121,66 @@ function DailyResultView({ report, saved, onSave, onShare, onRestart }: {
   const [sign, day] = report.subtitle.split(" · ");
   const signIndex = zodiac.indexOf(sign);
   const details = zodiacDetails[sign];
-  const sectionIcons = [Target, BriefcaseBusiness, Heart, Sparkles];
 
-  return <div>
-    <h2 className="sr-only">Thông điệp chiêm tinh hôm nay của {sign}</h2>
-    {/* Chỉ bo góc + cắt tràn: khung thẻ đã do .experience-surface lo, thêm
-        viền hay nền ở đây sẽ thành hai lớp hộp lồng nhau. */}
-    <div className="overflow-hidden rounded-[18px]">
-      <div className="daily-reading-layout h-auto!">
-        <aside className="daily-reading-art" aria-label={`Thông điệp ngày ${day}`}>
-          <span className="daily-reading-moon" aria-hidden="true">☾</span>
-          <div className="daily-reading-heading">
-            <span>HOROSCOPE</span>
-            <h2>Thông điệp<br />chiêm tinh<br />hôm nay</h2>
-            <p>{sign} · {day}</p>
-          </div>
-          <Image src="/images/zodiac-bust.png" alt="Nữ thần giữa quầng sao và mây" width={816} height={1024} priority />
-          <span className="daily-reading-art-caption">A BRIGHTER YOU<br />EVERY DAY</span>
-        </aside>
-        <div className="daily-reading-content overflow-visible!">
-          <div className="daily-reading-sign">
-            <span className="daily-reading-symbol" aria-hidden="true">{zodiacSymbols[signIndex] || "✦"}</span>
-            <div><h3>{sign}</h3><p>{details?.dates || day}</p></div>
-            {details ? <span className="daily-reading-traits">{details.traits}</span> : null}
-          </div>
-          <blockquote className="daily-reading-summary">{report.summary}</blockquote>
-          <div className="daily-reading-sections">
-            {report.sections.map((section, index) => {
-              const Icon = sectionIcons[index] || Sparkles;
-              return <section className="daily-reading-section" key={`${section.title}-${index}`}>
-                <span className="daily-reading-section-icon" aria-hidden="true"><Icon size={25} strokeWidth={1.7}/></span>
-                <div><h4>{section.title}</h4><p>{section.text}</p></div>
-              </section>;
-            })}
-          </div>
-          <div className="daily-reading-reflection">
-            <div><Sun size={20} strokeWidth={1.4}/><span>MỘT CÂU HỎI CHO BẠN</span></div>
-            <p>{report.reflection}</p>
-          </div>
-          <div className="daily-reading-actions">
-            <Button onClick={onSave} disabled={saved}>{saved ? <Check size={16}/> : <Bookmark size={16}/>} {saved ? "Đã lưu kết quả" : "Lưu kết quả"}</Button>
-            <Button variant="outline" onClick={onShare}><Share2 size={16}/> Chia sẻ</Button>
-            <button className="daily-reading-restart" onClick={onRestart}><RotateCcw size={15}/> Xem cung khác</button>
-          </div>
+  // Cùng khuôn kết quả với Thần số học, Bát tự…: một panel, đầu đề + nút làm lại, rồi phần đọc.
+  return (
+    <div className="tarot-setup-panel">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <p className="eyebrow">CHIÊM TINH · {day}</p>
+          <h2 className="mt-1 text-[30px] leading-tight text-[#1d1133]">
+            Thông điệp hôm nay cho {sign}
+          </h2>
+          {details ? (
+            <p className="mt-1 text-[12px] text-[#6a5c7a]">{details.dates}</p>
+          ) : null}
+        </div>
+        <Button variant="outline" onClick={onRestart}>
+          <RotateCcw size={15} /> Xem cung khác
+        </Button>
+      </div>
+
+      <div className="mt-6 flex items-center gap-4 rounded-2xl border border-[#e0d5f0] bg-[#f6f0fd]/70 p-4">
+        <span className="font-[family-name:var(--font-serif-app)] text-[40px] leading-none text-[#3e357e]" aria-hidden="true">
+          {zodiacSymbols[signIndex] || "✦"}
+        </span>
+        <div className="min-w-0">
+          <p className="text-xs tracking-[0.2em] text-[#6a5c7a] uppercase">Cung {sign}</p>
+          {details ? (
+            <p className="mt-1 text-[13px] leading-[1.6] text-[#281b44]">{details.traits}</p>
+          ) : null}
         </div>
       </div>
+
+      <div className="mt-7 border-t border-[#efe6f6] pt-6">
+        <p className="text-[15px] leading-[1.8] text-[#5b5276]">{report.summary}</p>
+        {report.sections.map((section, index) => (
+          <section key={`${section.title}-${index}`} className="mt-5">
+            <h3 className="font-[family-name:var(--font-serif-app)] text-[19px] text-[#281b44]">{section.title}</h3>
+            <p className="mt-2 text-[14px] leading-[1.8] text-[#5b5276]">{section.text}</p>
+          </section>
+        ))}
+      </div>
+
+      {report.reflection ? (
+        <div className="mt-6 rounded-2xl border border-[#e8ddef] bg-white/60 p-4">
+          <p className="text-xs tracking-[0.2em] text-[#6a5c7a] uppercase">Một câu hỏi cho bạn</p>
+          <p className="mt-2 font-[family-name:var(--font-serif-app)] text-[19px] leading-[1.5] text-[#3e357e]">
+            {report.reflection}
+          </p>
+        </div>
+      ) : null}
+
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Button onClick={onSave} disabled={saved}>
+          {saved ? <Check size={16} /> : <Bookmark size={16} />} {saved ? "Đã lưu kết quả" : "Lưu kết quả"}
+        </Button>
+        <Button variant="outline" onClick={onShare}>
+          <Share2 size={16} /> Chia sẻ
+        </Button>
+      </div>
     </div>
-  </div>;
+  );
 }
 
 function TarotCardSpread({

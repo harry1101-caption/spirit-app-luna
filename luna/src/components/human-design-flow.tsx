@@ -7,8 +7,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRelatedTools } from "@/components/related-tools";
-import { IconField, IconSelect } from "@/components/form-field";
+import { IconField, IconSelect, FormIntro, ValidatedForm } from "@/components/form-field";
 import { centers, type HumanDesignChart } from "@/lib/human-design";
+import { track } from "@/lib/analytics";
 
 type Interpretation = {
   summary: string;
@@ -46,18 +47,20 @@ export function HumanDesignFlow() {
       });
       const data = await response.json();
       setReading(response.ok ? data.interpretation : null);
+      track(response.ok ? "human_design_interpret_complete" : "human_design_interpret_fail");
     } catch {
       setReading(null);
+      track("human_design_interpret_fail");
     } finally {
       setReadingLoading(false);
     }
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  async function submit(form: HTMLFormElement) {
+    const data = new FormData(form);
     setLoading(true);
     setError("");
+    track("human_design_submit");
     const zone = zones.find((z) => z.label === String(data.get("zone"))) ?? zones[0];
     const body = {
       birthDate: String(data.get("birthDate") || ""),
@@ -73,12 +76,15 @@ export function HumanDesignFlow() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Không lập được biểu đồ.");
       setChart(payload.chart);
+      track("human_design_result_view");
+      track("experience_complete", { method: "human-design" });
       setLastInput(body);
       setReading(null);
       window.scrollTo({ top: 0, behavior: "auto" });
       void loadReading(body);
     } catch (err) {
       setError((err as Error).message);
+      track("human_design_error");
     } finally {
       setLoading(false);
     }
@@ -90,12 +96,12 @@ export function HumanDesignFlow() {
   if (!chart) {
     return (
       <div className="flow-body human-design-flow is-configuring">
-        <form className="tuvi-form tarot-setup-panel" onSubmit={submit}>
-          <p className="tuvi-note mb-1">
+        <ValidatedForm className="tuvi-form tarot-setup-panel" onValidSubmit={(form) => void submit(form)}>
+          <FormIntro>
             Human Design lấy vị trí các hành tinh tại đúng thời khắc bạn sinh ra.
             Giờ sinh càng chính xác càng tốt — Mặt Trăng đi khoảng 13° mỗi ngày
             nên lệch mười lăm phút đã có thể đổi kết quả.
-          </p>
+          </FormIntro>
 
           <div className="tuvi-grid">
             <label>Ngày sinh (dương lịch)
@@ -125,7 +131,7 @@ export function HumanDesignFlow() {
             <LockKeyhole size={13} strokeWidth={1.4} className="inline align-[-2px] mr-1" />
             Ngày giờ sinh chỉ dùng để lập biểu đồ, không lưu lại trên máy chủ.
           </p>
-        </form>
+        </ValidatedForm>
 
         <section className="tarot-introduction" aria-label="Tìm hiểu về Human Design">
           <div className="tarot-introduction-body">
@@ -194,7 +200,7 @@ export function HumanDesignFlow() {
           <h2 className="mt-1 text-[30px] leading-tight text-[#1d1133]">{chart.type}</h2>
           <p className="mt-1 text-[13px] text-[#5b5276]">{chart.strategy}</p>
         </div>
-        <Button variant="outline" onClick={() => { setChart(null); setReading(null); setLastInput(null); }}>
+        <Button variant="outline" onClick={() => { track("human_design_restart"); setChart(null); setReading(null); setLastInput(null); }}>
           <RotateCcw size={15} /> Lập lại
         </Button>
       </div>
@@ -307,7 +313,7 @@ export function HumanDesignFlow() {
             chỗ từ vị trí hành tinh thật nên vẫn đầy đủ.
           </p>
           {lastInput ? (
-            <Button variant="outline" className="mt-3" onClick={() => void loadReading(lastInput)}>
+            <Button variant="outline" className="mt-3" onClick={() => { track("human_design_interpret_retry"); void loadReading(lastInput); }}>
               <RotateCcw size={15} /> Thử luận giải lại
             </Button>
           ) : null}

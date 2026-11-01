@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { RelatedTools } from "@/components/related-tools";
 import { tuViBranches, type TuViChart, type TuViPalace } from "@/lib/tuvi";
 import { orderedTuViPalaces, tuViPalaceRelations, tuViReadingEvidence } from "@/lib/tuvi-reading";
+import { track } from "@/lib/analytics";
 
 const positions: Record<string, string> = {
   "Tỵ": "1 / 1", "Ngọ": "1 / 2", "Mùi": "1 / 3", "Thân": "1 / 4",
@@ -202,6 +203,7 @@ export function TuViChartView({ chart, onEdit }: { chart: TuViChart; onEdit: () 
   async function download() {
     if (!sheetRef.current || exporting) return;
     setExporting(true);
+    track("tuvi_download");
     setExportError("");
     try {
       const { toPng } = await import("html-to-image");
@@ -252,7 +254,7 @@ export function TuViChartView({ chart, onEdit }: { chart: TuViChart; onEdit: () 
             </div>
             <footer className="tuvi-chart-footer">
               <span>M: Miếu · V: Vượng · Đ: Đắc · B: Bình · H: Hãm</span>
-              <span>Dữ liệu an sao: {chart.source.name} · {chart.source.url.replace(/^https?:\/\//, "")}</span>
+              <span>Dữ liệu an sao: {chart.source.name}{chart.source.url ? ` · ${chart.source.url.replace(/^https?:\/\//, "")}` : ""}</span>
             </footer>
           </div>
         </div>
