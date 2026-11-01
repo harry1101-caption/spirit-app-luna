@@ -20,9 +20,9 @@ import { KinhDichFlow } from "@/components/kinh-dich-flow";
 import { AllToolsMenu } from "@/components/all-tools-menu";
 import { toolGroups, toolRoutes } from "@/components/tool-groups";
 import { SiteFooter } from "@/components/site-footer";
+import { AuthMenu } from "@/components/auth-menu";
 import { topicByKey, type Topic } from "@/components/topic-picker";
 import {
-  ChevronDown,
   Menu,
   ArrowRight,
   Bookmark,
@@ -36,7 +36,6 @@ import {
   Sparkles,
   Sun,
   Trash2,
-  UserRound,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -586,16 +585,7 @@ export default function LunaApp({
               <span>Khám phá của tôi</span>
             </button>
             <span className="header-divider" />
-            <button
-              className="profile-button"
-              onClick={() => navigateTab("profile")}
-              aria-label="Không gian của bạn"
-            >
-              <span>
-                <UserRound size={23} strokeWidth={1.3} />
-              </span>
-              <ChevronDown size={18} />
-            </button>
+            <AuthMenu onOpenProfile={() => navigateTab("profile")} />
             <button
               className="mobile-menu-toggle"
               onClick={() => setMobileMenu((v) => !v)}
