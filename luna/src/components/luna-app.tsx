@@ -18,7 +18,8 @@ import { ChiTayFlow } from "@/components/chi-tay-flow";
 import { XinXamFlow } from "@/components/xin-xam-flow";
 import { KinhDichFlow } from "@/components/kinh-dich-flow";
 import { AllToolsMenu } from "@/components/all-tools-menu";
-import { toolGroups } from "@/components/tool-groups";
+import { toolGroups, toolRoutes } from "@/components/tool-groups";
+import { SiteFooter } from "@/components/site-footer";
 import { topicByKey, type Topic } from "@/components/topic-picker";
 import {
   ChevronDown,
@@ -557,14 +558,21 @@ export default function LunaApp({
             <span>Lunara</span>
           </button>
           <nav aria-label="Điều hướng chính">
+            {/* Link thật (<a href>) để Google lần được tới các trang; bấm vẫn đi qua openTool như trước */}
             {nav.map((n) => (
-              <button
+              <a
                 key={n.label}
-                className={`nav-item ${isToolActive(n.action) ? "active" : ""}`}
-                onClick={() => openTool(n.action)}
+                href={n.action === "home" ? "/" : toolRoutes[n.action] ?? "/"}
+                className={`nav-item no-underline ${isToolActive(n.action) ? "active" : ""}`}
+                aria-current={isToolActive(n.action) ? "page" : undefined}
+                onClick={(event) => {
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+                  event.preventDefault();
+                  openTool(n.action);
+                }}
               >
                 {n.label}
-              </button>
+              </a>
             ))}
             <AllToolsMenu onPick={openTool} isActive={isToolActive} />
           </nav>
@@ -1053,6 +1061,9 @@ export default function LunaApp({
             </RelatedToolsSlot>
           </section>
         ) : null}
+        {/* Trang chủ đã có footer trong CelestialHome; các trang công cụ thêm footer
+            để có liên kết nội bộ tới mọi công cụ (giúp Google lần ra các trang) */}
+        {tab !== "home" || flow || report ? <SiteFooter /> : null}
       </main>
       <DailyCardModal
         open={!!dailyCard}

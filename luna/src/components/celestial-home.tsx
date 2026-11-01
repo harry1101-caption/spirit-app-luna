@@ -143,6 +143,7 @@ export function CelestialHome({
           src="/images/celestial-hero.webp"
           fill
           loading="eager"
+          fetchPriority="high"
           sizes="100vw"
           alt=""
         />
@@ -166,7 +167,7 @@ export function CelestialHome({
             KHÁM PHÁ · THẤU HIỂU · SỐNG TRỌN VẸN HƠN
           </p>
           <h1 id="hero-title">
-            Khám phá thế giới
+            Khám phá thế giới{" "}
             <br />
             bên trong bạn
           </h1>
