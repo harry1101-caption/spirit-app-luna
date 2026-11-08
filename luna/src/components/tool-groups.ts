@@ -5,6 +5,7 @@
 import { Hand, Layers, Leaf, Orbit } from "lucide-react";
 import {
   AstrologyIcon,
+  CoupleMatchIcon,
   BatTuEmblemIcon,
   DailyCardImgIcon,
   DreamIcon,
@@ -52,7 +53,7 @@ export const toolGroups = [
     tools: [
       { title: "Xem chỉ tay", description: "Quan sát dấu hiệu trên bàn tay.", icon: PalmistryIcon, action: "chi-tay", bare: true },
       { title: "Nhân tướng học", description: "Tìm hiểu các nét trên khuôn mặt.", icon: FaceReadingIcon, bare: true },
-      { title: "Xem độ hợp đôi", description: "Nhập hai ngày sinh, xem hợp nhau bao nhiêu %.", icon: PhacHoaIcon, action: "hop-nhau", bare: true },
+      { title: "Xem độ hợp đôi", description: "Nhập hai ngày sinh, xem hợp nhau bao nhiêu %.", icon: CoupleMatchIcon, action: "hop-nhau", bare: true },
       { title: "Phác hoạ người ấy", description: "Bức chân dung người dành cho bạn.", icon: PhacHoaIcon, action: "phac-hoa", bare: true },
       { title: "Khuôn mặt kiếp trước", description: "Một trải nghiệm khám phá hình ảnh.", icon: PastLifeIcon, clip: true },
       { title: "Giải mã giấc mơ", description: "Ghi lại những biểu tượng trong mơ.", icon: DreamIcon, action: "giac-mo", bare: true },
