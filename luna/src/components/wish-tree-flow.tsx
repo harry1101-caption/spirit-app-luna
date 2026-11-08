@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FieldCheckbox, FieldError, FieldTextarea, FormIntro, IconField, ValidatedForm, useClearFieldError } from "@/components/form-field";
 import { useRelatedTools } from "@/components/related-tools";
 import { GoogleMark } from "@/components/auth-menu";
-import { LetterIcon, WishTreeArt } from "@/components/wish-tree-art";
+import { LetterIcon, TREE_ASPECT, WishTreeArt } from "@/components/wish-tree-art";
 import { signInWithGoogle } from "@/lib/supabase/client";
 import { useAuthUser } from "@/lib/saved-results";
 import { track } from "@/lib/analytics";
@@ -156,27 +156,44 @@ export function WishTreeFlow() {
     <div className="flow-body wish-tree-flow">
       <section id="wish-tree" className="tarot-setup-panel scroll-mt-24" aria-label="Cây ước nguyện">
         <p className="text-center text-[14px] leading-[1.7] text-[#735f80]">
-          {treeState === "loading"
-            ? "Đang mở cây…"
+          {treeState !== "ready"
+            ? "Những lá thư ước nguyện của mọi người"
             : total
               ? <>Đang có <strong className="font-semibold text-[#5d4074]">{total.toLocaleString("vi-VN")}</strong> lá thư ước nguyện trên cây. Bấm vào một lá thư để mở.</>
               : "Cây còn trống. Bạn treo lá thư đầu tiên nhé."}
         </p>
         <div className="mt-4">
-          <WishTreeArt
-            wishes={tree}
-            mineIds={new Set(mineById.keys())}
-            freshId={freshId}
-            shaking={shaking}
-            onOpen={(w) => { track("wish_tree_open", { visibility: w.is_public ? "public" : "private" }); setOpenId(w.id); }}
-          />
+          {/* Chỉ dựng cây khi đã đọc được danh sách thư; trước đó giữ một khung cùng tỉ lệ để trang không nhảy */}
+          {treeState === "ready" ? (
+            <WishTreeArt
+              wishes={tree}
+              mineIds={new Set(mineById.keys())}
+              freshId={freshId}
+              shaking={shaking}
+              onOpen={(w) => { track("wish_tree_open", { visibility: w.is_public ? "public" : "private" }); setOpenId(w.id); }}
+            />
+          ) : (
+            <div
+              className="mx-auto flex w-full max-w-[760px] flex-col items-center justify-center gap-3 rounded-[20px] bg-[#f8f1fb] text-[14px] text-[#735f80]"
+              style={{ aspectRatio: TREE_ASPECT }}
+              aria-live="polite"
+            >
+              {treeState === "loading" ? (
+                <>
+                  <LoaderCircle className="spin" size={24} aria-hidden="true" />
+                  Đang mở cây…
+                </>
+              ) : (
+                <>
+                  <p>Chưa tải được cây ước nguyện.</p>
+                  <Button variant="outline" onClick={() => { setTreeState("loading"); void loadTree(page); }}>
+                    Thử lại
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
         </div>
-        {treeState === "error" ? (
-          <p className="mt-2 text-center text-[13px] text-[#a43e53]">
-            Chưa tải được cây.{" "}
-            <button type="button" className="underline underline-offset-2" onClick={() => void loadTree(page)}>Thử lại</button>
-          </p>
-        ) : null}
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
           <Button
             className="h-12 rounded-full px-6 text-[15px]"
