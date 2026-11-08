@@ -1,8 +1,10 @@
 "use client";
 
-import { createContext, useContext, useState, type ComponentType, type FormEvent, type ReactNode } from "react";
+import { createContext, useContext, useId, useRef, useState, type ComponentType, type FormEvent, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Check, ChevronDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -51,6 +53,7 @@ export function IconSelect({
   required = false,
   defaultValue,
   icon: Icon,
+  onValueChange,
 }: {
   name: string;
   placeholder: string;
@@ -58,12 +61,14 @@ export function IconSelect({
   required?: boolean;
   defaultValue?: string;
   icon: IconType;
+  /** Báo ra ngoài khi chọn — Select của base-ui không bắn sự kiện input/change lên form. */
+  onValueChange?: (value: string) => void;
 }) {
   const { errors, clear } = useContext(FormErrors);
   const error = errors[name];
   return (
     <span className="contents" data-field={name}>
-    <Select name={name} required={required} defaultValue={defaultValue ?? null} onValueChange={() => clear(name)}>
+    <Select name={name} required={required} defaultValue={defaultValue ?? null} onValueChange={(v) => { clear(name); onValueChange?.(String(v ?? "")); }}>
       <SelectTrigger
         className={`tuvi-select-trigger ${error ? INVALID : ""}`}
         aria-label={placeholder}
@@ -73,7 +78,9 @@ export function IconSelect({
         <Icon className="tuvi-control-icon" size={17} aria-hidden={true} />
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent className="tuvi-select-popup" alignItemWithTrigger={false}>
+      {/* Chặn chiều cao + cuộn trong danh sách: danh sách dài (34 tỉnh thành) mà để cao theo
+          --available-height thì tràn khỏi màn hình, trong khi trang đã bị khoá cuộn lúc mở. */}
+      <SelectContent className="tuvi-select-popup max-h-[min(288px,var(--available-height))]!" alignItemWithTrigger={false}>
         {options.map((option) => (
           <SelectItem key={option} value={option} className="tuvi-select-item">
             {option}
@@ -83,6 +90,138 @@ export function IconSelect({
     </Select>
     <FieldError name={name} />
     </span>
+  );
+}
+
+/** Bỏ dấu + chữ thường để tìm "ha noi" ra "Hà Nội". */
+function fold(text: string) {
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[đĐ]/g, "d").toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Ô chọn có tìm kiếm, cùng kiểu dáng với IconField. Dùng cho danh sách dài (34 tỉnh thành):
+ *  - gõ không dấu vẫn ra; `aliases` cho tên gọi khác ("hcm", "sai gon").
+ *  - danh sách cao tối đa 240px, cuộn bên trong; `data-lenis-prevent` vì Lenis (cuộn mượt
+ *    của luna-app) nuốt sự kiện lăn chuột toàn trang.
+ *  - phím ↑ ↓ Enter Esc. Giá trị nằm trong một ô ẩn để FormData và kiểm tra `required`
+ *    của ValidatedForm dùng được như ô thường.
+ */
+export function SearchSelect({
+  name,
+  placeholder,
+  options,
+  required = false,
+  icon: Icon,
+  onValueChange,
+  defaultValue = "",
+  aliases = {},
+}: {
+  name: string;
+  placeholder: string;
+  options: readonly string[];
+  required?: boolean;
+  icon: IconType;
+  onValueChange?: (value: string) => void;
+  defaultValue?: string;
+  aliases?: Record<string, string[]>;
+}) {
+  const { errors, clear } = useContext(FormErrors);
+  const error = errors[name];
+  const [value, setValue] = useState(defaultValue);
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const listRef = useRef<HTMLUListElement>(null);
+  const listId = useId();
+
+  const q = fold(query);
+  const shown = q
+    ? options.filter((o) => fold(o).includes(q) || (aliases[o] ?? []).some((a) => fold(a).startsWith(q)))
+    : options;
+
+  function choose(option: string) {
+    setValue(option);
+    setQuery("");
+    setOpen(false);
+    clear(name);
+    onValueChange?.(option);
+  }
+  function move(delta: number) {
+    if (!shown.length) return;
+    const next = (active + delta + shown.length) % shown.length;
+    setActive(next);
+    listRef.current?.children[next]?.scrollIntoView({ block: "nearest" });
+  }
+
+  return (
+    <>
+      <span className="tuvi-input-wrap" data-field={name}>
+        <Icon className="tuvi-control-icon" size={17} aria-hidden={true} />
+        <input
+          type="text"
+          role="combobox"
+          data-slot="select-trigger"
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-autocomplete="list"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${name}-error` : undefined}
+          autoComplete="off"
+          value={open ? query : value}
+          placeholder={open && value ? value : placeholder}
+          onFocus={() => {
+            setOpen(true);
+            setActive(Math.max(0, options.indexOf(value)));
+          }}
+          onBlur={() => setOpen(false)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setActive(0);
+            setOpen(true);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown") { e.preventDefault(); if (!open) setOpen(true); else move(1); }
+            else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+            else if (e.key === "Enter" && open) { e.preventDefault(); if (shown[active]) choose(shown[active]); }
+            else if (e.key === "Escape") { setOpen(false); setQuery(""); }
+          }}
+          // `!`: .tuvi-form input trong globals.css nằm ngoài layer, thắng Tailwind
+          className={`cursor-pointer pr-10! pl-[42px]! text-[13px]! ${error ? INVALID : ""}`}
+        />
+        <ChevronDown className={`pointer-events-none absolute top-1/2 right-[14px] -translate-y-1/2 text-[#9472aa] transition-transform ${open ? "rotate-180" : ""}`} size={16} aria-hidden={true} />
+        {/* Ô thật mang giá trị: có name + required để FormData và ValidatedForm thấy */}
+        <input name={name} value={value} required={required} onChange={() => {}} tabIndex={-1} aria-hidden={true} className="pointer-events-none absolute! bottom-0! left-[42px]! h-px! w-px! border-0! p-0! opacity-0" />
+        {open ? (
+          <ul
+            ref={listRef}
+            id={listId}
+            role="listbox"
+            data-lenis-prevent
+            className="absolute top-[calc(100%+4px)] right-0 left-0 z-50 max-h-[240px] overflow-y-auto overscroll-contain rounded-[12px] border border-[#deceeb] bg-[#fffafc] p-1 shadow-[0_14px_35px_#5d3d712b]"
+          >
+            {shown.length ? (
+              shown.map((o, i) => (
+                <li
+                  key={o}
+                  role="option"
+                  aria-selected={o === value}
+                  // mousedown: chọn trước khi ô nhập mất focus (blur đóng danh sách)
+                  onMouseDown={(e) => { e.preventDefault(); choose(o); }}
+                  onMouseEnter={() => setActive(i)}
+                  className={`flex min-h-9 cursor-pointer items-center justify-between rounded-[8px] px-3 py-2 text-[13px] ${i === active ? "bg-[#eee3f7] text-[#684280]" : "text-[#805c99]"}`}
+                >
+                  {o}
+                  {o === value ? <Check size={14} aria-hidden={true} /> : null}
+                </li>
+              ))
+            ) : (
+              <li className="px-3 py-2 text-[13px] text-[#b199c0]">Không thấy “{query}”</li>
+            )}
+          </ul>
+        ) : null}
+      </span>
+      <FieldError name={name} />
+    </>
   );
 }
 
@@ -148,7 +287,7 @@ function messageFor(field: Field) {
 function focusField(form: HTMLFormElement, name: string) {
   const zone = form.querySelector<HTMLElement>(`[data-field="${CSS.escape(name)}"]`);
   const target =
-    zone?.querySelector<HTMLElement>("[data-slot=select-trigger], input:not([type=hidden]):not([aria-hidden=true]), textarea, button") ??
+    zone?.querySelector<HTMLElement>("[data-slot=select-trigger], select, input:not([type=hidden]):not([aria-hidden=true]), textarea, button") ??
     form.querySelector<HTMLElement>(`[name="${CSS.escape(name)}"]`);
   target?.focus({ preventScroll: true });
   (zone ?? target)?.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -248,5 +387,35 @@ export function FieldTextarea({ name, className = "", ...props }: { name: string
       />
       <FieldError name={name} />
     </span>
+  );
+}
+
+/**
+ * Ô tích bắt buộc kiểu "Mình đồng ý…" trong ValidatedForm: checkbox shadcn + chữ cùng một hàng,
+ * lỗi dưới ô. Nhãn đặt ngoài hàng flex vì `.tuvi-form label{display:grid}` (ngoài cascade layer)
+ * sẽ đè `flex` của Tailwind nếu nhãn bọc cả checkbox.
+ */
+export function FieldCheckbox({ name, defaultChecked, children }: { name: string; defaultChecked?: boolean; children: ReactNode }) {
+  const error = useFieldError(name);
+  const clear = useClearFieldError();
+  const id = useId();
+  return (
+    <div data-field={name}>
+      <div className="flex items-start gap-3">
+        <Checkbox
+          id={id}
+          name={name}
+          defaultChecked={defaultChecked}
+          onCheckedChange={() => clear(name)}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${name}-error` : undefined}
+          className="size-5 shrink-0 rounded-[6px] border-[#c9b3dd] bg-white text-white data-checked:border-[#6e4a92] data-checked:bg-[#6e4a92]"
+        />
+        <label htmlFor={id} className="block! cursor-pointer text-[13px]! leading-[1.6]! font-normal! text-[#4a4257]!">
+          {children}
+        </label>
+      </div>
+      <FieldError name={name} />
+    </div>
   );
 }

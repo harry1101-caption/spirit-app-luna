@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowRight, Check, LoaderCircle, LockKeyhole, RotateCcw, Scroll, Sparkles,
 } from "lucide-react";
 import { FieldMessage, FormIntro, TEXTAREA } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import {
   checkQuestion, gradeMeaning, notes, ritualSteps, sampleQuestions, type Grade,
 } from "@/lib/xin-xam";
@@ -43,6 +44,21 @@ export function XinXamFlow() {
   const [questionError, setQuestionError] = useState("");
 
   useRelatedTools(chart ? "xin-xam" : null);
+
+  useSaveableResult(
+    useMemo(
+      () =>
+        chart
+          ? { feature: "xin-xam" as const, title: `Xin xăm · ${chart.question.slice(0, 80)}`, summary: reading?.summary, payload: { chart, reading, question: chart.question } }
+          : null,
+      [chart, reading],
+    ),
+  );
+  useRestoreSaved("xin-xam", (p: { chart: Chart; reading: Interpretation | null; question: string }) => {
+    setQuestion(p.question ?? p.chart.question);
+    setChart(p.chart);
+    setReading(p.reading);
+  });
 
   async function loadReading(payload: Record<string, unknown>) {
     setReadingLoading(true);

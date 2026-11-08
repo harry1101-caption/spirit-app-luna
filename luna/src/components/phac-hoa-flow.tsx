@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   CalendarDays,
@@ -20,7 +20,8 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import { FormIntro, IconField, IconSelect, ValidatedForm } from "@/components/form-field";
 import type { PortraitStyle, SoulmateProfile } from "@/lib/phac-hoa";
 import { track } from "@/lib/analytics";
@@ -96,6 +97,22 @@ export function PhacHoaFlow() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useRelatedTools(result ? "phac-hoa" : null);
+
+  useSaveableResult(
+    useMemo(
+      () =>
+        result
+          ? {
+              feature: "phac-hoa" as const,
+              title: `Phác hoạ người ấy · ${result.profile.target === "Nam" ? "Chàng trai" : "Cô gái"} cung ${result.profile.sign}`,
+              summary: result.profile.traits.slice(0, 3).join(", "),
+              payload: { result },
+            }
+          : null,
+      [result],
+    ),
+  );
+  useRestoreSaved("phac-hoa", (p: { result: Result }) => setResult(p.result));
 
   async function onPhoto(file: File | undefined) {
     setPhotoError("");

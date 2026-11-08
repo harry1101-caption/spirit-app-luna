@@ -2,7 +2,7 @@
  * Danh sách công cụ, dùng chung cho lưới ở trang chủ và menu "Trải nghiệm" trên
  * header. Giữ một nơi duy nhất để thêm feature mới không phải sửa hai chỗ.
  */
-import { Hand, Layers, Leaf, Orbit, UserRound } from "lucide-react";
+import { Hand, Layers, Leaf, Orbit } from "lucide-react";
 import {
   AstrologyIcon,
   BatTuEmblemIcon,
@@ -19,6 +19,7 @@ import {
   PhacHoaIcon,
   PlayingCardsIcon,
   TarotCardsIcon,
+  WishTreeIcon,
   XinXamIcon,
   ZodiacWheelIcon,
 } from "@/components/tool-icons";
@@ -51,6 +52,7 @@ export const toolGroups = [
     tools: [
       { title: "Xem chỉ tay", description: "Quan sát dấu hiệu trên bàn tay.", icon: PalmistryIcon, action: "chi-tay", bare: true },
       { title: "Nhân tướng học", description: "Tìm hiểu các nét trên khuôn mặt.", icon: FaceReadingIcon, bare: true },
+      { title: "Xem độ hợp đôi", description: "Nhập hai ngày sinh, xem hợp nhau bao nhiêu %.", icon: PhacHoaIcon, action: "hop-nhau", bare: true },
       { title: "Phác hoạ người ấy", description: "Bức chân dung người dành cho bạn.", icon: PhacHoaIcon, action: "phac-hoa", bare: true },
       { title: "Khuôn mặt kiếp trước", description: "Một trải nghiệm khám phá hình ảnh.", icon: PastLifeIcon, clip: true },
       { title: "Giải mã giấc mơ", description: "Ghi lại những biểu tượng trong mơ.", icon: DreamIcon, action: "giac-mo", bare: true },
@@ -62,8 +64,8 @@ export const toolGroups = [
     tools: [
       { title: "Xin Xăm Quan Âm", description: "Một lời gợi mở để suy ngẫm.", icon: XinXamIcon, action: "xin-xam", bare: true },
       { title: "Xem Kinh Dịch", description: "Khám phá ý nghĩa của các quẻ.", icon: IChingIcon, action: "kinh-dich", bare: true },
+      { title: "Cây ước nguyện", description: "Treo điều ước, nhận lời chúc.", icon: WishTreeIcon, action: "wish-tree", bare: true },
       { title: "Cung mặt trăng", description: "Tìm hiểu thế giới cảm xúc.", icon: MoonSignIcon, bare: true },
-      { title: "Trắc nghiệm tính cách", description: "Hiểu rõ hơn xu hướng của bạn.", icon: UserRound, action: "personality" },
     ],
   },
 ] as const;
@@ -84,8 +86,11 @@ export const toolRoutes: Record<string, string> = {
   "human-design": "/human-design",
   "giac-mo": "/giac-mo",
   "chi-tay": "/chi-tay",
-  personality: "/tinh-cach",
+  // Trắc nghiệm tính cách tạm ẩn (redirect ở next.config.ts) — mở lại thì thêm `personality: "/tinh-cach"` và mục trong toolGroups
   "xin-xam": "/xin-xam",
   "kinh-dich": "/kinh-dich",
   "phac-hoa": "/phac-hoa",
+  "hop-nhau": "/hop-nhau",
+  "wish-tree": "/cay-uoc-nguyen",
+  // Se duyên đang tạm dừng (redirect ở next.config.ts) — mở lại thì thêm `duyen: "/duyen"` và mục trong toolGroups
 };

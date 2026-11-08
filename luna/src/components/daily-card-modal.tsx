@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, Bookmark, Check, Layers } from "lucide-react";
+import { ArrowRight, Layers } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cards } from "@/lib/engine";
 import { dailyCardMessage } from "@/lib/daily-card";
+import { SaveResultCard } from "@/components/save-result-card";
+import type { SaveableResult } from "@/lib/saved-results";
 
 export function DailyCardModal({
   open,
@@ -19,18 +21,17 @@ export function DailyCardModal({
   cardId,
   revealed,
   onReveal,
-  onSave,
   onOpenTarot,
-  saved,
+  saveable,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   cardId: number;
   revealed: boolean;
   onReveal: () => void;
-  onSave: () => void;
   onOpenTarot: () => void;
-  saved: boolean;
+  /** Kết quả để lưu vào tài khoản / campaign đăng nhập */
+  saveable?: SaveableResult | null;
 }) {
   const card = cards[cardId];
 
@@ -119,16 +120,8 @@ export function DailyCardModal({
                   Trải bài Tarot đầy đủ
                   <ArrowRight size={16} />
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={onSave}
-                  disabled={saved}
-                  className="w-full sm:w-auto"
-                >
-                  {saved ? <Check size={16} /> : <Bookmark size={16} />}
-                  {saved ? "Đã lưu" : "Lưu lại"}
-                </Button>
               </div>
+              {saveable ? <SaveResultCard result={saveable} className="mt-2 w-full text-left" /> : null}
             </div>
           ) : (
             <p className="text-[13px] text-[#6a5c7a]">

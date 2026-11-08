@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import {
   ArrowRight, Camera, Check, Hand, LoaderCircle, LockKeyhole, RotateCcw, TriangleAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import { IconSelect, FormIntro, ValidatedForm, FieldError, useFieldError } from "@/components/form-field";
 import { PalmDiagram, PalmLegend } from "@/components/palm-diagram";
 import {
@@ -140,6 +141,18 @@ export function ChiTayFlow() {
 
   // Gợi ý feature liên quan render ngoài thẻ, do RelatedToolsSlot ở luna-app.
   useRelatedTools(result ? "chi-tay" : null);
+
+  // Chỉ lưu phần đọc tay, KHÔNG lưu ảnh bàn tay của người dùng
+  useSaveableResult(
+    useMemo(
+      () =>
+        result && result.usable
+          ? { feature: "chi-tay" as const, title: "Đọc chỉ tay", summary: result.summary ?? undefined, payload: { result } }
+          : null,
+      [result],
+    ),
+  );
+  useRestoreSaved("chi-tay", (p: { result: ChiTayResult }) => setResult(p.result));
 
   if (!result) {
     return (

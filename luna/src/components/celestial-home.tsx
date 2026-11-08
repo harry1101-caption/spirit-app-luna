@@ -32,25 +32,25 @@ const pillars = [
     icon: Moon,
     title: "Tarot",
     text: "Lắng nghe trực giác",
-    method: "tarot" as Method,
+    action: "tarot",
   },
   {
     icon: Sparkles,
     title: "Chiêm tinh",
     text: "Hiểu rõ bản thân",
-    method: "daily" as Method,
+    action: "daily",
   },
   {
     icon: Leaf,
     title: "Phát triển",
     text: "Sống phiên bản tốt hơn",
-    method: "personality" as Method,
+    action: "than-so-hoc",
   },
   {
     icon: Heart,
     title: "Kết nối",
     text: "Gần hơn với chính mình",
-    method: "personality" as Method,
+    action: "wish-tree",
   },
 ];
 
@@ -201,7 +201,7 @@ export function CelestialHome({
           data-reveal
         >
           {pillars.map((p) => (
-            <button key={p.title} onClick={() => onMethod(p.method)} className="items-center! text-center! after:right-0!">
+            <button key={p.title} onClick={() => onTool(p.action)} className="items-center! text-center! after:right-0!">
               <span className="pillar-icon mx-auto!">
                 <p.icon size={23} strokeWidth={1.25} />
               </span>

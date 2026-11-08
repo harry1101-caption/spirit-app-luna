@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import {
   ArrowRight,
@@ -16,7 +16,6 @@ import {
   Moon,
   LockKeyhole,
   Pencil,
-  Bookmark,
   Check,
   ChevronLeft,
   Layers,
@@ -29,7 +28,9 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RelatedTools, useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { SaveResultCard, SaveResultInline } from "@/components/save-result-card";
+import { useRestoreSaved, type SavedFeature, type SaveableResult } from "@/lib/saved-results";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
@@ -173,7 +174,30 @@ export function TuViFlow() {
     }
   }
 
-  if (chart?.formatVersion === 2) return <TuViChartView chart={chart} onEdit={() => { track("tuvi_restart"); setChart(null); }} />;
+  // Lưu lá số vào tài khoản / campaign đăng nhập; mở lại khi URL có ?saved=
+  const tuviSaveable = useMemo(
+    () =>
+      chart?.formatVersion === 2
+        ? {
+            feature: "tuvi" as const,
+            title: `Lá số Tử Vi · ${formValues?.fullName || "của bạn"}`,
+            summary: formValues ? `Sinh ${formValues.birthDate}${formValues.readingYear ? ` · năm xem ${formValues.readingYear}` : ""}` : undefined,
+            payload: { chart, formValues },
+          }
+        : null,
+    [chart, formValues],
+  );
+  useRestoreSaved("tuvi", (p: { chart: TuViChart; formValues: TuViInput | null }) => {
+    setChart(p.chart);
+    setFormValues(p.formValues);
+  });
+  if (chart?.formatVersion === 2)
+    return (
+      <>
+        <TuViChartView chart={chart} onEdit={() => { track("tuvi_restart"); setChart(null); }} />
+        {tuviSaveable ? <SaveResultCard result={tuviSaveable} className="tuvi-save-card" /> : null}
+      </>
+    );
   return (
     <section className="experience-page experience-page-tarot tuvi-page pt-[35px]! max-[1250px]:pt-[45px]! min-[1600px]:pt-[45px]!" aria-labelledby="tuvi-title">
       <div className="tarot-page-background left-1/2! right-auto! w-screen! -translate-x-1/2!" aria-hidden="true" />
@@ -869,8 +893,6 @@ export function PersonalityFlow({
 }
 export function ReportView({
   report,
-  saved,
-  onSave,
   onShare,
   onRestart,
   onSubmit,
@@ -879,8 +901,6 @@ export function ReportView({
   onSubmit: (input: InterpretationInput) => void;
   loading: boolean;
   report: Report;
-  saved: boolean;
-  onSave: () => void;
   onShare: () => void;
   onRestart: () => void;
 }) {
@@ -908,43 +928,53 @@ export function ReportView({
 
   // Các loại này hiển thị thẳng trong trang, nên gợi ý đi ra ngoài thẻ.
   useRelatedTools(
-    report.type === "daily" || report.type === "personality" || report.type === "tarot" ? report.type : null,
+    report.type === "daily" || report.type === "personality" || report.type === "tarot" || report.type === "lenormand" ? report.type : null,
   );
+  // Lưu vào tài khoản / campaign đăng nhập (mở lại: luna-app đọc ?saved= rồi setReport)
+  const saveable = useMemo(
+    () => ({ feature: report.type as SavedFeature, title: report.title, summary: report.summary, payload: { report } }),
+    [report],
+  );
+  // Kết quả có nút Chia sẻ (mọi loại trừ Tarot, Lenormand): nút lưu nằm cạnh đó
+  useSaveableResult(saveable, report.type !== "tarot" && report.type !== "lenormand");
 
   if (report.type === "daily") {
-    return <DailyResultView report={report} saved={saved} onSave={onSave} onShare={onShare} onRestart={onRestart} />;
+    return <DailyResultView report={report} saveable={saveable} onShare={onShare} onRestart={onRestart} />;
   }
   if (report.type === "lenormand") {
-    return <Dialog open onOpenChange={open => { if (!open && !loading) onRestart(); }}>
-      <DialogContent className="luna-dialog tarot-result-modal lenormand-result-modal" showCloseButton={!loading} data-lenis-prevent>
-        <DialogHeader>
-          <DialogTitle>Câu chuyện từ ba lá Lenormand</DialogTitle>
-          <DialogDescription>{report.context || report.subtitle}</DialogDescription>
-        </DialogHeader>
-        <div className="report-body">
-          <div className="lenormand-card-row lenormand-report-cards">
-            {report.cards?.map((id, index) => {
-              const card = lenormandCards[id];
-              return card ? <article className="lenormand-card lenormand-card-face" key={`${id}-${index}`}>
-                <small>{["Điểm khởi đầu", "Trọng tâm", "Điều cần lưu ý"][index]}</small>
-                <span>{card[2]}</span><strong>{card[0]}</strong><small>{card[1]}</small>
-              </article> : null;
-            })}
+    // Hiển thị trên trang như Tarot (không modal), để thẻ lưu kết quả & gợi ý nằm ngay dưới
+    return <section className="tarot-result-modal lenormand-result-modal tarot-result-inline" aria-labelledby="lenormand-result-title">
+      <header className="tarot-result-inline-header">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <div>
+            <p className="eyebrow">LENORMAND</p>
+            <h2 id="lenormand-result-title" className="mt-1! text-[30px] leading-tight text-[#1d1133]">Câu chuyện từ ba lá Lenormand</h2>
+            <p className="mt-1! text-[12px] text-[#6a5c7a]">{report.context || report.subtitle}</p>
           </div>
-          <div className="report-content"><div className="report-summary">{report.summary}</div>
-            {report.sections.map((section, index) => <section className="report-section" key={index}><h3>{section.title}</h3><p>{section.text}</p></section>)}
-          </div>
-          <div className="report-bottom">
-            <div className="reflection-question"><Sparkles size={19}/><span>MỘT CÂU HỎI CHO BẠN</span><h3>{report.reflection}</h3></div>
-            <p className="source-note">{report.source === "ai" ? "Diễn giải được hỗ trợ bởi AI." : "Bản diễn giải dự phòng · AI chưa khả dụng."} Dành cho tự suy ngẫm, không thay thế lời khuyên chuyên môn.</p>
-            {report.source === "fallback" ? <Button variant="outline" disabled={loading} onClick={() => onSubmit({ type: "lenormand", topic: report.subtitle, question: report.context, cards: report.cards })}>{loading ? <LoaderCircle className="spin" size={16}/> : <RotateCcw size={16}/>} {loading ? "Đang thử lại…" : "Thử lại diễn giải AI với bộ bài này"}</Button> : null}
-            <div className="report-actions"><Button onClick={onSave} disabled={saved}>{saved ? <Check size={16}/> : <Bookmark size={16}/>} {saved ? "Đã lưu kết quả" : "Lưu kết quả"}</Button><Button variant="outline" onClick={onShare}><Share2 size={16}/> Chia sẻ</Button></div>
-            <button className="skip-button" onClick={onRestart}><RotateCcw size={14}/> Trải bài mới</button>
-            <RelatedTools current="lenormand" className="text-left" />
-          </div>
+          <Button variant="outline" disabled={loading} onClick={onRestart}>
+            <RotateCcw size={15} /> Trải bài mới
+          </Button>
         </div>
-      </DialogContent>
-    </Dialog>;
+      </header>
+      <div className="report-body">
+        <div className="lenormand-card-row lenormand-report-cards">
+          {report.cards?.map((id, index) => {
+            const card = lenormandCards[id];
+            return card ? <article className="lenormand-card lenormand-card-face" key={`${id}-${index}`}>
+              <small>{["Điểm khởi đầu", "Trọng tâm", "Điều cần lưu ý"][index]}</small>
+              <span>{card[2]}</span><strong>{card[0]}</strong><small>{card[1]}</small>
+            </article> : null;
+          })}
+        </div>
+        <div className="report-content"><div className="report-summary">{report.summary}</div>
+          {report.sections.map((section, index) => <section className="report-section" key={index}><h3>{section.title}</h3><p>{section.text}</p></section>)}
+        </div>
+        <div className="report-bottom">
+          <div className="reflection-question"><Sparkles size={19}/><span>MỘT CÂU HỎI CHO BẠN</span><h3>{report.reflection}</h3></div>
+          {report.source === "fallback" ? <Button variant="outline" disabled={loading} onClick={() => onSubmit({ type: "lenormand", topic: report.subtitle, question: report.context, cards: report.cards })}>{loading ? <LoaderCircle className="spin" size={16}/> : <RotateCcw size={16}/>} {loading ? "Đang thử lại…" : "Thử lại diễn giải AI với bộ bài này"}</Button> : null}
+        </div>
+      </div>
+    </section>;
   }
 
   const previousReading = report.deepQuestions ? report.previousReading : undefined;
@@ -1023,13 +1053,10 @@ export function ReportView({
           Dành cho tự suy ngẫm, không thay thế lời khuyên chuyên môn.
         </p>
         <div className="report-actions">
-          <Button onClick={onSave} disabled={saved}>
-            {saved ? <Check size={16} /> : <Bookmark size={16} />}{" "}
-            {saved ? "Đã lưu kết quả" : "Lưu kết quả"}
-          </Button>
           <Button variant="outline" onClick={onShare}>
             <Share2 size={16} /> Chia sẻ
           </Button>
+          <SaveResultInline result={saveable} />
         </div>
         <div className="report-feedback">
           <span>
@@ -1111,10 +1138,9 @@ const zodiacDetails: Record<string, { dates: string; traits: string }> = {
  * Bỏ chúng đi thì khối cao theo nội dung và cuộn chung với trang. Hậu tố `!`
  * là bắt buộc — phần lớn globals.css nằm ngoài layer nên thắng Tailwind.
  */
-function DailyResultView({ report, saved, onSave, onShare, onRestart }: {
+function DailyResultView({ report, saveable, onShare, onRestart }: {
   report: Report;
-  saved: boolean;
-  onSave: () => void;
+  saveable: SaveableResult;
   onShare: () => void;
   onRestart: () => void;
 }) {
@@ -1172,12 +1198,10 @@ function DailyResultView({ report, saved, onSave, onShare, onRestart }: {
       ) : null}
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <Button onClick={onSave} disabled={saved}>
-          {saved ? <Check size={16} /> : <Bookmark size={16} />} {saved ? "Đã lưu kết quả" : "Lưu kết quả"}
-        </Button>
         <Button variant="outline" onClick={onShare}>
           <Share2 size={16} /> Chia sẻ
         </Button>
+        <SaveResultInline result={saveable} />
       </div>
     </div>
   );

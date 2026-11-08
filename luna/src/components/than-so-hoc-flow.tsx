@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowRight, CalendarDays, Check, Hash, LoaderCircle, LockKeyhole, RotateCcw, Sparkles, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import { IconField, FormIntro, ValidatedForm } from "@/components/form-field";
 import { numberMeanings, type ThanSoHocChart } from "@/lib/than-so-hoc";
 import { track } from "@/lib/analytics";
@@ -77,6 +78,23 @@ export function ThanSoHocFlow() {
 
   // Gợi ý feature liên quan render ngoài thẻ, do RelatedToolsSlot ở luna-app.
   useRelatedTools(chart ? "than-so-hoc" : null);
+
+  // Lưu vào tài khoản / campaign đăng nhập, và mở lại khi URL có ?saved=
+  useSaveableResult(
+    useMemo(
+      () =>
+        chart
+          ? { feature: "than-so-hoc" as const, title: `Thần số học · ${chart.input.fullName}`, summary: reading?.summary, payload: { chart, reading, lastInput } }
+          : null,
+      [chart, reading, lastInput],
+    ),
+  );
+  useRestoreSaved("than-so-hoc", (p: { chart: ThanSoHocChart; reading: Interpretation | null; lastInput: Record<string, unknown> | null }) => {
+    setChart(p.chart);
+    setReading(p.reading);
+    setLastInput(p.lastInput);
+    if (!p.reading && p.lastInput) void loadReading(p.lastInput);
+  });
 
   if (!chart) {
     return (

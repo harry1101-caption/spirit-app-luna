@@ -51,9 +51,9 @@ const socials: { name: string; url: string; Icon: typeof FacebookIcon }[] = [
 
 const notes = [
   "Nội dung để bạn tự chiêm nghiệm, không thay thế lời khuyên y tế, tài chính hay pháp lý.",
-  "Không cần đăng ký, không có tài khoản.",
-  "Họ tên và ngày giờ sinh chỉ dùng để tính, không lưu lại trên máy chủ.",
-  "Kết quả chỉ nằm trên thiết bị của bạn, và chỉ khi bạn chủ động bấm lưu.",
+  "Không cần đăng ký vẫn dùng được. Đăng nhập chỉ để lưu kết quả.",
+  "Họ tên và ngày giờ sinh chỉ dùng để tính, không lưu lại trừ khi bạn bấm lưu kết quả.",
+  "Kết quả chỉ được lưu vào tài khoản khi bạn đăng nhập và chủ động bấm lưu.",
 ];
 
 const badge =

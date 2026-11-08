@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import {
   ArrowRight, Check, Coins, LoaderCircle, LockKeyhole, RotateCcw, Scroll, Sparkles,
@@ -8,7 +8,8 @@ import {
 import { FieldMessage, FormIntro, TEXTAREA } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import {
   checkQuestion, linePositions, notes, ritualSteps, sampleQuestions, tossMeaning, trigrams,
   type CoinFace, type Hexagram, type KinhDichCast, type LineState,
@@ -136,6 +137,24 @@ export function KinhDichFlow() {
   const reduced = useReducedMotion();
 
   useRelatedTools(showResult ? "kinh-dich" : null);
+
+  useSaveableResult(
+    useMemo(
+      () =>
+        showResult && cast
+          ? { feature: "kinh-dich" as const, title: `Kinh Dịch · ${cast.question.slice(0, 80)}`, summary: reading?.summary, payload: { cast, reading, payload } }
+          : null,
+      [showResult, cast, reading, payload],
+    ),
+  );
+  useRestoreSaved("kinh-dich", (p: { cast: KinhDichCast; reading: Interpretation | null; payload: Record<string, string> | null }) => {
+    setQuestion(p.cast.question);
+    setCast(p.cast);
+    setRevealed(6);
+    setPayload(p.payload);
+    setReading(p.reading);
+    setShowResult(true);
+  });
 
   async function loadReading(body: Record<string, string>) {
     setReadingLoading(true);

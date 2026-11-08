@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowRight, CalendarClock, CalendarDays, Check, Clock3, LoaderCircle, LockKeyhole, RotateCcw, Scale, UserRound, VenusAndMars } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IconField, IconSelect, FormIntro, ValidatedForm } from "@/components/form-field";
 import { elements, type BatTuChart } from "@/lib/bat-tu";
@@ -88,6 +89,23 @@ export function BatTuFlow() {
 
   // Gợi ý feature liên quan render ngoài thẻ, do RelatedToolsSlot ở luna-app.
   useRelatedTools(chart ? "bat-tu" : null);
+
+  useSaveableResult(
+    useMemo(
+      () =>
+        chart
+          ? { feature: "bat-tu" as const, title: `Bát Tự · ${chart.input.name}`, summary: reading?.summary, payload: { chart, reading, lastInput, unknownHour } }
+          : null,
+      [chart, reading, lastInput, unknownHour],
+    ),
+  );
+  useRestoreSaved("bat-tu", (p: { chart: BatTuChart; reading: Interpretation | null; lastInput: Record<string, unknown> | null; unknownHour: boolean }) => {
+    setChart(p.chart);
+    setReading(p.reading);
+    setLastInput(p.lastInput);
+    setUnknownHour(!!p.unknownHour);
+    if (!p.reading && p.lastInput) void loadReading(p.lastInput);
+  });
 
   if (!chart) {
     return (

@@ -50,6 +50,30 @@ export const PAGES = {
     appName: "Tra Thần số học",
     priority: 0.9,
   },
+  duyen: {
+    path: "/duyen",
+    title: "Se duyên: tạo hồ sơ duyên, xem ai hợp với bạn nhất",
+    description:
+      "Tạo hồ sơ duyên miễn phí, đăng link lên story. Ai bấm vào nhập ngày sinh là biết hợp với bạn bao nhiêu % theo con giáp, cung mệnh, cung hoàng đạo và Thần số học.",
+    appName: "Se duyên",
+    priority: 0.9,
+  },
+  "wish-tree": {
+    path: "/cay-uoc-nguyen",
+    title: "Cây ước nguyện online: viết điều ước, treo lên cây, nhận lời chúc",
+    description:
+      "Viết điều ước của bạn, treo lên cây ước nguyện chung và nhận một lời chúc riêng. Đọc điều ước của người khác, gửi lời chúc cho họ. Ẩn danh, không cần tài khoản.",
+    appName: "Cây ước nguyện",
+    priority: 0.8,
+  },
+  "hop-nhau": {
+    path: "/hop-nhau",
+    title: "Xem độ hợp đôi: hai bạn hợp nhau bao nhiêu %?",
+    description:
+      "Xem độ hợp nhau theo tên và ngày sinh: con giáp, ngũ hành, cung hoàng đạo và Thần số học. Gửi link để người ấy tự nhập, không cần tài khoản.",
+    appName: "Xem độ hợp đôi",
+    priority: 0.9,
+  },
   "phac-hoa": {
     path: "/phac-hoa",
     title: "Phác hoạ người ấy: vẽ chân dung người yêu tương lai bằng AI",

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
-import { JsonLd } from "@/components/json-ld";
 import { OG_IMAGE, SITE_NAME, SITE_URL, siteJsonLd } from "@/lib/seo";
 const sans = Be_Vietnam_Pro({
   variable: "--font-sans-app",
@@ -36,10 +35,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" className={`${sans.variable} ${serif.variable}`}>
-      <body>
-        <JsonLd data={siteJsonLd} />
-        {children}
-      </body>
+      {/* JSON-LD đặt trong <head>: nếu là <script> đầu tiên của <body>, snippet PostHog
+          chèn script của nó ngay trước → HTML lệch với lúc server render (hydration mismatch) */}
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd).replace(/</g, "\\u003c") }}
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

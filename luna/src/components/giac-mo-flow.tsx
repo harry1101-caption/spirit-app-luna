@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowRight, Check, LoaderCircle, LockKeyhole, Moon, RotateCcw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import { IconField, IconSelect, FormIntro, ValidatedForm, FieldTextarea } from "@/components/form-field";
 import { CalendarClock, Smile } from "lucide-react";
 import { dreamMoods, dreamRecurrences, type GiacMoChart } from "@/lib/giac-mo";
@@ -79,6 +80,23 @@ export function GiacMoFlow() {
 
   // Gợi ý feature liên quan render ngoài thẻ, do RelatedToolsSlot ở luna-app.
   useRelatedTools(chart ? "giac-mo" : null);
+
+  useSaveableResult(
+    useMemo(
+      () =>
+        chart
+          ? { feature: "giac-mo" as const, title: `Giấc mơ · ${chart.input.dream.slice(0, 60)}`, summary: reading?.summary, payload: { chart, reading, lastInput, dream } }
+          : null,
+      [chart, reading, lastInput, dream],
+    ),
+  );
+  useRestoreSaved("giac-mo", (p: { chart: GiacMoChart; reading: Interpretation | null; lastInput: Record<string, unknown> | null; dream: string }) => {
+    setChart(p.chart);
+    setReading(p.reading);
+    setLastInput(p.lastInput);
+    setDream(p.dream ?? "");
+    if (!p.reading && p.lastInput) void loadReading(p.lastInput);
+  });
 
   if (!chart) {
     return (

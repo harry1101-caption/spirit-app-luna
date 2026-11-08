@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowRight, CalendarDays, Check, Clock3, Globe, LoaderCircle, LockKeyhole,
   Orbit, RotateCcw, Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import { IconField, IconSelect, FormIntro, ValidatedForm } from "@/components/form-field";
 import { centers, type HumanDesignChart } from "@/lib/human-design";
 import { track } from "@/lib/analytics";
@@ -92,6 +93,22 @@ export function HumanDesignFlow() {
 
   // Gợi ý feature liên quan render ngoài thẻ, do RelatedToolsSlot ở luna-app.
   useRelatedTools(chart ? "human-design" : null);
+
+  useSaveableResult(
+    useMemo(
+      () =>
+        chart
+          ? { feature: "human-design" as const, title: `Human Design · ${chart.type}`, summary: reading?.summary, payload: { chart, reading, lastInput } }
+          : null,
+      [chart, reading, lastInput],
+    ),
+  );
+  useRestoreSaved("human-design", (p: { chart: HumanDesignChart; reading: Interpretation | null; lastInput: Record<string, unknown> | null }) => {
+    setChart(p.chart);
+    setReading(p.reading);
+    setLastInput(p.lastInput);
+    if (!p.reading && p.lastInput) void loadReading(p.lastInput);
+  });
 
   if (!chart) {
     return (

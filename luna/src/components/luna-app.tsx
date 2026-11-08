@@ -13,14 +13,21 @@ import { BatTuFlow } from "@/components/bat-tu-flow";
 import { ThanSoHocFlow } from "@/components/than-so-hoc-flow";
 import { GiacMoFlow } from "@/components/giac-mo-flow";
 import { PhacHoaFlow } from "@/components/phac-hoa-flow";
+import { HopNhauFlow } from "@/components/hop-nhau-flow";
+import { DatingFlow, type DatingView } from "@/components/dating-flow";
 import { HumanDesignFlow } from "@/components/human-design-flow";
 import { ChiTayFlow } from "@/components/chi-tay-flow";
 import { XinXamFlow } from "@/components/xin-xam-flow";
 import { KinhDichFlow } from "@/components/kinh-dich-flow";
+import { WishTreeFlow } from "@/components/wish-tree-flow";
 import { AllToolsMenu } from "@/components/all-tools-menu";
 import { toolGroups, toolRoutes } from "@/components/tool-groups";
 import { SiteFooter } from "@/components/site-footer";
-import { AuthMenu } from "@/components/auth-menu";
+import { AuthMenu, GoogleMark } from "@/components/auth-menu";
+import { AccountSavedList } from "@/components/account-saved-list";
+import { useAuthUser, useRestoreSaved } from "@/lib/saved-results";
+import { signInWithGoogle } from "@/lib/supabase/client";
+import { AstrologyIcon, NumerologyIcon, TarotCardsIcon, ZodiacWheelIcon } from "@/components/tool-icons";
 import { topicByKey, type Topic } from "@/components/topic-picker";
 import {
   Menu,
@@ -69,8 +76,14 @@ import { RelatedToolsSlot } from "@/components/related-tools";
 import { LogoMark } from "@/components/logo-mark";
 
 import { buildDailyCardReport, drawDailyCard } from "@/lib/daily-card";
-type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich" | "phac-hoa";
+type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich" | "phac-hoa" | "hop-nhau" | "duyen" | "wish-tree";
 type DailyCardState = { id: number; day: string; revealed: boolean };
+/** Trắc nghiệm tính cách đang tạm ẩn: không liệt kê, không gợi ý. */
+const visibleMethods = methods.filter((m) => m.id !== "personality");
+const recommendVisible = (intent: string): Method => {
+  const m = recommend(intent);
+  return m === "personality" ? "daily" : m;
+};
 /** Lá bài hôm nay được khoá theo ngày, nên cần một seed ổn định cho mỗi thiết bị. */
 const DAILY_CARD_KEY = "luna:dailycard:v1";
 function deviceSeed() {
@@ -89,6 +102,7 @@ const defaultPrefs: Preferences = {
 };
 const nav: { label: string; action: string }[] = [
   { label: "Trang chủ", action: "home" },
+  { label: "Cây ước nguyện", action: "wish-tree" },
   { label: "Phác hoạ người ấy", action: "phac-hoa" },
   { label: "Tarot", action: "tarot" },
   { label: "Thần số học", action: "than-so-hoc" },
@@ -112,17 +126,22 @@ export default function LunaApp({
   initialFlow,
   initialTab = "home",
   initialTopic,
+  hopNhau,
+  dating,
 }: {
+  /** Màn hình Se duyên: tạo hồ sơ / hồ sơ công khai / quản lý. */
+  dating?: DatingView;
+  /** Token người mời / người được mời đọc từ query string của /hop-nhau. */
+  hopNhau?: { m?: string; b?: string };
   initialFlow?: Method;
   initialTab?: Tab;
   /** Key chủ đề đọc từ query string, ví dụ /tarot?chu-de=work. */
   initialTopic?: string;
 } = {}) {
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [historyFilter, setHistoryFilter] = useState<"all" | Method>("all");
+  const { user: authUser, ready: authReady } = useAuthUser();
   const [tab, setTab] = useState<Tab>(initialTab);
   const [prefs, setPrefs] = useState(defaultPrefs);
-  const [history, setHistory] = useState<Report[]>([]);
   const [ready, setReady] = useState(false);
   const [flow, setFlow] = useState<Method | null>(initialFlow ?? null);
   const [onboard, setOnboard] = useState(false);
@@ -134,7 +153,6 @@ export default function LunaApp({
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [analytics, setAnalytics] = useState(true);
-  const [savedStatus, setSavedStatus] = useState(false);
   const [dailyCard, setDailyCard] = useState<DailyCardState | null>(null);
   /**
    * Chủ đề + câu hỏi điền sẵn khi vào từ khối "Chọn một chủ đề để bắt đầu".
@@ -159,10 +177,20 @@ export default function LunaApp({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Hydrate an external browser store after the SSR snapshot.
     setPrefs(readLocal("luna:prefs:v1", defaultPrefs));
-    setHistory(readLocal("luna:history:v1", []));
     setAnalytics(hasAnalyticsConsent());
     setReady(true);
     track("session_start");
+  }, []);
+  // Mở lại kết quả dạng report đã lưu trong tài khoản (?saved=<id>)
+  useRestoreSaved(["tarot", "lenormand", "daily", "personality", "dailycard"], (p: { report: Report }) => {
+    setReport(p.report);
+  });
+  // Link cũ /?kham-pha=1 → chuyển sang route riêng /kham-pha-cua-toi
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).has("kham-pha")) return;
+    window.history.replaceState(null, "", "/kham-pha-cua-toi");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc tham số URL một lần sau khi hydrate
+    setTab("history");
   }, []);
   useEffect(() => {
     if (!ready) return;
@@ -285,15 +313,34 @@ export default function LunaApp({
       window.location.assign("/kinh-dich");
       return;
     }
+    if (next === "duyen" && window.location.pathname !== "/duyen") {
+      window.location.assign("/duyen");
+      return;
+    }
+    if (next === "wish-tree" && window.location.pathname !== "/cay-uoc-nguyen") {
+      window.location.assign("/cay-uoc-nguyen");
+      return;
+    }
+    if (next === "hop-nhau" && window.location.pathname !== "/hop-nhau") {
+      window.location.assign("/hop-nhau");
+      return;
+    }
     if (next === "phac-hoa" && window.location.pathname !== "/phac-hoa") {
       window.location.assign("/phac-hoa");
+      return;
+    }
+    if (next === "history" && window.location.pathname !== "/kham-pha-cua-toi") {
+      window.location.assign("/kham-pha-cua-toi");
       return;
     }
     if (next === "home" && window.location.pathname !== "/") {
       window.location.assign("/");
       return;
     }
-    if (next !== "tuvi" && window.location.pathname === "/tu-vi") {
+    if (
+      (next !== "tuvi" && window.location.pathname === "/tu-vi") ||
+      (next !== "history" && window.location.pathname === "/kham-pha-cua-toi")
+    ) {
       window.history.replaceState(null, "", "/");
     }
     setFlow(null);
@@ -391,7 +438,6 @@ export default function LunaApp({
           } catch {}
       }
       setReport(result!);
-      setSavedStatus(history.some((r) => r.id === result!.id));
       track("experience_complete", { method: input.type });
       if (input.type === "personality") track("personality_report_view");
       track(input.type === "tarot" ? "tarot_reading_complete" : input.type === "lenormand" ? "lenormand_reading_complete" : input.type === "daily" ? "daily_guidance_complete" : "personality_test_complete");
@@ -431,48 +477,6 @@ export default function LunaApp({
     setDailyCard({ ...dailyCard, revealed: true });
     track("daily_card_reveal");
   }
-  function saveDailyCard() {
-    if (!dailyCard) return;
-    const next = buildDailyCardReport(dailyCard.id, dailyCard.day);
-    if (history.some((r) => r.id === next.id)) {
-      setToast("Lá bài hôm nay đã có trong bộ sưu tập.");
-      return;
-    }
-    const updated = [next, ...history];
-    try {
-      writeLocal("luna:history:v1", updated);
-      setHistory(updated);
-      setToast("Đã lưu lá bài hôm nay.");
-      track("daily_card_save");
-    } catch {
-      setToast("Không lưu được. Bộ nhớ trình duyệt có thể đã đầy.");
-    }
-  }
-  function saveReport() {
-    if (!report) return;
-    if (history.some((r) => r.id === report.id)) {
-      setToast("Kết quả này đã có trong bộ sưu tập.");
-      return;
-    }
-    const next = [report, ...history];
-    try {
-      writeLocal("luna:history:v1", next);
-      setHistory(next);
-      setSavedStatus(true);
-      track(
-        report.type === "tarot"
-          ? "tarot_reading_save"
-          : report.type === "lenormand"
-            ? "lenormand_reading_save"
-          : report.type === "personality"
-            ? "personality_report_save"
-            : "daily_guidance_save",
-      );
-      setToast("Đã giữ lại khám phá này cho bạn.");
-    } catch {
-      setToast("Bộ nhớ thiết bị đã đầy. Hãy xóa bớt kết quả rồi thử lại.");
-    }
-  }
   async function shareReport() {
     if (!report) return;
     const text = `Luna · ${report.title}\n${report.summary}\n\n${report.reflection}`;
@@ -489,15 +493,7 @@ export default function LunaApp({
       setToast("Chưa chia sẻ được. Bạn có thể thử lại.");
     }
   }
-  function deleteReport(id: string) {
-    const next = history.filter((r) => r.id !== id);
-    try {
-      writeLocal("luna:history:v1", next);
-      setHistory(next);
-    } catch {
-      setToast("Chưa xóa được dữ liệu.");
-    }
-  }
+
   /**
    * Mở phương pháp hợp với từng chủ đề, chứ không đổ cả bốn về một chỗ — section
    * đó tự hứa "Lunara gợi ý phương pháp phù hợp" nên phải làm đúng.
@@ -538,10 +534,6 @@ export default function LunaApp({
     setOnboard(true);
     track("onboarding_intent_select", { intent: value });
   }
-  const filteredHistory =
-    historyFilter === "all"
-      ? history
-      : history.filter((r) => r.type === historyFilter);
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -689,7 +681,7 @@ export default function LunaApp({
               <h2>Chọn cách bạn muốn lắng nghe</h2>
             </div>
             <div className="method-grid" data-reveal>
-              {methods.map((m, i) => (
+              {visibleMethods.map((m, i) => (
                 <ExperienceCard
                   key={m.id}
                   method={m}
@@ -705,59 +697,56 @@ export default function LunaApp({
           </>
         ) : null}
         {tab === "history" && !flow && !report ? (
-          <>
-            <PageHeading
-              eyebrow="KHÔNG GIAN RIÊNG CỦA BẠN"
-              title="Những khám phá đã lưu"
-              description="Có những lời nhắn, đọc lại vào một ngày khác sẽ mang một ý nghĩa mới."
-            />
-            <div className="history-filters" aria-label="Lọc khám phá">
-              {[
-                { id: "all", label: "Tất cả" },
-                { id: "tarot", label: "Tarot" },
-                { id: "daily", label: "Chiêm tinh" },
-                { id: "personality", label: "Tính cách" },
-              ].map((f) => (
-                <button
-                  key={f.id}
-                  className={historyFilter === f.id ? "selected" : ""}
-                  aria-pressed={historyFilter === f.id}
-                  onClick={() => setHistoryFilter(f.id as "all" | Method)}
-                >
-                  {f.label}
-                </button>
-              ))}
+          <section className="history-page">
+            <div className="history-atmosphere" aria-hidden="true">
+              <span className="history-star history-star-one" />
+              <span className="history-star history-star-two" />
+              <span className="history-star history-star-three" />
             </div>
-            {filteredHistory.length ? (
-              <div className="saved-grid" data-reveal>
-                {filteredHistory.map((r) => (
-                  <SavedCard
-                    key={r.id}
-                    report={r}
-                    onOpen={() => {
-                      setReport(r);
-                      setSavedStatus(true);
-                      track("saved_result_view");
-                    }}
-                    onDelete={() => deleteReport(r.id)}
-                  />
-                ))}
+            {/* Bỏ cột orbit → hero một cột, chữ và CTA canh giữa */}
+            <header className="history-hero grid-cols-1! justify-items-center px-0! text-center" data-reveal>
+              <div className="history-hero-copy flex flex-col items-center">
+                <p className="eyebrow">KHÔNG GIAN RIÊNG CỦA BẠN</p>
+                <h1>Những khám phá <em>đã lưu</em></h1>
+                <p>Đăng nhập ngay để lưu kết quả, theo dõi hành trình và nhận ưu đãi đặc biệt trong thời gian ra mắt</p>
+                {authReady && !authUser ? (
+                  // Dùng Button chung để cùng gradient/kích thước với CTA "Rút một trải bài" phía dưới
+                  <Button
+                    className="mt-7! gap-3! max-md:w-full!"
+                    onClick={() => { track("login_start", { provider: "google", from: "history" }); void signInWithGoogle(); }}
+                  >
+                    {/* Nền trắng để logo Google nhiều màu vẫn rõ trên gradient tím */}
+                    <span className="grid size-6 place-items-center rounded-full bg-white">
+                      <GoogleMark size={16} />
+                    </span>
+                    Đăng nhập với Google
+                  </Button>
+                ) : null}
               </div>
-            ) : (
-              <div className="empty-state" data-reveal>
-                <Bookmark size={42} strokeWidth={1} />
-                <h2>Một trang mới đang đợi bạn</h2>
-                <p>
-                  Những kết quả bạn chọn lưu sẽ xuất hiện ở đây.
-                  <br />
-                  Chỉ có bạn, trên thiết bị này, xem được chúng.
-                </p>
-                <Button onClick={() => openMethod("tarot")}>
-                  Bắt đầu khám phá <ArrowRight size={16} />
-                </Button>
-              </div>
-            )}
-          </>
+            </header>
+
+            <nav className={`history-entry-grid ${authReady && !authUser ? "mb-0!" : ""}`} aria-label="Khám phá các trải nghiệm" data-reveal>
+              {[
+                { title: "Tarot", description: "Giải đáp câu hỏi hiện tại", icon: TarotCardsIcon, action: "tarot" },
+                { title: "Chiêm tinh", description: "Hiểu rõ tính cách & xu hướng", icon: AstrologyIcon, action: "daily" },
+                { title: "Thần số học", description: "Khám phá con số của bạn", icon: NumerologyIcon, action: "than-so-hoc" },
+                { title: "Tử vi", description: "Luận giải lá số của bạn", icon: ZodiacWheelIcon, action: "tuvi" },
+              ].map((entry) => {
+                const Icon = entry.icon;
+                return (
+                  <button key={entry.title} type="button" onClick={() => openTool(entry.action)} className="history-entry">
+                    <span className="history-entry-icon"><Icon size={31} /></span>
+                    <span className="history-entry-copy"><strong>{entry.title}</strong><small>{entry.description}</small></span>
+                    <ArrowRight size={19} aria-hidden="true" />
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Kết quả chỉ lưu vào tài khoản; khách đã có CTA đăng nhập ở hero */}
+            <AccountSavedList hideGuest />
+
+          </section>
         ) : null}
         {tab === "tuvi" && !flow && !report ? <TuViFlow /> : null}
         {tab === "xin-xam" && !flow && !report ? (
@@ -786,6 +775,33 @@ export default function LunaApp({
             <div className="tarot-page-background" aria-hidden="true" />
             <div className="page-heading tarot-title-only"><h1>Bản đồ năng lượng của bạn</h1></div>
             <RelatedToolsSlot><div className="experience-surface"><HumanDesignFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "duyen" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-dating">
+            <div className="tarot-page-background" aria-hidden="true" />
+            {dating?.view === "manage" ? (
+              <h1 className="sr-only">Hồ sơ duyên của bạn</h1>
+            ) : (
+              <div className="page-heading tarot-title-only">
+                <h1>{dating?.view === "profile" ? "Hai bạn hợp nhau bao nhiêu %?" : "Se duyên"}</h1>
+              </div>
+            )}
+            <RelatedToolsSlot><div className="experience-surface"><DatingFlow {...(dating ?? { view: "home" })} /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "wish-tree" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-wishtree">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Cây ước nguyện</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><WishTreeFlow /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "hop-nhau" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-hopnhau">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Xem độ hợp đôi</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><HopNhauFlow inviteToken={hopNhau?.m} partnerToken={hopNhau?.b} /></div></RelatedToolsSlot>
           </section>
         ) : null}
         {tab === "phac-hoa" && !flow && !report ? (
@@ -905,7 +921,6 @@ export default function LunaApp({
                         "luna:daily:v1",
                       ].forEach((k) => localStorage.removeItem(k));
                       clearAnalytics();
-                      setHistory([]);
                       setPrefs(defaultPrefs);
                       setAnalytics(true);
                       setToast("Đã xóa dữ liệu Luna trên thiết bị này.");
@@ -997,8 +1012,6 @@ export default function LunaApp({
                   onSubmit={interpret}
                   loading={loading}
                   report={report}
-                  saved={savedStatus}
-                  onSave={saveReport}
                   onShare={shareReport}
                   onRestart={() => {
                     track("experience_restart", { method: report.type });
@@ -1063,16 +1076,20 @@ export default function LunaApp({
         cardId={dailyCard?.id ?? 0}
         revealed={!!dailyCard?.revealed}
         onReveal={revealDailyCard}
-        onSave={saveDailyCard}
+        saveable={
+          dailyCard?.revealed
+            ? {
+                feature: "dailycard",
+                title: `Lá bài hôm nay · ${buildDailyCardReport(dailyCard.id, dailyCard.day).title}`,
+                payload: { report: buildDailyCardReport(dailyCard.id, dailyCard.day) },
+              }
+            : null
+        }
         onOpenTarot={() => {
           track("daily_card_to_tarot");
           setDailyCard(null);
           openMethod("tarot");
         }}
-        saved={
-          !!dailyCard &&
-          history.some((r) => r.id === `dailycard-${dailyCard.day}-${dailyCard.id}`)
-        }
       />
       <Dialog open={onboard} onOpenChange={setOnboard}>
         <DialogContent className="luna-dialog" data-lenis-prevent>
@@ -1146,7 +1163,7 @@ export default function LunaApp({
                 <span>
                   Luna gợi ý:{" "}
                   <strong>
-                    {methods.find((m) => m.id === recommend(intent))?.tag}
+                    {visibleMethods.find((m) => m.id === recommendVisible(intent))?.tag}
                   </strong>
                 </span>
                 <p>
@@ -1156,11 +1173,11 @@ export default function LunaApp({
                 </p>
               </div>
               <div className="method-options">
-                {methods.map((m) => (
+                {visibleMethods.map((m) => (
                   <button
                     key={m.id}
                     className={
-                      (chosenMethod || recommend(intent)) === m.id
+                      (chosenMethod || recommendVisible(intent)) === m.id
                         ? "selected"
                         : ""
                     }
@@ -1170,7 +1187,7 @@ export default function LunaApp({
                     }}
                   >
                     {m.tag}
-                    {(chosenMethod || recommend(intent)) === m.id ? (
+                    {(chosenMethod || recommendVisible(intent)) === m.id ? (
                       <Check size={15} />
                     ) : null}
                   </button>
@@ -1181,7 +1198,7 @@ export default function LunaApp({
                   updatePrefs({ ...prefs, intent, onboarded: true });
                   setOnboard(false);
                   track("onboarding_complete");
-                  openMethod(chosenMethod || recommend(intent));
+                  openMethod(chosenMethod || recommendVisible(intent));
                 }}
               >
                 Bắt đầu trải nghiệm <ArrowRight size={16} />
@@ -1227,53 +1244,5 @@ function PageHeading({
       <h1>{title}</h1>
       <p>{description}</p>
     </div>
-  );
-}
-function SavedCard({
-  report,
-  onOpen,
-  onDelete,
-}: {
-  report: Report;
-  onOpen: () => void;
-  onDelete: () => void;
-}) {
-  return (
-    <article className="saved-card">
-      <button className="saved-open" onClick={onOpen}>
-        <span className="saved-icon">
-          {report.type === "tarot" ? (
-            <Sparkles />
-          ) : report.type === "lenormand" ? (
-            <Compass />
-          ) : report.type === "daily" || report.type === "dailycard" ? (
-            <Sun />
-          ) : (
-            <Leaf />
-          )}
-        </span>
-        <small>
-          {report.type === "lenormand"
-            ? "LENORMAND"
-            : report.type === "dailycard"
-              ? "LÁ BÀI HÔM NAY"
-              : methods.find((m) => m.id === report.type)?.tag}{" "}
-          ·{" "}
-          {new Date(report.date).toLocaleDateString("vi-VN")}
-        </small>
-        <h3>{report.title}</h3>
-        <p>{report.subtitle}</p>
-        <span className="text-link">
-          Đọc lại <ArrowRight size={15} />
-        </span>
-      </button>
-      <button
-        className="delete-result"
-        aria-label={`Xóa ${report.title}`}
-        onClick={onDelete}
-      >
-        <Trash2 size={16} />
-      </button>
-    </article>
   );
 }

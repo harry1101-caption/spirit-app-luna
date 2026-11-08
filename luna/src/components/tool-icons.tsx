@@ -133,3 +133,4 @@ export const MoonSignIcon = imageIcon("/icons/tools/moon-sign.png", "MoonSignIco
 export const DreamIcon = imageIcon("/icons/tools/dream.png", "DreamIcon");
 export const BatTuEmblemIcon = imageIcon("/icons/tools/bat-tu.png", "BatTuEmblemIcon");
 export const DailyCardImgIcon = imageIcon("/icons/tools/daily-card-img.png", "DailyCardImgIcon");
+export const WishTreeIcon = imageIcon("/icons/tools/wish-tree.png", "WishTreeIcon");
