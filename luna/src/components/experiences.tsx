@@ -28,9 +28,9 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
-import { SaveResultCard, SaveResultInline } from "@/components/save-result-card";
-import { useRestoreSaved, type SavedFeature, type SaveableResult } from "@/lib/saved-results";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
+import { SaveResultInline } from "@/components/save-result-card";
+import { useRestoreSaved, type SavedFeature } from "@/lib/saved-results";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
@@ -195,7 +195,7 @@ export function TuViFlow() {
     return (
       <>
         <TuViChartView chart={chart} onEdit={() => { track("tuvi_restart"); setChart(null); }} />
-        {tuviSaveable ? <SaveResultCard result={tuviSaveable} className="tuvi-save-card" /> : null}
+        {tuviSaveable ? <div className="mt-5 flex justify-center"><SaveResultInline result={tuviSaveable} /></div> : null}
       </>
     );
   return (
@@ -939,7 +939,7 @@ export function ReportView({
   useSaveableResult(saveable, report.type !== "tarot" && report.type !== "lenormand");
 
   if (report.type === "daily") {
-    return <DailyResultView report={report} saveable={saveable} onShare={onShare} onRestart={onRestart} />;
+    return <DailyResultView report={report} onShare={onShare} onRestart={onRestart} />;
   }
   if (report.type === "lenormand") {
     // Hiển thị trên trang như Tarot (không modal), để thẻ lưu kết quả & gợi ý nằm ngay dưới
@@ -951,9 +951,12 @@ export function ReportView({
             <h2 id="lenormand-result-title" className="mt-1! text-[30px] leading-tight text-[#1d1133]">Câu chuyện từ ba lá Lenormand</h2>
             <p className="mt-1! text-[12px] text-[#6a5c7a]">{report.context || report.subtitle}</p>
           </div>
-          <Button variant="outline" disabled={loading} onClick={onRestart}>
-            <RotateCcw size={15} /> Trải bài mới
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <ResultSaveButton />
+            <Button variant="outline" disabled={loading} onClick={onRestart}>
+              <RotateCcw size={15} /> Trải bài mới
+            </Button>
+          </div>
         </div>
       </header>
       <div className="report-body">
@@ -1056,7 +1059,7 @@ export function ReportView({
           <Button variant="outline" onClick={onShare}>
             <Share2 size={16} /> Chia sẻ
           </Button>
-          <SaveResultInline result={saveable} />
+          <ResultSaveButton />
         </div>
         <div className="report-feedback">
           <span>
@@ -1105,9 +1108,12 @@ export function ReportView({
           <p className="mt-1! text-[12px] text-[#6a5c7a]">{report.context || report.subtitle}</p>
         </div>
         {/* Cùng vị trí và kiểu với "Tính lại" / "Vẽ lại" ở các form khác */}
-        <Button variant="outline" disabled={loading} onClick={onRestart}>
-          <RotateCcw size={15} /> Khám phá lại
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" disabled={loading} onClick={onRestart}>
+            <RotateCcw size={15} /> Khám phá lại
+          </Button>
+        </div>
       </div>
     </header>
     {body}
@@ -1138,9 +1144,8 @@ const zodiacDetails: Record<string, { dates: string; traits: string }> = {
  * Bỏ chúng đi thì khối cao theo nội dung và cuộn chung với trang. Hậu tố `!`
  * là bắt buộc — phần lớn globals.css nằm ngoài layer nên thắng Tailwind.
  */
-function DailyResultView({ report, saveable, onShare, onRestart }: {
+function DailyResultView({ report, onShare, onRestart }: {
   report: Report;
-  saveable: SaveableResult;
   onShare: () => void;
   onRestart: () => void;
 }) {
@@ -1201,7 +1206,7 @@ function DailyResultView({ report, saveable, onShare, onRestart }: {
         <Button variant="outline" onClick={onShare}>
           <Share2 size={16} /> Chia sẻ
         </Button>
-        <SaveResultInline result={saveable} />
+        <ResultSaveButton />
       </div>
     </div>
   );

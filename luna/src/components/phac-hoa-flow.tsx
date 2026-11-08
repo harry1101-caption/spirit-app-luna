@@ -20,7 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
 import { useRestoreSaved } from "@/lib/saved-results";
 import { FormIntro, IconField, IconSelect, ValidatedForm } from "@/components/form-field";
 import type { PortraitStyle, SoulmateProfile } from "@/lib/phac-hoa";
@@ -380,9 +380,12 @@ export function PhacHoaFlow() {
           <p className="eyebrow">PHÁC HOẠ NGƯỜI ẤY</p>
           <h2 className="mt-1 text-[30px] leading-tight text-[#1d1133]">{who} dành cho bạn</h2>
         </div>
-        <Button variant="outline" onClick={() => { track("phac_hoa_restart"); setResult(null); }}>
-          <RotateCcw size={15} /> Vẽ lại
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" onClick={() => { track("phac_hoa_restart"); setResult(null); }}>
+            <RotateCcw size={15} /> Vẽ lại
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">

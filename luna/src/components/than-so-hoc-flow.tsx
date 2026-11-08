@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, CalendarDays, Check, Hash, LoaderCircle, LockKeyhole, RotateCcw, Sparkles, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
 import { useRestoreSaved } from "@/lib/saved-results";
 import { IconField, FormIntro, ValidatedForm } from "@/components/form-field";
 import { numberMeanings, type ThanSoHocChart } from "@/lib/than-so-hoc";
@@ -223,9 +223,12 @@ export function ThanSoHocFlow() {
             Tên quy ra chữ cái: {chart.normalizedName}
           </p>
         </div>
-        <Button variant="outline" onClick={() => { track("than_so_hoc_restart"); setChart(null); setReading(null); setLastInput(null); }}>
-          <RotateCcw size={15} /> Tính lại
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" onClick={() => { track("than_so_hoc_restart"); setChart(null); setReading(null); setLastInput(null); }}>
+            <RotateCcw size={15} /> Tính lại
+          </Button>
+        </div>
       </div>
 
       {[["Từ ngày sinh", fromDate], ["Từ họ tên", fromName]].map(([label, group]) => (

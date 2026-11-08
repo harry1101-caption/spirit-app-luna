@@ -8,7 +8,7 @@ import {
 import { FieldMessage, FormIntro, TEXTAREA } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
 import { useRestoreSaved } from "@/lib/saved-results";
 import {
   checkQuestion, linePositions, notes, ritualSteps, sampleQuestions, tossMeaning, trigrams,
@@ -423,9 +423,12 @@ export function KinhDichFlow() {
               : "Không có hào động, quẻ đang tĩnh"}
           </p>
         </div>
-        <Button variant="outline" onClick={restart} type="button">
-          <RotateCcw size={15} /> Hỏi việc khác
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" onClick={restart} type="button">
+            <RotateCcw size={15} /> Hỏi việc khác
+          </Button>
+        </div>
       </div>
 
       <div className={`mt-6 grid gap-4 ${changed ? "lg:grid-cols-2" : ""}`}>

@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { toolGroups, toolRoutes as routes } from "@/components/tool-groups";
-import { SaveResultCard } from "@/components/save-result-card";
+import { SaveResultInline } from "@/components/save-result-card";
 import type { SaveableResult } from "@/lib/saved-results";
 
 /**
@@ -27,6 +27,8 @@ const SlotContext = createContext<((action: string | null) => void) | null>(null
 /** Kết quả có thể lưu vào tài khoản — flow đăng ký qua `useSaveableResult` */
 type Saveable = { result: SaveableResult; guestOnly?: boolean };
 const SaveContext = createContext<((saveable: Saveable | null) => void) | null>(null);
+/** Kết quả hiện tại mà flow đã đăng ký — để nút lưu nằm ngay trong thẻ kết quả đọc được. */
+const CurrentSaveContext = createContext<Saveable | null>(null);
 
 /**
  * Bọc quanh `.experience-surface`: gợi ý hiện ngay dưới thẻ, ngoài thẻ.
@@ -47,8 +49,9 @@ export function RelatedToolsSlot({
   return (
     <SlotContext.Provider value={setAction}>
       <SaveContext.Provider value={setSaveable}>
-        {children}
-        {saveable ? <SaveResultCard result={saveable.result} guestOnly={saveable.guestOnly} className={`${panel} mt-5!`} /> : null}
+        <CurrentSaveContext.Provider value={saveable}>{children}</CurrentSaveContext.Provider>
+        {/* Banner "đăng nhập nhận 3 tháng miễn phí" dưới kết quả đã bỏ: khách lưu qua nút
+            "Lưu vào tài khoản" trong header kết quả (mở modal đăng nhập). */}
         {action ? (
           <div className={`${panel} mt-5!`}>
             <RelatedTools current={action} />
@@ -139,4 +142,14 @@ export function RelatedTools({
       </div>
     </section>
   );
+}
+
+/**
+ * Nút "Lưu vào tài khoản" đặt trong header thẻ kết quả, cạnh nút làm lại. Lấy kết quả
+ * từ `useSaveableResult` của flow nên không phải truyền prop. Khách và lúc chưa có kết
+ * quả thì không hiện gì (khách đã có banner đăng nhập dưới kết quả).
+ */
+export function ResultSaveButton() {
+  const current = useContext(CurrentSaveContext);
+  return current ? <SaveResultInline result={current.result} /> : null;
 }

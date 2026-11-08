@@ -1,168 +1,164 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Bookmark, BookmarkCheck, Crown, LoaderCircle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Bookmark, BookmarkCheck, LoaderCircle } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { signInWithGoogle } from "@/lib/supabase/client";
 import Link from "next/link";
 import {
   clearJustSaved,
   isJustSaved,
-  FREE_MONTHS,
   saveResult,
   savedIdFromUrl,
+  updateSaved,
   setPendingSave,
   useAuthUser,
   type SaveableResult,
 } from "@/lib/saved-results";
 import { track } from "@/lib/analytics";
-import { cn } from "@/lib/utils";
+
+type AutoState = { id: string | null; status: "idle" | "saving" | "saved" | "error" };
 
 /**
- * Thẻ dưới mỗi kết quả:
- * - Khách: campaign "Kích hoạt tài khoản miễn phí" — đăng nhập Google, kết quả tự lưu.
- * - Đã đăng nhập: chỉ còn nút "Lưu vào tài khoản". Kết quả nào có nút "Chia sẻ" thì đặt
- *   `SaveResultInline` cạnh nút đó và báo slot `guestOnly` để thẻ này không lặp nút.
- */
-export function SaveResultCard({ result, className, guestOnly }: { result: SaveableResult; className?: string; guestOnly?: boolean }) {
-  const { user, ready } = useAuthUser();
-  // Đang mở một kết quả đã lưu (?saved=) → đã nằm trong tài khoản rồi
-  const [state, setState] = useState<"idle" | "saving" | "saved" | "error">(() => (savedIdFromUrl() ? "saved" : "idle"));
-  const [busy, setBusy] = useState(false);
-  useEffect(() => {
-    if (isJustSaved(savedIdFromUrl())) clearJustSaved();
-  }, []);
-
-  async function save() {
-    setState("saving");
-    try {
-      await saveResult(result);
-      setState("saved");
-      track("result_save", { feature: result.feature });
-    } catch {
-      setState("error");
-    }
-  }
-
-  async function loginAndSave() {
-    setBusy(true);
-    setPendingSave(result);
-    track("campaign_login_click", { feature: result.feature });
-    const { error } = await signInWithGoogle();
-    if (error) setBusy(false);
-  }
-
-  if (!ready || (user && guestOnly)) return null;
-
-  if (!user) {
-    // Banner campaign theo thiết kế "Đăng nhập nhận 3 tháng miễn phí"
-    return (
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-[28px] border border-[#e6d6f3] bg-[linear-gradient(100deg,#fcf5f9_0%,#f8eefb_55%,#fdeede_100%)] px-5 py-6 shadow-[0_18px_44px_#6b4b821a] sm:px-8 sm:py-7",
-          className,
-        )}
-      >
-        {/* sóng trang trí mép dưới */}
-        <svg aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-10 w-full" viewBox="0 0 1000 40" preserveAspectRatio="none">
-          <path d="M0 28 C 220 6, 420 40, 640 22 S 900 8, 1000 24 L1000 40 L0 40 Z" fill="#efe1fb" opacity=".8" />
-          <path d="M520 34 C 700 18, 860 30, 1000 16 L1000 40 L520 40 Z" fill="#f6d98c" opacity=".35" />
-        </svg>
-
-        <div className="relative grid items-center gap-x-6 gap-y-4 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)]">
-          <div className="min-w-0">
-            <p className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(90deg,#4b2a6e,#6e4a92)] py-1.5 pr-4 pl-3 text-[10.5px] font-semibold tracking-[0.04em] whitespace-nowrap text-[#fbe7b4] shadow-[0_4px_14px_#4b2a6e33] sm:text-[12.5px] sm:tracking-[0.06em]">
-              <Crown size={15} className="text-[#f6d98c]" fill="#f6d98c" /> ƯU ĐÃI ĐẶC BIỆT – DÀNH CHO TÀI KHOẢN MỚI
-            </p>
-            <h3 className="mt-3! font-[family-name:var(--font-sans-app)]! text-[23px]! leading-[1.28]! font-bold! tracking-[-0.01em] text-[#3a1f5c]! sm:text-[31px]!">
-              Đăng nhập hôm nay, dùng miễn phí không giới hạn{" "}
-              <span className="relative inline-block whitespace-nowrap px-2">
-                <span aria-hidden="true" className="absolute inset-x-0 top-[38%] bottom-[2%] -skew-x-6 rounded-[6px] bg-[linear-gradient(90deg,#f6d98c,#fbe7b4_70%,transparent)]" />
-                <span className="relative font-[family-name:var(--font-sans-app)] text-[1.3em] font-extrabold italic text-[#3a1f5c]">{FREE_MONTHS} tháng</span>
-              </span>
-            </h3>
-            <p className="mt-4! border-l-[3px] border-[#c9a9e0] pl-3 text-[13px] leading-[1.7] text-[#4a4257]">
-              Kết quả được lưu vào tài khoản. Bạn dùng không giới hạn trong {FREE_MONTHS} tháng kể từ ngày tạo tài khoản; sau đó
-              tiếp tục dùng miễn phí với số lượt giới hạn mỗi ngày.
-            </p>
-          </div>
-
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/campaign-gift.jpg"
-            alt="Hộp quà: miễn phí không giới hạn 3 tháng"
-            className="mx-auto w-[min(100%,230px)] mix-blend-multiply [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_78%)] sm:w-full sm:max-w-[320px]"
-          />
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void loginAndSave()}
-            className="mx-auto flex w-full max-w-[520px] items-center gap-3 rounded-full bg-[linear-gradient(90deg,#6e4a92,#4b2a6e)] py-2 pr-4 pl-2 text-left text-white sm:pr-6 shadow-[0_10px_24px_#4b2a6e40,inset_0_1px_0_#ffffff33] ring-2 ring-[#f6d98c]/60 transition-transform hover:-translate-y-0.5 disabled:opacity-70 sm:col-span-2"
-          >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white">
-              {busy ? <LoaderCircle className="spin text-[#4b2a6e]" size={20} /> : <GoogleMark size={22} />}
-            </span>
-            <span className="h-7 w-px bg-white/35" aria-hidden="true" />
-            <span className="flex-1 text-center font-[family-name:var(--font-sans-app)] text-[14px] font-semibold whitespace-nowrap min-[400px]:text-[15px] sm:text-[17px]">
-              Đăng nhập Google & lưu kết quả
-            </span>
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={cn("flex", className)}>
-      <SaveResultButton result={result} state={state} onSave={save} />
-    </div>
-  );
-}
-
-/**
- * Nút lưu cho người đã đăng nhập, đặt cạnh nút "Chia sẻ" của kết quả.
- * Khách không thấy gì — họ đã có banner campaign ở dưới kết quả.
+ * Nút lưu trong header thẻ kết quả.
+ * - Đã đăng nhập: TỰ LƯU, không cần bấm. Lưu ngay khi có kết quả, rồi cập nhật lại bản ghi khi
+ *   kết quả còn thay đổi (luận giải AI về sau). Mỗi lần thẻ kết quả mount là một kết quả mới;
+ *   làm lại → thẻ unmount → lần sau là bản ghi mới. Chỉ hiện trạng thái "Đã lưu".
+ * - Khách: nút "Lưu vào tài khoản" mở modal đăng nhập Google; kết quả được giữ tạm và tự lưu
+ *   sau khi đăng nhập (xem auth-menu.tsx → takePendingSave).
  */
 export function SaveResultInline({ result }: { result: SaveableResult }) {
   const { user, ready } = useAuthUser();
-  const [state, setState] = useState<"idle" | "saving" | "saved" | "error">(() => (savedIdFromUrl() ? "saved" : "idle"));
+  const [auto, setAuto] = useState<AutoState>(() => {
+    // Đang mở lại một kết quả đã lưu → đã nằm trong tài khoản, không lưu thêm bản nữa
+    const fromUrl = savedIdFromUrl();
+    if (fromUrl) return { id: fromUrl, status: "saved" };
+    return { id: null, status: "idle" };
+  });
+  const [loginOpen, setLoginOpen] = useState(false);
+  const idRef = useRef<string | null>(auto.id);
+  const restored = useRef(auto.id !== null);
+  const inflight = useRef<Promise<unknown> | null>(null);
+
   useEffect(() => {
     if (isJustSaved(savedIdFromUrl())) clearJustSaved();
   }, []);
-  if (!ready || !user) return null;
-  async function save() {
-    setState("saving");
-    try {
-      await saveResult(result);
-      setState("saved");
-      track("result_save", { feature: result.feature });
-    } catch {
-      setState("error");
-    }
-  }
-  return <SaveResultButton result={result} state={state} onSave={save} />;
-}
 
-/** Lưu = nút chính (nền tím), khác hẳn nút "Chia sẻ" viền bên cạnh; đã lưu = nút phụ dẫn tới danh sách. */
-function SaveResultButton({
-  state,
-  onSave,
-}: {
-  result: SaveableResult;
-  state: "idle" | "saving" | "saved" | "error";
-  onSave: () => Promise<void>;
-}) {
-  if (state === "saved")
+  useEffect(() => {
+    if (!ready || !user) return;
+    // Đang xem lại một kết quả đã lưu → không ghi đè
+    if (restored.current) return;
+    // Đợi kết quả "lắng" một chút: nhiều flow cập nhật dồn dập (biểu đồ rồi mới tới AI)
+    const timer = setTimeout(() => {
+      const run = async () => {
+        await inflight.current?.catch(() => {});
+        setAuto((a) => ({ ...a, status: a.status === "saved" ? "saved" : "saving" }));
+        try {
+          if (idRef.current) {
+            await updateSaved(idRef.current, result);
+          } else {
+            idRef.current = await saveResult(result);
+            track("result_save", { feature: result.feature, via: "auto" });
+          }
+          setAuto({ id: idRef.current, status: "saved" });
+        } catch {
+          setAuto((a) => ({ ...a, status: "error" }));
+        }
+      };
+      inflight.current = run();
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [ready, user, result]);
+
+  if (!ready) return null;
+
+  if (!user) {
+    return (
+      <>
+        <Button
+          onClick={() => {
+            track("save_login_open", { feature: result.feature });
+            setLoginOpen(true);
+          }}
+        >
+          <Bookmark size={16} /> Lưu vào tài khoản
+        </Button>
+        <SaveLoginDialog open={loginOpen} onOpenChange={setLoginOpen} result={result} />
+      </>
+    );
+  }
+
+  if (auto.status === "saved")
     return (
       <Link href="/kham-pha-cua-toi" className={buttonVariants({ variant: "secondary" })}>
-        <BookmarkCheck size={16} /> Xem trong Khám phá của tôi
+        <BookmarkCheck size={16} /> Đã lưu · Xem
       </Link>
     );
+  if (auto.status === "error")
+    return (
+      <Button
+        variant="outline"
+        onClick={() => {
+          setAuto((a) => ({ ...a, status: "saving" }));
+          void (async () => {
+            try {
+              if (idRef.current) await updateSaved(idRef.current, result);
+              else idRef.current = await saveResult(result);
+              setAuto({ id: idRef.current, status: "saved" });
+            } catch {
+              setAuto((a) => ({ ...a, status: "error" }));
+            }
+          })();
+        }}
+      >
+        <Bookmark size={16} /> Chưa lưu được · Thử lại
+      </Button>
+    );
   return (
-    <Button disabled={state === "saving"} onClick={() => void onSave()}>
-      {state === "saving" ? <LoaderCircle className="spin" size={16} /> : <Bookmark size={16} />}
-      {state === "error" ? "Thử lưu lại" : "Lưu vào tài khoản"}
-    </Button>
+    <span className="inline-flex h-10 items-center gap-2 px-2 text-[13px] text-[#8a7b99]" aria-live="polite">
+      <LoaderCircle className="spin" size={14} /> Đang lưu…
+    </span>
+  );
+}
+
+/** Modal đăng nhập cho khách bấm "Lưu vào tài khoản". */
+function SaveLoginDialog({ open, onOpenChange, result }: { open: boolean; onOpenChange: (o: boolean) => void; result: SaveableResult }) {
+  const [busy, setBusy] = useState(false);
+  async function login() {
+    setBusy(true);
+    setPendingSave(result);
+    track("campaign_login_click", { feature: result.feature, from: "save_modal" });
+    const { error } = await signInWithGoogle();
+    if (error) setBusy(false);
+  }
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[min(420px,calc(100%-32px))]! gap-0 rounded-[24px] border-0 bg-[#fffaf9] p-0 ring-1 ring-[#e8ddef]">
+        <div className="px-6 pt-8 pb-6 text-center sm:px-8">
+          <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-[#f1e8f8] text-[#6e4a92]">
+            <Bookmark size={22} />
+          </span>
+          <DialogTitle className="mt-4 font-[family-name:var(--font-serif-app)] text-[24px] leading-tight font-normal text-[#3a1f5c]">
+            Lưu kết quả vào tài khoản
+          </DialogTitle>
+          <p className="mt-3 text-[14px] leading-[1.7] text-[#6a5c7a]">
+            Đăng nhập bằng Google để giữ lại kết quả này và xem lại bất cứ lúc nào. Sau khi đăng nhập,
+            mọi kết quả mới đều được lưu tự động.
+          </p>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void login()}
+            className="mt-6 flex h-12 w-full items-center justify-center gap-3 rounded-full border border-[#e0d5f0] bg-white text-[15px] font-medium text-[#3a1f5c] shadow-[0_6px_16px_#5d3d7114] transition-colors hover:bg-[#faf6fd] disabled:opacity-70"
+          >
+            {busy ? <LoaderCircle className="spin" size={18} /> : <GoogleMark size={20} />}
+            {busy ? "Đang mở Google…" : "Tiếp tục với Google"}
+          </button>
+          <p className="mt-4 text-[12px] leading-[1.6] text-[#8a7b99]">Kết quả bạn vừa xem được giữ lại và lưu ngay khi đăng nhập xong.</p>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

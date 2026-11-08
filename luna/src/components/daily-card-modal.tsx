@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cards } from "@/lib/engine";
 import { dailyCardMessage } from "@/lib/daily-card";
-import { SaveResultCard } from "@/components/save-result-card";
+import { SaveResultInline } from "@/components/save-result-card";
 import type { SaveableResult } from "@/lib/saved-results";
 
 export function DailyCardModal({
@@ -121,7 +121,7 @@ export function DailyCardModal({
                   <ArrowRight size={16} />
                 </Button>
               </div>
-              {saveable ? <SaveResultCard result={saveable} className="mt-2 w-full text-left" /> : null}
+              {saveable ? <div className="mt-2 flex justify-center"><SaveResultInline result={saveable} /></div> : null}
             </div>
           ) : (
             <p className="text-[13px] text-[#6a5c7a]">

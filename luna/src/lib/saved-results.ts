@@ -99,6 +99,15 @@ export async function saveResult(result: SaveableResult) {
   return data.id as string;
 }
 
+/** Cập nhật kết quả đã tự lưu (vd. khi phần luận giải AI về sau). */
+export async function updateSaved(id: string, result: SaveableResult) {
+  const { error } = await supabaseBrowser()
+    .from("saved_results")
+    .update({ title: result.title.slice(0, 200), summary: result.summary?.slice(0, 600) ?? null, payload: result.payload })
+    .eq("id", id);
+  if (error) throw error;
+}
+
 export async function listSaved() {
   const { data, error } = await supabaseBrowser()
     .from("saved_results")

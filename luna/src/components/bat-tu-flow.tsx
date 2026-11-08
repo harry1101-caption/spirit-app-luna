@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, CalendarClock, CalendarDays, Check, Clock3, LoaderCircle, LockKeyhole, RotateCcw, Scale, UserRound, VenusAndMars } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
 import { useRestoreSaved } from "@/lib/saved-results";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IconField, IconSelect, FormIntro, ValidatedForm } from "@/components/form-field";
@@ -245,9 +245,12 @@ export function BatTuFlow() {
             {chart.input.name ? `Lá số của ${chart.input.name}` : "Tứ trụ của bạn"}
           </h2>
         </div>
-        <Button variant="outline" onClick={() => { track("bat_tu_restart"); setChart(null); setReading(null); setLastInput(null); }}>
-          <RotateCcw size={15} /> Lập lại
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" onClick={() => { track("bat_tu_restart"); setChart(null); setReading(null); setLastInput(null); }}>
+            <RotateCcw size={15} /> Lập lại
+          </Button>
+        </div>
       </div>
 
       {/* Bốn trụ */}

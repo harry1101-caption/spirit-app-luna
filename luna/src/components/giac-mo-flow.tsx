@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, Check, LoaderCircle, LockKeyhole, Moon, RotateCcw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
 import { useRestoreSaved } from "@/lib/saved-results";
 import { IconField, IconSelect, FormIntro, ValidatedForm, FieldTextarea } from "@/components/form-field";
 import { CalendarClock, Smile } from "lucide-react";
@@ -237,9 +237,12 @@ export function GiacMoFlow() {
               : "Một giấc mơ riêng của bạn"}
           </h2>
         </div>
-        <Button variant="outline" onClick={() => { track("giac_mo_restart"); setChart(null); setReading(null); setLastInput(null); }}>
-          <RotateCcw size={15} /> Kể giấc mơ khác
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" onClick={() => { track("giac_mo_restart"); setChart(null); setReading(null); setLastInput(null); }}>
+            <RotateCcw size={15} /> Kể giấc mơ khác
+          </Button>
+        </div>
       </div>
 
       <blockquote className="mt-5 rounded-2xl border border-[#e8ddef] bg-white/60 p-4 text-[14px] leading-[1.8] text-[#5b5276] italic">

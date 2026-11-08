@@ -1,6 +1,7 @@
 import LunaApp from "@/components/luna-app";
 import { JsonLd } from "@/components/json-ld";
 import { pageMetadata, toolJsonLd } from "@/lib/seo";
+import { DreamArticleIndex } from "@/components/dream-article";
 
 export const metadata = pageMetadata("giac-mo");
 
@@ -11,7 +12,7 @@ export default function GiacMoPage() {
           React 19 tự đưa thẻ này lên <head>. */}
       <link rel="preload" as="image" href="/images/tarot-sanctuary.webp" fetchPriority="high" />
       <JsonLd data={toolJsonLd("giac-mo")} />
-      <LunaApp initialTab="giac-mo" />
+      <LunaApp initialTab="giac-mo" belowTool={<DreamArticleIndex />} />
     </>
   );
 }

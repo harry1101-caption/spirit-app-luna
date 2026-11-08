@@ -6,7 +6,7 @@ import {
   ArrowRight, Camera, Check, Hand, LoaderCircle, LockKeyhole, RotateCcw, TriangleAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools, useSaveableResult } from "@/components/related-tools";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
 import { useRestoreSaved } from "@/lib/saved-results";
 import { IconSelect, FormIntro, ValidatedForm, FieldError, useFieldError } from "@/components/form-field";
 import { PalmDiagram, PalmLegend } from "@/components/palm-diagram";
@@ -300,9 +300,12 @@ export function ChiTayFlow() {
           <h2 className="mt-1 text-[30px] leading-tight text-[#1d1133]">Hai bàn tay của bạn</h2>
           <p className="mt-1 text-xs text-[#6a5c7a]">Thuận {result.dominant.toLowerCase()}</p>
         </div>
-        <Button variant="outline" onClick={reset}>
-          <RotateCcw size={15} /> Chụp ảnh khác
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" onClick={reset}>
+            <RotateCcw size={15} /> Chụp ảnh khác
+          </Button>
+        </div>
       </div>
 
       {result.summary ? (

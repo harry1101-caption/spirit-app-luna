@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   TarotFlow,
   DailyFlow,
@@ -76,7 +76,7 @@ import { RelatedToolsSlot } from "@/components/related-tools";
 import { LogoMark } from "@/components/logo-mark";
 
 import { buildDailyCardReport, drawDailyCard } from "@/lib/daily-card";
-type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich" | "phac-hoa" | "hop-nhau" | "duyen" | "wish-tree";
+type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich" | "phac-hoa" | "hop-nhau" | "duyen" | "wish-tree" | "article";
 type DailyCardState = { id: number; day: string; revealed: boolean };
 /** Trắc nghiệm tính cách đang tạm ẩn: không liệt kê, không gợi ý. */
 const visibleMethods = methods.filter((m) => m.id !== "personality");
@@ -128,7 +128,13 @@ export default function LunaApp({
   initialTopic,
   hopNhau,
   dating,
+  article,
+  belowTool,
 }: {
+  /** Trang nội dung (bài tra cứu SEO): render trong khung app để có header/footer chung. */
+  article?: ReactNode;
+  /** Nội dung server render thêm dưới thẻ công cụ (vd. danh sách bài tra cứu ở /giac-mo). */
+  belowTool?: ReactNode;
   /** Màn hình Se duyên: tạo hồ sơ / hồ sơ công khai / quản lý. */
   dating?: DatingView;
   /** Token người mời / người được mời đọc từ query string của /hop-nhau. */
@@ -790,6 +796,12 @@ export default function LunaApp({
             <RelatedToolsSlot><div className="experience-surface"><DatingFlow {...(dating ?? { view: "home" })} /></div></RelatedToolsSlot>
           </section>
         ) : null}
+        {tab === "article" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-article">
+            <div className="tarot-page-background" aria-hidden="true" />
+            {article}
+          </section>
+        ) : null}
         {tab === "wish-tree" && !flow && !report ? (
           <section className="experience-page experience-page-tarot experience-page-wishtree">
             <div className="tarot-page-background" aria-hidden="true" />
@@ -816,6 +828,7 @@ export default function LunaApp({
             <div className="tarot-page-background" aria-hidden="true" />
             <div className="page-heading tarot-title-only"><h1>Lắng nghe giấc mơ</h1></div>
             <RelatedToolsSlot><div className="experience-surface"><GiacMoFlow /></div></RelatedToolsSlot>
+            {belowTool}
           </section>
         ) : null}
         {tab === "than-so-hoc" && !flow && !report ? (
