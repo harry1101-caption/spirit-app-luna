@@ -951,7 +951,12 @@ export default function LunaApp({
             className={`experience-page ${report ? "is-report" : ""} ${flow === "daily" && !report ? "experience-page-tarot" : ""} experience-page-${report?.type || flow}`}
           >
             {flow === "daily" || report?.type === "daily" ? (
-              <div className="tarot-page-background" aria-hidden="true" />
+              // Trang kết quả không mang .experience-page-tarot nên section bị giới hạn theo
+              // khung nội dung → ảnh nền bị cắt hai bên. Kéo ảnh ra full màn như Tử Vi.
+              <div
+                className={`tarot-page-background ${report ? "left-1/2! right-auto! w-screen! -translate-x-1/2!" : ""}`}
+                aria-hidden="true"
+              />
             ) : null}
             {flow === "tarot" || report?.type === "tarot" ? (
               <>

@@ -54,10 +54,13 @@ export function IconSelect({
   defaultValue,
   icon: Icon,
   onValueChange,
+  optionIcons,
 }: {
   name: string;
   placeholder: string;
   options: string[];
+  /** Icon/logo đặt trước nhãn của từng option trong danh sách, theo nhãn. */
+  optionIcons?: Record<string, ReactNode>;
   required?: boolean;
   defaultValue?: string;
   icon: IconType;
@@ -83,6 +86,7 @@ export function IconSelect({
       <SelectContent className="tuvi-select-popup max-h-[min(288px,var(--available-height))]!" alignItemWithTrigger={false}>
         {options.map((option) => (
           <SelectItem key={option} value={option} className="tuvi-select-item">
+            {optionIcons?.[option]}
             {option}
           </SelectItem>
         ))}
@@ -262,7 +266,7 @@ const INVALID = "border-[#c4566a]! ring-0!";
  * `!` vì .tarot-question-wrap textarea / .tuvi-form textarea trong globals.css
  * nằm ngoài cascade layer và đặt cứng chiều cao.
  */
-export const TEXTAREA = "h-auto! min-h-[120px]! rounded-[8px]! border-[#e5d9eb]! bg-[#fdfafc]! px-4! py-3! text-[13px]! leading-[1.7]! text-[#795e87]!";
+export const TEXTAREA = "h-auto! min-h-[120px]! rounded-[8px]! border-[#e5d9eb]! bg-[#fdfafc]! px-4! py-3! text-[13px]! leading-[1.7]! text-[#281b44]! placeholder:text-[#b199c0]!";
 
 type FieldErrors = Record<string, string>;
 const FormErrors = createContext<{ errors: FieldErrors; clear: (name: string) => void }>({

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { toolGroups, toolRoutes as routes } from "@/components/tool-groups";
 import { SaveResultInline } from "@/components/save-result-card";
+import { ConsultationSection } from "@/components/consultation-section";
 import type { SaveableResult } from "@/lib/saved-results";
 
 /**
@@ -53,9 +54,17 @@ export function RelatedToolsSlot({
         {/* Banner "đăng nhập nhận 3 tháng miễn phí" dưới kết quả đã bỏ: khách lưu qua nút
             "Lưu vào tài khoản" trong header kết quả (mở modal đăng nhập). */}
         {action ? (
-          <div className={`${panel} mt-5!`}>
-            <RelatedTools current={action} />
-          </div>
+          <>
+            {/* Se duyên là ghép đôi giữa người dùng, không phải một lần xem → không mời tư vấn. */}
+            {action !== "duyen" ? (
+              <div className={`${panel} mt-5!`}>
+                <ConsultationSection key={action} feature={action} resultTitle={saveable?.result.title} />
+              </div>
+            ) : null}
+            <div className={`${panel} mt-5!`}>
+              <RelatedTools current={action} />
+            </div>
+          </>
         ) : null}
       </SaveContext.Provider>
     </SlotContext.Provider>

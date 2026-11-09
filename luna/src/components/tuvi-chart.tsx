@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { ArrowLeft, Download, LoaderCircle, Radar, BookOpenText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RelatedTools } from "@/components/related-tools";
+import { ConsultationSection } from "@/components/consultation-section";
 import { tuViBranches, type TuViChart, type TuViPalace } from "@/lib/tuvi";
 import { orderedTuViPalaces, tuViPalaceRelations, tuViReadingEvidence } from "@/lib/tuvi-reading";
 import { track } from "@/lib/analytics";
@@ -262,6 +263,9 @@ export function TuViChartView({ chart, onEdit }: { chart: TuViChart; onEdit: () 
       </section>
       <TwelvePalaceChart chart={chart} />
       <ChartInterpretation chart={chart} />
+      <div className="tuvi-interpretation">
+        <ConsultationSection feature="tuvi" />
+      </div>
       <div className="tuvi-interpretation">
         <RelatedTools current="tuvi" />
       </div>

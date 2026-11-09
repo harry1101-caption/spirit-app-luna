@@ -55,3 +55,18 @@ export function ThreadsIcon({ size = 18, className }: IconProps) {
     </svg>
   );
 }
+
+/**
+ * Logo Zalo rút gọn: khung bo tròn + chữ "Zalo". Không nhận `fill="currentColor"`
+ * như các logo trên vì chữ phải nằm khoét trắng trên nền màu thương hiệu.
+ */
+export function ZaloIcon({ size = 18, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden className={className}>
+      <rect x="1" y="3" width="22" height="18" rx="6" fill="#0068ff" />
+      <text x="12" y="15.2" textAnchor="middle" fontFamily="Arial, Helvetica, sans-serif" fontSize="7.6" fontWeight="700" fill="#fff">
+        Zalo
+      </text>
+    </svg>
+  );
+}
