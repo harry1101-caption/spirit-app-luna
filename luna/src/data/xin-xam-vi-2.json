@@ -1,0 +1,827 @@
+[
+  {
+    "so": 26,
+    "hanViet": [
+      "Thượng hạ truyền lai sự chuyển hư",
+      "Thiên biên tiếp đắc nhất phong thư",
+      "Thư trung hứa ngã công danh toại",
+      "Trực đáo chung thời diệc thị hư"
+    ],
+    "nghia": [
+      "Tin tức truyền qua nhiều người, chuyện dần thành không rõ thật hư.",
+      "Từ nơi xa bỗng nhận được một lá thư.",
+      "Trong thư hứa hẹn công danh sẽ thành.",
+      "Nhưng đến cuối cùng, lời hứa ấy vẫn chưa thành sự thật."
+    ],
+    "dienTich": "Chung Quỳ đắc đạo",
+    "dienTichText": "Chung Quỳ là một thư sinh học giỏi, đi thi đỗ đạt nhưng không được trọng dụng vì dung mạo xấu xí. Con đường công danh ở trần gian khép lại với ông. Về sau, dân gian tôn ông thành vị thần trừ tà, được nhớ đến theo một cách khác hẳn điều ông từng mong.",
+    "summary": "Quẻ nói về những lời hứa nghe rất hay nhưng chưa có gì chắc trong tay. Đừng dựa cả vào tin đồn hay lời hứa suông. Hãy tin vào những gì bạn tự kiểm chứng được và tự làm được.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Có thể bạn đang nghe về một cơ hội, một lời hứa tăng lương hay một dự án lớn sắp tới. Quẻ khuyên cứ vui, nhưng đừng xếp kế hoạch dựa hết vào đó. Nếu ai đó hứa với bạn điều gì quan trọng, hãy nhẹ nhàng hỏi lại mốc thời gian và người quyết định. Một tin nhắn xác nhận rõ ràng đáng giá hơn nhiều lời truyền miệng."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Lời nói ngọt ngào thì dễ, giữ lời qua tháng năm mới khó. Quẻ nhắc bạn nhìn vào việc người kia làm, nhiều hơn điều người kia nói. Điều này không có nghĩa là nghi ngờ, chỉ là đặt niềm tin đúng chỗ. Tuần này, thử để ý một việc nhỏ mà người ấy làm cho bạn mà không cần ai nhắc."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc bạn đang chờ có vẻ còn nhiều tầng trung gian, tin đi qua nhiều người dễ bị lệch. Đây là lúc nên tìm đúng nguồn tin gốc thay vì nghe kể lại. Nếu được, hãy hỏi thẳng người phụ trách một câu ngắn gọn. Trong lúc chờ, giữ cho mình một phương án dự phòng để lòng nhẹ hơn."
+      }
+    ],
+    "question": "Điều bạn đang trông đợi dựa trên lời hứa của ai, và bạn đã tự kiểm chứng được bao nhiêu phần?"
+  },
+  {
+    "so": 27,
+    "hanViet": [
+      "Nhất mưu nhất dụng nhất phiên thư",
+      "Lự hậu tư tiền bất cảm vi",
+      "Thời đáo quý nhân tương trợ lực",
+      "Như sơn bích lập khả an cư"
+    ],
+    "nghia": [
+      "Mỗi mưu tính, mỗi việc làm đều đã được viết thành kế hoạch.",
+      "Nhưng lo trước nghĩ sau nên chưa dám làm.",
+      "Khi thời đến sẽ có người tốt ra tay giúp sức.",
+      "Lúc ấy vững như vách núi, có thể yên ổn mà sống."
+    ],
+    "dienTich": "Lưu Cơ gián chủ",
+    "dienTichText": "Lưu Cơ, tức Lưu Bá Ôn, là quân sư giúp Chu Nguyên Chương dựng nên nhà Minh. Ông nổi tiếng mưu trí và thường thẳng thắn khuyên can chủ mình. Nhờ những lời góp ý đúng lúc, nhiều việc lớn được tính toán kỹ trước khi làm.",
+    "summary": "Bạn đã chuẩn bị khá kỹ, chỉ còn đang do dự. Quẻ nói cứ kiên nhẫn, khi thời điểm đến sẽ có người giúp đỡ. Lúc đó mọi việc sẽ vững vàng hơn.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Kế hoạch của bạn có lẽ đã khá đầy đủ, chỉ thiếu một cú hích để bắt đầu. Việc cân nhắc kỹ là điểm mạnh, miễn là nó không kéo dài mãi. Hãy chọn một phần nhỏ nhất trong kế hoạch và làm thử ngay. Đồng thời kể kế hoạch cho một người có kinh nghiệm, biết đâu họ chính là người giúp bạn."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Bạn có điều muốn nói hoặc muốn làm cho người kia nhưng cứ ngại mãi. Sự thận trọng ấy cho thấy bạn quý mối quan hệ này. Thử nói ra một phần nhỏ trước, bằng giọng nhẹ nhàng, rồi xem phản ứng. Một người bạn chung cũng có thể giúp bạn hiểu tình hình rõ hơn."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Chuyện bạn chờ đang đi đúng hướng, chỉ là chưa tới lúc. Quẻ nói khi thời điểm chín sẽ có người hỗ trợ. Trong lúc này, hãy giữ liên lạc với những người có thể giúp, đừng để mối quan hệ nguội đi. Một lời hỏi thăm đơn giản tuần này cũng đủ."
+      }
+    ],
+    "question": "Bạn đang chờ thêm điều gì nữa trước khi dám bắt đầu, và điều đó có thật sự cần thiết không?"
+  },
+  {
+    "so": 28,
+    "hanViet": [
+      "Đông biên nguyệt thượng chính thiền quyên",
+      "Khoảnh khắc vân già diệc ám tồn",
+      "Hoặc hữu viên thời hoàn hữu khuyết",
+      "Cánh ngôn phi giả diệc nhàn ngôn"
+    ],
+    "nghia": [
+      "Trăng lên phía đông, đang đẹp đẽ sáng trong.",
+      "Chốc lát mây che, ánh trăng tạm khuất nhưng vẫn còn đó.",
+      "Trăng có lúc tròn thì cũng có lúc khuyết.",
+      "Những lời chê bai kia chỉ là chuyện nói suông."
+    ],
+    "dienTich": "Bao Công tầm Lý hậu",
+    "dienTichText": "Lý phi, mẹ ruột của vua Tống Nhân Tông, bị hãm hại và phải sống lưu lạc nhiều năm trong cảnh nghèo khó. Bao Công trên đường đi tình cờ gặp bà, nghe chuyện và tìm cách làm sáng tỏ sự thật. Cuối cùng bà được nhận lại thân phận và đoàn tụ với con.",
+    "summary": "Mọi việc có lúc sáng lúc tối như trăng tròn rồi khuyết. Cái tốt bị che tạm thời chứ không mất đi. Đừng để lời nói ra nói vào làm bạn dao động.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Bạn đang làm tốt, dù có lúc công sức bị che khuất hoặc bị hiểu sai. Đó là chuyện mây che trăng, qua rồi sẽ sáng lại. Đừng vội tranh cãi với những lời bàn tán. Thay vào đó, ghi lại những việc mình đã làm được trong tháng này, để khi cần bạn có sẵn mà trình bày."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Tình cảm nào cũng có ngày đầy ngày vơi, đó là nhịp bình thường. Một giai đoạn nhạt hơn không có nghĩa là hết thương. Nếu người ngoài nói điều này điều kia, hãy hỏi trực tiếp người trong cuộc. Tối nay, thử rủ người ấy làm lại một việc nhỏ hai bạn từng thích."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Có vẻ có mây che tạm thời, nên việc chưa rõ ràng. Quẻ nghiêng về thuận, chỉ cần bạn chủ động hơn một chút. Hãy hỏi lại tiến độ một cách lịch sự, và chuẩn bị sẵn giấy tờ hay thông tin cần thiết. Khi mây tan, người sẵn sàng sẽ đi nhanh hơn."
+      }
+    ],
+    "question": "Lời nói nào của người khác đang làm bạn nghi ngờ điều mà chính bạn đã thấy rõ?"
+  },
+  {
+    "so": 29,
+    "hanViet": [
+      "Bảo kiếm quang mang xuất hạp thời",
+      "Hạp trung ưng bất bị trần khi",
+      "Quý nhân thân thủ đề huề khởi",
+      "Tận khả phòng thân cánh vật nghi"
+    ],
+    "nghia": [
+      "Thanh kiếm quý tỏa sáng khi được rút ra khỏi hộp.",
+      "Nằm trong hộp, kiếm không bị bụi bặm làm hoen gỉ.",
+      "Có người tốt tự tay nâng đỡ, dìu dắt.",
+      "Cứ yên tâm dùng để giữ mình, đừng nghi ngại nữa."
+    ],
+    "dienTich": "Triệu Tử Long cứu A Đẩu / Bách Lý Hề tự ngưu nhập tướng",
+    "dienTichText": "Ở trận Trường Bản, Triệu Vân một mình phá vòng vây, ôm ấu chúa A Đẩu trở về an toàn. Bách Lý Hề thì từng phải chăn trâu, sống trong cảnh nghèo. Về sau Tần Mục Công nhận ra tài ông và mời làm tướng quốc.",
+    "summary": "Tài năng của bạn đã được giữ gìn, nay đến lúc đem ra dùng. Sẽ có người nhìn thấy và nâng đỡ bạn. Hãy tin vào khả năng của mình và mạnh dạn hơn.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Những kỹ năng bạn tích lũy bấy lâu đang tới lúc được dùng. Có thể sắp có người giao việc quan trọng hơn hoặc giới thiệu bạn với cơ hội mới. Đừng khiêm tốn quá mức khi được hỏi. Tuần này, hãy cập nhật hồ sơ hoặc viết ra ba việc bạn làm giỏi nhất, để sẵn sàng khi có người cần."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Bạn có nhiều điều tốt đẹp để trao, chỉ là đôi khi giấu kỹ quá. Quẻ khuyên bạn bớt ngần ngại, cho người kia thấy con người thật của mình. Người phù hợp sẽ trân trọng điều đó. Hôm nay thử kể cho người ấy nghe một chuyện bạn chưa từng kể."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc này nghiêng về thuận, nhất là khi có người đứng ra giúp. Hãy để ý ai đang sẵn lòng hỗ trợ bạn và nhận sự giúp đỡ một cách tự nhiên. Vài chỗ nhỏ vẫn cần bạn kiểm lại cho kỹ. Xong phần mình, cứ yên tâm đi tiếp."
+      }
+    ],
+    "question": "Khả năng nào của bạn đang nằm yên trong hộp, chờ bạn cho phép nó tỏa sáng?"
+  },
+  {
+    "so": 30,
+    "hanViet": [
+      "Khuyến quân thiết mạc hướng tha cầu",
+      "Tự hạc phi lai ám tiễn đầu",
+      "Nhược khứ thái tân xà phục thảo",
+      "Khủng tao độc thủ dã kham ưu"
+    ],
+    "nghia": [
+      "Khuyên bạn lúc này đừng đi cầu cạnh người khác.",
+      "Như con hạc bay đến lại gặp mũi tên bắn lén.",
+      "Như đi hái củi mà có rắn nằm trong cỏ.",
+      "E rằng gặp chuyện không hay, nên cẩn thận."
+    ],
+    "dienTich": "Kỳ bàn đại hội",
+    "dienTichText": "Tích này gắn với một cuộc hội họp quanh bàn cờ, nơi mỗi bên đều giấu ý đồ riêng. Bề ngoài là cuộc vui, bên trong là tính toán. Ý chính là ở chỗ đông người và nhiều lợi ích, cần tỉnh táo trước khi tin.",
+    "summary": "Quẻ nói đang có trở ngại, nhất là khi trông cậy vào người khác. Đây không phải điềm xấu, chỉ là lời nhắc nên chậm lại. Hãy tự lo phần mình và xem kỹ trước khi nhận lời hay nhờ vả.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Lúc này bạn nên dựa vào sức mình nhiều hơn là chờ người khác giúp. Với những lời mời hợp tác nghe quá dễ dàng, hãy đọc kỹ điều khoản. Không cần nghi ngờ ai, chỉ cần rõ ràng mọi thứ trên giấy. Thử đặt cho mình nguyên tắc: việc gì quan trọng thì xin thêm một ngày để suy nghĩ."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Có thể bạn đang mong người kia thay đổi hoặc chủ động trước. Quẻ khuyên tạm thời đừng đặt hết kỳ vọng vào họ. Hãy chăm sóc bản thân trước, cảm xúc sẽ dịu hơn. Nếu có chuyện chưa vui, chọn lúc cả hai bình tĩnh để nói, đừng nói lúc đang giận."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc này đang có vướng mắc, chưa nên thúc ép. Chậm lại một nhịp sẽ giúp bạn thấy rõ chỗ nào chưa ổn. Đừng nhờ vả quá nhiều người cùng lúc, dễ rối thêm. Hãy liệt kê những gì bạn tự làm được, rồi làm từng việc một trong tuần này."
+      }
+    ],
+    "question": "Việc nào bạn đang chờ người khác làm giúp mà thật ra mình có thể tự bắt đầu?"
+  },
+  {
+    "so": 31,
+    "hanViet": [
+      "Thanh nhàn vô ưu tĩnh xứ tọa",
+      "Bão hậu hát trà thời tọa ngọa",
+      "Phóng hạ thân tâm bất dụng mang",
+      "Tất định bất chiêu oan dữ họa"
+    ],
+    "nghia": [
+      "Thong thả không lo nghĩ, ngồi ở nơi yên tĩnh.",
+      "Ăn no rồi uống trà, lúc ngồi lúc nằm nghỉ ngơi.",
+      "Buông lỏng thân và tâm, không cần vội vàng.",
+      "Như vậy thì không vướng vào oan ức hay phiền lụy."
+    ],
+    "dienTich": "Phật Ấn hội Đông Pha",
+    "dienTichText": "Tô Đông Pha là nhà thơ lớn đời Tống, có người bạn thân là thiền sư Phật Ấn. Hai người thường gặp nhau uống trà, đối đáp, trêu nhau bằng những câu nói đầy ý thiền. Qua những buổi ấy, Đông Pha học được cách sống nhẹ nhàng hơn.",
+    "summary": "Quẻ khuyên bạn sống chậm lại, giữ tâm thanh thản. Việc chưa ngã ngũ, nhưng vội vã lúc này không giúp gì. Bình tĩnh sẽ giúp bạn tránh được những rắc rối không đáng có.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Bạn không cần ôm thêm việc lúc này. Làm tốt phần đang có là đủ. Giữ nhịp đều, tránh tranh cãi không cần thiết trong nhóm. Thử dành mười lăm phút mỗi ngày làm việc không bị ngắt quãng, tắt thông báo điện thoại. Bạn sẽ thấy đầu óc sáng hơn và ít sai sót hơn."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Một buổi tối ngồi uống trà cùng nhau có khi quý hơn những kế hoạch lớn. Quẻ nhắc rằng sự bình yên cũng là một dạng hạnh phúc. Đừng tạo áp lực cho mình hay cho người kia phải tiến nhanh. Cuối tuần này, thử dành một buổi không điện thoại để trò chuyện thật thong thả."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Cứ để việc này đi theo nhịp của nó. Càng sốt ruột càng dễ làm điều thừa. Bạn đã làm phần mình thì giờ có thể tạm buông tay một chút. Hãy chọn một hoạt động giúp bạn thư giãn, như đi bộ hay nấu một bữa ngon, để lòng không cứ xoay quanh chuyện đó."
+      }
+    ],
+    "question": "Nếu cho phép mình chậm lại một tuần, điều gì trong đời bạn sẽ nhẹ đi?"
+  },
+  {
+    "so": 32,
+    "hanViet": [
+      "Miểu miểu tiền đồ sự khả nghi",
+      "Thạch trung tàng ngọc hữu thùy tri",
+      "Nhất triêu lương tượng phân minh phẫu",
+      "Thủy giác kỳ trung bích ngọc kỳ"
+    ],
+    "nghia": [
+      "Con đường phía trước còn mờ mịt, khiến lòng hoài nghi.",
+      "Ngọc giấu trong đá, ai mà biết được.",
+      "Đến một ngày, người thợ giỏi bổ đá ra rõ ràng.",
+      "Mới thấy bên trong là viên ngọc biếc quý lạ."
+    ],
+    "dienTich": "Lưu Bị tam cố mao lư",
+    "dienTichText": "Gia Cát Lượng sống ẩn ở lều tranh, tài năng chưa ai dùng tới. Lưu Bị ba lần tìm đến, hai lần đầu đều không gặp. Lần thứ ba, ông mới được gặp và mời được Khổng Minh ra giúp sức.",
+    "summary": "Giá trị của bạn hiện chưa được nhìn thấy, nên đường đi có vẻ mờ. Quẻ nói đang hơi vướng, nên xem lại cách làm. Khi gặp đúng người, cái quý bên trong sẽ lộ ra.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Bạn có năng lực nhưng có thể chưa đặt đúng chỗ, hoặc chưa trình bày cho người khác thấy. Viên ngọc cần người thợ, tài năng cần cơ hội và người hiểu việc. Hãy xem lại cách mình giới thiệu bản thân. Thử nhờ một người tin cậy đọc hồ sơ hay sản phẩm của bạn và góp ý thật lòng."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Có thể bạn thấy mình chưa được hiểu đúng. Điều đó không làm bạn kém đi. Người phù hợp cần thời gian để nhìn thấy bên trong. Đừng vội thay đổi mình để vừa lòng ai. Thay vào đó, thử mở lòng thêm một chút, chia sẻ một suy nghĩ thật với người bạn quan tâm."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc này còn nhiều điều chưa rõ, nên dễ sinh lo. Hơi vướng một chút, vì vậy nên xem lại cách tiếp cận trước khi tiếp tục. Như Lưu Bị, có khi phải thử lại vài lần mới gặp đúng người. Hãy viết ra hai cách khác nhau để thử lần tới."
+      }
+    ],
+    "question": "Ai là người có thể nhìn ra viên ngọc trong bạn, và bạn đã để họ thấy chưa?"
+  },
+  {
+    "so": 33,
+    "hanViet": [
+      "Nội tàng vô giá bảo hòa trân",
+      "Đắc ngọc hà tu ngoại giới tầm",
+      "Bất như đẳng đãi cao nhân thức",
+      "Khoan tâm do thả cánh khoan tâm"
+    ],
+    "nghia": [
+      "Bên trong đã có sẵn báu vật vô giá.",
+      "Đã có ngọc rồi, cần gì phải tìm kiếm bên ngoài.",
+      "Chi bằng chờ người hiểu biết nhận ra.",
+      "Hãy bình tâm, rồi lại bình tâm hơn nữa."
+    ],
+    "dienTich": "Giảo Kim sính Nhân Quý",
+    "dienTichText": "Tiết Nhân Quý là người tài nhưng thời trẻ sống nghèo khó, lâu ngày không được ai biết đến. Theo truyện dân gian, Trình Giảo Kim là một trong những người góp phần đưa ông ra giúp nhà Đường. Từ đó tài năng của Nhân Quý mới được trọng dụng.",
+    "summary": "Bạn đã có đủ điều quý giá, không cần chạy theo thứ bên ngoài. Việc chưa ngã ngũ, kết quả tùy cách bạn giữ mình. Hãy bình tâm chờ người hiểu mình xuất hiện.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Bạn có thể đang muốn nhảy việc hay học thêm thứ mới vì thấy mình chưa đủ. Quẻ nhắc rằng thứ bạn có đã giá trị. Trước khi tìm hướng mới, hãy liệt kê những gì bạn làm tốt ở chỗ hiện tại. Có khi chỉ cần làm cho cấp trên thấy rõ hơn, không cần đổi chỗ."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Đừng so sánh mối quan hệ của mình với người khác. Những điều tốt đẹp có sẵn đôi khi bị xem nhẹ vì quá quen. Thử nhìn lại một việc nhỏ người kia làm hàng ngày cho bạn. Một lời cảm ơn chân thành hôm nay có thể làm cả hai ấm lòng."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc này cần người có tiếng nói nhận ra giá trị của bạn. Bạn không cần chạy vạy khắp nơi. Hãy chuẩn bị chu đáo và để kết quả công việc tự lên tiếng. Lo lắng nhiều chỉ làm mệt thêm. Khi thấy sốt ruột, thử hít thở chậm vài lần rồi quay lại việc đang làm."
+      }
+    ],
+    "question": "Điều quý giá nào bạn đã có sẵn nhưng lâu rồi chưa để ý tới?"
+  },
+  {
+    "so": 34,
+    "hanViet": [
+      "Xuất nhập hành tàng lễ nghĩa cung",
+      "Ngôn tất trung lương thính tất thông",
+      "Tâm hạ liễu nhiên câu đỗng triệt",
+      "Quang minh như nhật chính đương không"
+    ],
+    "nghia": [
+      "Ra vào, hành xử đều giữ lễ nghĩa, cung kính.",
+      "Lời nói ngay thẳng, lắng nghe thì sáng suốt.",
+      "Trong lòng hiểu rõ mọi điều, thông suốt.",
+      "Sáng tỏ như mặt trời giữa trưa."
+    ],
+    "dienTich": "Đào viên kết nghĩa",
+    "dienTichText": "Lưu Bị, Quan Vũ và Trương Phi gặp nhau, cùng chung chí hướng. Ba người kết nghĩa anh em trong vườn đào, thề cùng nhau giúp đời. Tình nghĩa ấy theo họ suốt những năm tháng về sau.",
+    "summary": "Đây là quẻ rất thuận. Bạn đang sống ngay thẳng, nói thật và biết lắng nghe. Cứ giữ cách đó và đi tiếp theo hướng đã định.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Sự chính trực và cách cư xử chừng mực đang giúp bạn được tin tưởng. Mọi việc đi đúng hướng. Hãy tiếp tục lắng nghe góp ý và giữ lời đã hứa. Tuần này, thử chủ động cảm ơn một đồng nghiệp đã hỗ trợ bạn. Mối quan hệ tốt sẽ giúp việc lớn trôi chảy hơn."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Bạn đang đối xử với người mình thương bằng sự tôn trọng, và điều đó được cảm nhận. Quẻ khuyến khích bạn tiếp tục thẳng thắn, nói điều mình nghĩ bằng giọng nhẹ nhàng. Mối quan hệ có nền là sự thật lòng sẽ bền. Thử hỏi người ấy một câu và lắng nghe trọn vẹn câu trả lời."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Mọi việc khá sáng sủa, bạn đã làm đúng phần mình. Không cần lo lắng thêm. Hãy giữ thái độ cởi mở và lịch sự với những người liên quan. Nếu có ai giúp bạn trên đường đi, nhớ ghi nhận họ. Cứ bước tiếp với sự tự tin bình thản."
+      }
+    ],
+    "question": "Ai là người bạn có thể cùng chung chí hướng, như ba anh em trong vườn đào?"
+  },
+  {
+    "so": 35,
+    "hanViet": [
+      "Y quan trùng chỉnh cựu gia phong",
+      "Đạo thị vô công khước hữu công",
+      "Tảo khước đương đồ kinh cức ngại",
+      "Tam nhân cộng nghị sự hòa đồng"
+    ],
+    "nghia": [
+      "Chỉnh đốn lại áo mũ, giữ nếp nhà xưa.",
+      "Tưởng như không công mà hóa ra có công.",
+      "Quét sạch gai góc cản đường.",
+      "Ba người cùng bàn, việc được đồng lòng."
+    ],
+    "dienTich": "Lưu Quan Trương Cổ Thành tương hội",
+    "dienTichText": "Sau một thời gian ly tán vì chiến loạn, ba anh em Lưu Bị, Quan Vũ, Trương Phi mỗi người một ngả. Lúc đầu còn có hiểu lầm khi gặp lại. Cuối cùng họ đoàn tụ ở Cổ Thành, nghĩa anh em càng thêm gắn bó.",
+    "summary": "Quẻ nói về việc sắp xếp lại và cùng nhau bàn bạc. Công sức tưởng như vô ích hóa ra có giá trị. Khi mọi người đồng lòng, trở ngại sẽ được dọn đi.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Có thể bạn từng làm nhiều mà thấy không ai ghi nhận. Quẻ nói những công sức đó vẫn có ích. Đây là lúc nên ngồi lại với nhóm, sắp xếp lại cách làm và chia việc rõ ràng. Thử tổ chức một buổi trao đổi ngắn, mỗi người nói một điều đang vướng."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Nếu từng có hiểu lầm hay xa cách, đây là lúc tốt để nói chuyện lại. Đừng để khúc mắc nhỏ đứng giữa hai người quá lâu. Một cuộc trò chuyện thẳng thắn, bình tĩnh có thể gỡ được nhiều điều. Bắt đầu bằng một câu hỏi thăm đơn giản cũng được."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc chưa ngã ngũ, nhưng có thể gỡ khi bàn bạc với vài người liên quan. Đừng một mình gánh hết. Hãy liệt kê những chỗ đang cản trở rồi nhờ đúng người xử lý từng chỗ. Ba cái đầu thường nghĩ ra cách tốt hơn một. Khi mọi người cùng nhìn một hướng, việc sẽ đi nhanh hơn."
+      }
+    ],
+    "question": "Có mối quan hệ nào đang chờ bạn chủ động hàn gắn lại?"
+  },
+  {
+    "so": 36,
+    "hanViet": [
+      "Nhãn tiền bệnh tụng bất tu ưu",
+      "Bảo địa tư tài tận khả cầu",
+      "Kháp tự viên hầu kim tỏa thoát",
+      "Tự quy sơn động khứ lai du"
+    ],
+    "nghia": [
+      "Những chuyện phiền lòng trước mắt như ốm đau, tranh chấp không cần quá lo.",
+      "Đất lành, tiền của đều có thể cầu được.",
+      "Giống như con khỉ thoát khỏi xích vàng.",
+      "Tự do về hang núi, đi lại thong dong."
+    ],
+    "dienTich": "Tương Tử ngộ Tân",
+    "dienTichText": "Hàn Tương Tử là một trong Bát Tiên trong truyện dân gian. Tương truyền ông gặp được tiên nhân Lã Động Tân và được dẫn dắt vào con đường tu đạo. Từ đó ông rời bỏ ràng buộc trần thế, sống tự tại.",
+    "summary": "Quẻ báo những chuyện làm bạn nặng lòng sẽ dần nhẹ đi. Như được tháo một sợi xích, bạn có thể thoải mái hơn. Việc chưa ngã ngũ, nhưng hướng mở đang ở trước mặt.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Áp lực hay rắc rối gần đây có thể đang dần gỡ ra. Đừng để lo âu cũ trói tay mình. Hãy nhìn vào những cơ hội tạo thêm thu nhập hoặc học hỏi mà bạn từng gác lại. Thử dành một buổi tối tìm hiểu kỹ một hướng đi mà bạn thấy hứng thú."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Bạn có thể đang mang theo một nỗi lo hay một khúc mắc cũ. Quẻ khuyên bạn thả lỏng hơn. Một mối quan hệ lành mạnh là nơi cả hai thấy tự do, không gò bó. Thử nói với người ấy một điều bạn cần để thấy thoải mái hơn khi ở bên nhau."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Những vướng mắc quanh việc này có dấu hiệu nhẹ bớt. Bạn không cần lo quá xa. Hãy giải quyết từng việc trong tầm tay, rồi để phần còn lại đi theo nhịp tự nhiên. Một buổi đi dạo ngoài trời có thể giúp đầu óc bạn sáng hơn khi nghĩ về chuyện này."
+      }
+    ],
+    "question": "Sợi xích nào bạn đang tự đeo vào mà có thể tháo ra được?"
+  },
+  {
+    "so": 37,
+    "hanViet": [
+      "Dục đãi thân an vận thái thời",
+      "Phong trung đăng chúc bất tương nghi",
+      "Bất như thu thập thâm đường tọa",
+      "Thứ miễn quang dao tĩnh xứ minh"
+    ],
+    "nghia": [
+      "Muốn đợi lúc thân an ổn, vận hanh thông.",
+      "Ngọn đèn đặt giữa gió thì không hợp.",
+      "Chi bằng thu xếp vào ngồi trong nhà sâu.",
+      "Để ánh đèn khỏi lay động, ở chỗ yên mà sáng."
+    ],
+    "dienTich": "Lý Tĩnh quy sơn",
+    "dienTichText": "Lý Tĩnh là một nhân vật từng ra làm tướng, có tài cầm quân. Theo tích này, đến một lúc ông chọn rút về núi, tránh xa nơi tranh giành. Việc lui về giúp ông giữ được mình và sống yên ổn.",
+    "summary": "Như ngọn đèn trước gió, lúc này không nên đứng ở chỗ nhiều xáo động. Quẻ khuyên tạm lui vào chỗ yên để giữ sức. Ở nơi tĩnh, bạn sẽ sáng suốt hơn.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Môi trường quanh bạn đang có nhiều biến động. Đây chưa phải lúc để mạo hiểm hay đứng ra giữa tâm bão. Hãy tập trung vào phần việc mình nắm chắc, làm cho kỹ. Thử giảm bớt những cuộc họp hay nhóm chat không cần thiết trong tuần này để giữ năng lượng."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Khi cảm xúc đang chao đảo, đừng vội đưa ra quyết định lớn. Một khoảng lặng giúp bạn nghe rõ lòng mình hơn. Bạn có thể nói với người kia rằng mình cần vài ngày để nghĩ. Trong lúc đó, chăm sóc bản thân bằng giấc ngủ đủ và bữa ăn đều đặn."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Chuyện này đang gặp gió, chưa nên đẩy mạnh. Cứ lui một bước, quan sát thêm. Kết quả còn tùy cách bạn xử lý từ đây. Hãy ghi lại những điều bạn quan sát được mỗi ngày, khi gió lặng bạn sẽ biết rõ nên đi bước nào. Đứng yên một chút không có nghĩa là bỏ cuộc."
+      }
+    ],
+    "question": "Nơi yên tĩnh nào giúp bạn suy nghĩ sáng suốt nhất, và đã lâu chưa bạn ghé đó?"
+  },
+  {
+    "so": 38,
+    "hanViet": [
+      "Kính nguyệt đương không xuất hạp thời",
+      "Sát na vân vụ ám hôn mê",
+      "Khoan tâm thủ thời phù vân tán",
+      "Canh cải tương nghi khả vọng vi"
+    ],
+    "nghia": [
+      "Gương sáng như trăng giữa trời vừa lấy ra khỏi hộp.",
+      "Chỉ chốc lát mây mù kéo đến, tối tăm mờ mịt.",
+      "Cứ bình tâm chờ thời, mây trôi sẽ tan.",
+      "Thay đổi cho hợp thì có thể mong làm được việc."
+    ],
+    "dienTich": "Hà Văn Tú ngộ nạn",
+    "dienTichText": "Hà Văn Tú là nhân vật trong truyện dân gian Trung Hoa, một thư sinh gặp nhiều trắc trở và oan khuất. Trải qua giai đoạn khó khăn, cuối cùng sự việc được sáng tỏ. Câu chuyện nói về sự kiên nhẫn vượt qua lúc bị che lấp.",
+    "summary": "Quẻ nói đang có trở ngại, như mây che mặt trăng. Đây không phải điềm xấu, chỉ là lúc cần chậm lại. Bình tâm chờ và điều chỉnh cách làm thì việc vẫn có thể thành.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Mọi thứ vừa có vẻ suôn sẻ thì bỗng gặp trục trặc. Đừng vội nản. Trở ngại này mang tính tạm thời. Hãy xem lại kế hoạch và thử một hướng khác phù hợp hơn với tình hình hiện tại. Tuần này, chọn một khâu đang vướng nhất và nghĩ ra một cách làm khác cho khâu đó."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Có thể vừa có một hiểu lầm làm không khí giữa hai người u ám. Cứ để cảm xúc lắng xuống trước khi nói chuyện. Rồi thử thay đổi cách nói, nhẹ hơn, rõ hơn. Một lời xin lỗi hoặc một câu hỏi thật lòng có thể làm mây tan nhanh hơn bạn nghĩ."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc này đang bị che khuất, chưa rõ đường. Chậm lại và xem kỹ trước khi quyết. Đừng ép kết quả lúc trời đang mù. Khi bạn chịu điều chỉnh một chút theo hoàn cảnh, cơ hội sẽ mở ra. Thử hỏi một người ngoài cuộc xem họ thấy điều gì bạn chưa thấy."
+      }
+    ],
+    "question": "Nếu mây đang che, bạn có thể thay đổi điều gì nhỏ để thích nghi trong lúc chờ?"
+  },
+  {
+    "so": 39,
+    "hanViet": [
+      "Thiên biên tiêu tức ưng nan vấn",
+      "Thiết mạc tư tâm cưỡng vọng cầu",
+      "Nhược bả thạch đầu ma tác kính",
+      "Tinh thần uổng phí nhất thời hưu"
+    ],
+    "nghia": [
+      "Tin tức nơi chân trời xa khó mà hỏi được.",
+      "Đừng vì lòng riêng mà cố cưỡng cầu.",
+      "Nếu đem hòn đá mài thành gương.",
+      "Thì chỉ tốn công sức, rồi cũng phải dừng."
+    ],
+    "dienTich": "Khương Nữ tầm phu / Nễ Hành đầu Hoàng Tổ",
+    "dienTichText": "Mạnh Khương Nữ vượt đường xa đi tìm chồng bị bắt đi xây Trường Thành, chịu nhiều vất vả mà không được như mong. Nễ Hành là người tài nhưng ăn nói ngạo mạn, bị đẩy qua nhiều chủ và kết cục không tốt. Cả hai tích đều nói về việc cố theo đuổi điều không hợp thời.",
+    "summary": "Quẻ nói đang có trở ngại, nhất là khi cố ép một việc chưa hợp. Đây không phải điềm xấu, mà là lời nhắc dừng lại xem xét. Đặt sức vào đúng chỗ sẽ đỡ uổng công.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Bạn có thể đang dồn sức vào một việc mà nền tảng chưa phù hợp, như mài đá thành gương. Không phải bạn kém, mà là chất liệu chưa đúng. Hãy dừng lại hỏi: việc này có thật sự đáng không. Thử liệt kê ba việc đang tốn sức nhất và đánh dấu việc nào đem lại kết quả thật."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Đừng cố bắt một mối quan hệ phải theo ý mình. Tình cảm cần cả hai phía cùng muốn. Nếu bạn đang chờ tin từ ai đó lâu rồi, hãy cho mình quyền nghỉ ngơi. Tuần này, dành thời gian cho những người đang ở gần và thật sự quan tâm đến bạn."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Tin tức còn xa vời, hỏi mãi cũng khó rõ. Chậm lại và xem kỹ trước khi quyết thêm điều gì. Có khi buông bớt kỳ vọng lại giúp bạn nhẹ lòng và thấy hướng khác. Hãy đặt cho mình một mốc thời gian, qua mốc đó thì chuyển sự chú ý sang việc khác."
+      }
+    ],
+    "question": "Bạn đang cố mài hòn đá nào, và nếu thay bằng chất liệu khác thì sao?"
+  },
+  {
+    "so": 40,
+    "hanViet": [
+      "Hồng luân tây trụy thố đông thăng",
+      "Âm trưởng dương tiêu bách sự hanh",
+      "Nhược thị nữ nhân nghi vọng dụng",
+      "Tăng thiêm tài lộc phúc kỳ tâm"
+    ],
+    "nghia": [
+      "Mặt trời lặn phía tây, mặt trăng mọc phía đông.",
+      "Âm lớn lên, dương lui xuống, trăm việc hanh thông.",
+      "Nếu là người nữ thì càng nên trông cậy vào đó.",
+      "Tài lộc thêm nhiều, lòng được an vui."
+    ],
+    "dienTich": "Võ Tắc Thiên đăng vị",
+    "dienTichText": "Võ Tắc Thiên từ một cung nữ dần vươn lên, cuối cùng trở thành nữ hoàng đế duy nhất trong lịch sử Trung Hoa. Bà nắm quyền điều hành đất nước nhiều năm. Tích này nói về lúc một người tưởng ở vị trí thấp lại đi lên.",
+    "summary": "Quẻ nói về sự chuyển giao, cái cũ lui, cái mới lên. Sự mềm mỏng, khéo léo đang có lợi. Việc chưa ngã ngũ, nhưng nếu bạn khéo xử lý thì nhiều điều sẽ thuận.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Nơi làm việc có thể đang thay đổi người, thay đổi cách làm. Đây là lúc sự tinh tế, kiên nhẫn và lắng nghe phát huy tác dụng. Đừng cứng nhắc theo lối cũ. Thử quan sát xem ai đang có ảnh hưởng mới, rồi tìm cách phối hợp nhẹ nhàng với họ."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Sự dịu dàng và thấu hiểu đang là điểm mạnh của bạn trong chuyện tình cảm. Người phụ nữ trong cuộc có thể là người dẫn dắt mọi việc tốt lên. Hãy để cảm xúc được nói ra một cách mềm mỏng. Thử viết vài dòng nhắn cho người ấy, nói điều bạn trân trọng ở họ."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Thời thế đang chuyển, điều trước kia khó có thể sắp dễ hơn. Kết quả còn tùy cách bạn đón nhận sự thay đổi. Đừng cưỡng lại dòng chảy mới. Hãy chuẩn bị tinh thần để thích nghi, ví dụ cập nhật lại thông tin hoặc hỏi xem quy trình đã thay đổi gì chưa."
+      }
+    ],
+    "question": "Thay đổi nào quanh bạn mà nếu đón nhận nhẹ nhàng, nó có thể trở thành lợi thế?"
+  },
+  {
+    "so": 41,
+    "hanViet": [
+      "Vô hạn hảo ngôn quân ký thủ",
+      "Khước vi nhận tặc tương tác tử",
+      "Mạc tham nhãn hạ hữu ta điềm",
+      "Cánh lự tha niên tiền dạng khán"
+    ],
+    "nghia": [
+      "Bao nhiêu lời hay, bạn hãy ghi nhớ.",
+      "Kẻo lại nhận nhầm người xấu làm người thân.",
+      "Đừng ham chút ngọt ngào trước mắt.",
+      "Hãy nghĩ xa xem sau này mọi việc sẽ thế nào."
+    ],
+    "dienTich": "Đổng Trác thu Lã Bố",
+    "dienTichText": "Đổng Trác dùng ngựa quý và vàng bạc để thu phục Lã Bố, nhận làm con nuôi. Ông tưởng đã có được một mãnh tướng trung thành. Về sau, chính Lã Bố lại quay sang chống Đổng Trác.",
+    "summary": "Quẻ nhắc bạn tỉnh táo trước những lợi ích trước mắt. Hãy nhìn người qua thời gian, đừng chỉ qua vài lời ngọt. Việc chưa ngã ngũ, nghĩ xa một chút sẽ giúp bạn chọn đúng.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Có thể bạn đang được mời gọi với điều kiện rất hấp dẫn. Không cần nghi ngờ mọi thứ, chỉ cần nhìn kỹ hơn. Hãy hỏi về những gì sẽ diễn ra sau sáu tháng, một năm. Thử tìm hiểu thêm từ người từng làm cùng đối tác hay công ty đó trước khi gật đầu."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Lời ngọt dễ làm lòng mềm, nhưng tình cảm bền cần được thử qua thời gian. Bạn có trực giác tốt, hãy nghe nó. Để ý xem người kia đối xử thế nào với người xung quanh, không chỉ với bạn. Điều đó nói nhiều hơn những lời hứa. Thời gian sẽ giúp bạn thấy rõ hơn."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Đừng vì muốn xong nhanh mà chấp nhận một giải pháp có hậu quả về sau. Cân nhắc cả cái lợi trước mắt lẫn chuyện lâu dài. Hãy viết ra hai cột, cái được ngay và cái có thể phải trả sau này. Nhìn vào đó, bạn sẽ dễ quyết hơn."
+      }
+    ],
+    "question": "Có điều gì đang ngọt ngào trước mắt mà bạn chưa thử nghĩ đến chuyện một năm sau?"
+  },
+  {
+    "so": 42,
+    "hanViet": [
+      "Quân thùy ân trạch nhuận vô biên",
+      "Phúc đảo kỳ nhương một đảng thiên",
+      "Nhất thiết hữu tình giai thụ dụng",
+      "Quân triêm lạc lợi đắc chu toàn"
+    ],
+    "nghia": [
+      "Ơn lành ban xuống, thấm nhuần khắp nơi không bờ bến.",
+      "Lời cầu nguyện được che chở, không thiên vị ai.",
+      "Mọi chúng sinh đều được hưởng.",
+      "Ai cũng thấm niềm vui và lợi ích, mọi việc vẹn toàn."
+    ],
+    "dienTich": "Mục Liên cứu mẫu",
+    "dienTichText": "Mục Kiền Liên là đệ tử của Đức Phật, rất thương mẹ. Biết mẹ chịu khổ sau khi mất, ông thành tâm tìm cách cứu. Theo lời Phật dạy, ông cúng dường chư tăng và nhờ đó mẹ được giải thoát, từ đây có lễ Vu Lan.",
+    "summary": "Đây là quẻ rất thuận, mang ý ơn lành lan tỏa đến mọi người. Lòng tốt và sự hiếu thảo của bạn đang được đáp lại. Cứ đi tiếp theo hướng đã định.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Công việc đang thuận, và thành quả không chỉ đến với bạn mà còn với những người xung quanh. Đây là lúc tốt để chia sẻ thành công, ghi nhận đồng đội. Thử dành thời gian hướng dẫn một người mới hoặc giúp ai đó đang gặp khó, cái tốt sẽ lan ra."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Sự quan tâm chân thành của bạn đang được người thân cảm nhận. Quẻ khuyến khích bạn dành thêm thời gian cho gia đình, đặc biệt là cha mẹ. Một cuộc gọi hỏi thăm hay một bữa cơm chung tuần này có thể mang lại niềm vui cho cả nhà."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Mọi chuyện đang đi theo hướng tốt, và kết quả có thể làm nhiều người cùng vui. Không cần lo lắng. Hãy giữ lòng thành và làm phần việc của mình chu đáo. Nếu có điều gì cần cảm ơn, đừng ngại nói ra ngay khi có dịp. Sự biết ơn cũng giúp lòng bạn nhẹ nhàng hơn."
+      }
+    ],
+    "question": "Ai trong gia đình bạn đang mong được bạn hỏi thăm nhiều hơn?"
+  },
+  {
+    "so": 43,
+    "hanViet": [
+      "Thiên địa giao thái vạn vật tân",
+      "Tự hình tự sắc tự di thần",
+      "Sâm la vạn tượng giai tinh thái",
+      "Sự sự hợp hài đắc xứng nhân"
+    ],
+    "nghia": [
+      "Trời đất giao hòa, muôn vật đổi mới.",
+      "Mỗi vật tự có dáng, có sắc, tự vui tươi.",
+      "Muôn hình vạn trạng đều rực rỡ.",
+      "Việc gì cũng hài hòa, vừa lòng người."
+    ],
+    "dienTich": "Hành Giả đắc đạo / Lưu Bang khởi ư bố y nhi thành đế nghiệp",
+    "dienTichText": "Tôn Hành Giả sau chặng đường dài theo thầy đi thỉnh kinh, cuối cùng tu thành chính quả. Lưu Bang xuất thân là dân thường áo vải, về sau dựng nên nhà Hán. Cả hai đều đi từ chỗ bình thường đến thành tựu lớn.",
+    "summary": "Đây là quẻ rất thuận, như mùa xuân trời đất giao hòa. Mọi thứ đang mới mẻ và hài hòa. Cứ tự tin đi tiếp theo hướng đã định.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Đây là giai đoạn tươi mới, thích hợp để bắt đầu dự án hay thử cách làm mới. Mỗi người trong nhóm đều có thế mạnh riêng, và khi phối hợp tốt thì kết quả rất đẹp. Hãy mạnh dạn đề xuất ý tưởng bạn ấp ủ. Tuần này, chọn một ý và trình bày nó trong một trang giấy."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Không khí giữa bạn và người thương đang hài hòa. Mỗi người được là chính mình mà vẫn vui vẻ bên nhau. Hãy tận hưởng giai đoạn này. Thử cùng nhau làm một việc mới mà cả hai chưa từng làm, như học nấu một món hay đi một nơi lạ."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Mọi thứ đang hội tụ đủ điều kiện để thuận lợi. Không cần lo nhiều. Nếu còn khâu nào chưa xong, hãy hoàn tất nó với tâm thế thoải mái. Kết quả có khả năng làm bạn và những người liên quan cùng hài lòng. Cứ để niềm vui ấy đến một cách tự nhiên, không cần vội."
+      }
+    ],
+    "question": "Nếu đây là mùa xuân của bạn, bạn muốn gieo hạt giống gì?"
+  },
+  {
+    "so": 44,
+    "hanViet": [
+      "Kỳ phùng địch thủ yếu tàng cơ",
+      "Hắc bạch bàn trung vị quyết thời",
+      "Đáo để dục tri thùy thắng phụ",
+      "Tu giáo tiên trước tương cơ nghi"
+    ],
+    "nghia": [
+      "Đánh cờ gặp đối thủ ngang tài thì phải giấu nước đi.",
+      "Quân đen quân trắng trên bàn còn chưa phân định.",
+      "Rốt cuộc muốn biết ai thắng ai thua.",
+      "Thì phải đi trước một nước, tùy cơ mà ứng biến."
+    ],
+    "dienTich": "Khương Duy dữ Đặng Ngải đấu trận / Chu Du Xích Bích chi chiến",
+    "dienTichText": "Khương Duy của nhà Thục và Đặng Ngải của nhà Ngụy là hai tướng tài, nhiều lần đối đầu mà khó phân thắng bại. Ở trận Xích Bích, Chu Du cùng liên quân tính toán kỹ, chọn đúng thời cơ dùng hỏa công. Cả hai tích nói về cuộc đấu trí giữa những người ngang tài.",
+    "summary": "Bạn đang ở thế giằng co với một đối thủ hay một thử thách ngang sức. Việc chưa ngã ngũ, kết quả tùy cách bạn xử lý. Hãy suy tính kỹ, đi trước một bước và linh hoạt.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Có thể bạn đang cạnh tranh một vị trí, một hợp đồng hay một dự án. Hai bên đều mạnh, nên chi tiết nhỏ sẽ quyết định. Đừng vội tiết lộ hết kế hoạch. Hãy chuẩn bị sớm hơn người khác một bước, ví dụ tìm hiểu kỹ nhu cầu của khách hàng hay người phỏng vấn."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Trong tình cảm, chuyện ai hơn ai không quan trọng bằng hiểu nhau. Nếu đang có giằng co, hãy dừng việc tranh phần đúng. Quan sát xem người kia thật sự cần gì. Thử chủ động đưa ra một đề nghị nhỏ trước, như một cách nhường nhịn khéo léo."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Thế cờ còn chưa rõ, chưa ai nắm phần thắng. Quẻ khuyên bạn chủ động nhưng linh hoạt. Đừng chờ đối phương ra tay rồi mới tính. Hãy viết ra hai ba tình huống có thể xảy ra và cách bạn sẽ đáp lại mỗi tình huống. Có sẵn phương án, bạn sẽ bình tĩnh hơn."
+      }
+    ],
+    "question": "Nước đi nào bạn có thể chuẩn bị sớm hơn một bước so với hiện tại?"
+  },
+  {
+    "so": 45,
+    "hanViet": [
+      "Ôn nhu tự thị thắng cường cương",
+      "Hành thiện vu môn đại cát xương",
+      "Nhược thị hữu nhân chiêm thử quái",
+      "Uyển như chính khát ngộ quỳnh tương"
+    ],
+    "nghia": [
+      "Mềm mỏng ôn hòa vốn thắng được cứng rắn.",
+      "Làm việc thiện trong nhà thì rất tốt lành, hưng thịnh.",
+      "Nếu ai rút được quẻ này.",
+      "Giống như đang khát lại gặp nước ngọt lành."
+    ],
+    "dienTich": "Nhân Tông nhận mẫu",
+    "dienTichText": "Vua Tống Nhân Tông từ nhỏ không biết mẹ ruột của mình là Lý phi, vì bà bị hãm hại và phải lưu lạc. Nhờ Bao Công tìm ra sự thật, nhà vua mới biết chuyện. Hai mẹ con được đoàn tụ sau nhiều năm xa cách.",
+    "summary": "Đây là quẻ rất thuận. Sự mềm mỏng và lòng tốt của bạn sẽ mang lại kết quả đẹp. Điều bạn mong mỏi có thể đến đúng lúc cần.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Lúc này cách làm ôn hòa sẽ hiệu quả hơn ép buộc. Khi gặp người khó tính, hãy nhẹ nhàng mà kiên định. Thiện chí của bạn sẽ được đáp lại. Thử dùng câu hỏi thay vì mệnh lệnh khi cần nhờ ai làm việc, bạn sẽ thấy sự khác biệt."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Sự dịu dàng của bạn là món quà lớn cho người mình thương. Những gì từng xa cách có thể được nối lại. Cứ tiếp tục đối xử bằng sự kiên nhẫn. Tuần này, thử làm một việc tử tế nhỏ cho gia đình mà không cần ai biết. Lòng tốt thầm lặng thường được nhớ lâu."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc bạn mong đang rất thuận, giống người khát gặp nước. Cứ đi tiếp theo hướng đã định. Giữ thái độ hòa nhã với những người liên quan, nó sẽ giúp mọi khâu trôi chảy. Khi kết quả đến, nhớ cảm ơn những ai đã đồng hành. Niềm vui được chia sẻ sẽ trọn vẹn hơn."
+      }
+    ],
+    "question": "Ở chỗ nào bạn đang dùng sức mạnh, mà sự mềm mỏng lại có thể hiệu quả hơn?"
+  },
+  {
+    "so": 46,
+    "hanViet": [
+      "Khuyến quân nại thủ cựu sinh nhai",
+      "Bả định thân tâm mạc thính tà",
+      "Trực đãi hữu nhân khinh trước lực",
+      "Mãn viên khô mộc tái khai hoa"
+    ],
+    "nghia": [
+      "Khuyên bạn kiên nhẫn giữ nghề cũ, việc cũ.",
+      "Giữ vững thân tâm, đừng nghe lời xúi bẩy.",
+      "Chờ đến khi có người nhẹ nhàng giúp sức.",
+      "Cả vườn cây khô sẽ lại trổ hoa."
+    ],
+    "dienTich": "Vị Thủy điếu ngư",
+    "dienTichText": "Khương Tử Nha ngồi câu cá bên sông Vị đến tuổi rất cao mà chưa gặp thời. Ông vẫn kiên nhẫn giữ mình, không vội vàng. Đến khi Chu Văn Vương tìm đến và mời ông ra giúp nước, tài năng của ông mới được dùng.",
+    "summary": "Quẻ khuyên bạn kiên nhẫn với con đường đang đi. Đừng để lời bàn ra tán vào làm lung lay. Khi có người giúp đúng lúc, những gì tưởng khô cằn sẽ lại nở hoa.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Có thể bạn đang chán việc hiện tại và bị rủ rê sang hướng khác. Quẻ khuyên đừng vội bỏ cái đang có. Giữ vững, trau dồi thêm, cơ hội sẽ tới qua một người biết việc. Tuần này, thử học thêm một kỹ năng nhỏ liên quan trực tiếp đến công việc hiện tại."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Một mối quan hệ có vẻ nhạt dần vẫn có thể ấm lại. Đừng nghe lời người ngoài bàn ra. Hãy chăm sóc những gì đang có bằng sự kiên nhẫn. Thử nhắc lại với người ấy một kỷ niệm đẹp của hai người, đôi khi đó là giọt nước cho cây khô."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc chưa ngã ngũ, nhưng không cần đổi hướng lúc này. Giữ nguyên kế hoạch và chờ thêm. Sẽ có người giúp bạn một tay vào lúc thích hợp. Trong lúc chờ, hãy giữ mọi thứ gọn gàng, sẵn sàng để khi cơ hội đến thì bắt tay vào ngay."
+      }
+    ],
+    "question": "Điều gì trong đời bạn tưởng đã khô héo, nhưng có thể nở hoa lại nếu được chăm đúng cách?"
+  },
+  {
+    "so": 47,
+    "hanViet": [
+      "Cẩm thượng thiêm hoa sắc dũ tiên",
+      "Vận lai lộc mã hỉ song toàn",
+      "Thời nhân mạc hận công danh vãn",
+      "Nhất cử đăng khoa tứ hải truyền"
+    ],
+    "nghia": [
+      "Trên gấm thêm hoa, màu sắc càng thêm tươi.",
+      "Vận đến, lộc và đường đi đều vui trọn vẹn.",
+      "Người đời đừng buồn vì công danh đến muộn.",
+      "Một lần thi đỗ, tiếng vang khắp bốn bể."
+    ],
+    "dienTich": "Lương Hạo đăng khoa",
+    "dienTichText": "Lương Hạo là người đời Tống, theo truyền thuyết ông đi thi nhiều lần mà chưa đỗ. Ông không bỏ cuộc và đến khi tuổi đã rất cao mới đỗ trạng nguyên. Câu chuyện thành biểu tượng cho thành công đến muộn mà vẫn rực rỡ.",
+    "summary": "Đây là quẻ rất thuận, như gấm thêm hoa. Dù thành công đến muộn hơn mong đợi, nó vẫn trọn vẹn. Cứ tiếp tục theo hướng đã định.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Nỗ lực bền bỉ của bạn đang đến lúc được ghi nhận. Nếu từng thấy mình chậm hơn bạn bè, đừng buồn. Mỗi người có thời điểm riêng. Hãy chuẩn bị thật tốt cho kỳ thi, buổi phỏng vấn hay buổi trình bày sắp tới. Một buổi luyện tập trước gương có thể giúp bạn tự tin hơn nhiều."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Niềm vui có thể đến cả hai phía, công việc và tình cảm cùng thuận. Nếu bạn đang đợi một người phù hợp, đừng nghĩ là đã muộn. Hãy giữ lòng cởi mở. Thử nhận lời một buổi gặp gỡ bạn bè mà thường ngày bạn hay từ chối. Duyên lành đôi khi đến từ những dịp rất bình thường."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc này rất thuận, chỉ là có thể đến chậm hơn bạn muốn. Đừng nản vì thời gian. Khi đến, kết quả sẽ xứng đáng. Hãy giữ phong độ và làm tròn từng bước. Mỗi tối, ghi một dòng về tiến bộ trong ngày để thấy mình đang đi tới."
+      }
+    ],
+    "question": "Bạn có đang so sánh tiến độ của mình với người khác, và điều đó có giúp gì không?"
+  },
+  {
+    "so": 48,
+    "hanViet": [
+      "Linh điểu thu lai hóa tác bằng",
+      "Cao tường đắc ý tận phi đằng",
+      "Trực xung vạn lý vân tiêu ngoại",
+      "Nhậm thị chư cầm tổng bất năng"
+    ],
+    "nghia": [
+      "Chim thiêng mùa thu đến hóa thành chim bằng.",
+      "Bay lượn thỏa chí, vút lên cao.",
+      "Lao thẳng ra ngoài muôn dặm mây xanh.",
+      "Mọi loài chim khác đều không theo kịp."
+    ],
+    "dienTich": "Hàn Tín quải soái",
+    "dienTichText": "Hàn Tín thời trẻ nghèo khó, từng chịu nhục và không được trọng dụng. Nhờ Tiêu Hà tiến cử, Lưu Bang phong ông làm đại tướng. Từ đó Hàn Tín cầm quân lập nhiều chiến công lớn.",
+    "summary": "Quẻ nói về sự chuyển mình mạnh mẽ, từ nhỏ bé thành lớn lao. Việc chưa ngã ngũ, nhưng khả năng vươn lên của bạn rất rõ. Kết quả tùy vào việc bạn dám dang cánh hay không.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Bạn đang có tiềm năng để bứt lên, như chim nhỏ hóa chim bằng. Một cơ hội lớn hơn có thể xuất hiện, hãy sẵn sàng nhận trách nhiệm. Đừng tự giới hạn mình. Tuần này, thử nhận một nhiệm vụ hơi vượt sức một chút và xin góp ý từ người đi trước."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Khi bạn phát triển, mối quan hệ cũng cần lớn lên cùng. Hãy chia sẻ với người ấy những mục tiêu mới của mình. Để họ đồng hành, đừng bay một mình. Thử hỏi người ấy ước mơ của họ là gì, và tìm điểm chung để cùng hướng tới."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc này có nhiều cơ hội tiến xa, nhưng cần bạn chủ động nắm lấy. Thời điểm như mùa thu, khi mọi thứ chín muồi. Hãy chuẩn bị kỹ phần mình. Nếu có người sẵn lòng giới thiệu hay tiến cử, đừng ngại nhận và cảm ơn họ. Đôi cánh mạnh cần cả gió và người chỉ đường."
+      }
+    ],
+    "question": "Nếu không còn gì giữ bạn lại, bạn muốn bay đến đâu?"
+  },
+  {
+    "so": 49,
+    "hanViet": [
+      "Thiên hàn địa đống thủy thành băng",
+      "Hà tu tham lận thủ công danh",
+      "Chỉ hảo thủ kỷ tĩnh xứ tọa",
+      "Đãi thời hưng biến tự nhiên minh"
+    ],
+    "nghia": [
+      "Trời lạnh đất buốt, nước đóng thành băng.",
+      "Cần gì phải ham hố giành lấy công danh.",
+      "Chỉ nên giữ mình, ngồi ở chỗ yên tĩnh.",
+      "Đợi thời thế đổi thay, mọi việc tự nhiên sáng tỏ."
+    ],
+    "dienTich": "Vương Tường cầu lý",
+    "dienTichText": "Vương Tường là người con hiếu thảo đời Tấn, dù mẹ kế không thương mình. Mùa đông giá rét, mẹ kế muốn ăn cá chép, ông ra sông băng nằm chờ. Lòng hiếu cảm động trời đất, băng nứt ra và cá chép nhảy lên.",
+    "summary": "Thời điểm này như mùa đông, mọi thứ còn đóng băng. Việc chưa ngã ngũ, không nên ép. Hãy giữ mình, làm điều đúng và kiên nhẫn chờ trời ấm lại.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Môi trường lúc này chưa thuận cho những bước tiến lớn. Đừng chạy theo danh vọng hay so đo thiệt hơn. Hãy làm tròn việc mình và tích lũy thêm. Thử dùng khoảng thời gian chậm này để sắp xếp lại tài liệu, học thêm, hoặc nghỉ ngơi đủ để sẵn sàng khi mùa xuân tới."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Nếu quan hệ đang lạnh nhạt, đừng ép người kia phải ấm lại ngay. Như Vương Tường, sự chân thành bền bỉ có thể làm tan băng. Hãy tiếp tục quan tâm một cách nhẹ nhàng, không đòi hỏi. Một tin nhắn hỏi thăm giản dị tuần này là đủ."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Mọi thứ đang tạm dừng, như sông đóng băng. Bạn không làm gì sai, chỉ là chưa đến mùa. Hãy để yên một thời gian, đừng thúc ép thêm. Trong lúc chờ, chăm lo cho sức khỏe và tinh thần của mình. Khi thời thế đổi, mọi việc sẽ rõ ràng hơn."
+      }
+    ],
+    "question": "Trong mùa đông này của bạn, điều gì đáng để bạn kiên nhẫn giữ gìn?"
+  },
+  {
+    "so": 50,
+    "hanViet": [
+      "Ngũ hồ tứ hải tận hành thuyền",
+      "Cao quải phong phàm bả đà kiên",
+      "Hạnh đắc thuận phong tùy sở chí",
+      "Mãn thuyền bảo bối xứng tâm điền"
+    ],
+    "nghia": [
+      "Năm hồ bốn biển đều có thể đi thuyền.",
+      "Treo cao cánh buồm, giữ chặt tay lái.",
+      "May được gió thuận, muốn đi đâu cũng tới.",
+      "Thuyền đầy của quý, thỏa lòng mong ước."
+    ],
+    "dienTich": "Đào Chu quy Ngũ Hồ",
+    "dienTichText": "Phạm Lãi giúp Việt vương Câu Tiễn khôi phục đất nước, rồi rời bỏ chức quan. Ông cùng Tây Thi đi thuyền về vùng Ngũ Hồ, đổi tên là Đào Chu Công và làm ăn buôn bán. Nhờ biết thời và biết lúc dừng, ông vừa giàu có vừa an nhàn.",
+    "summary": "Quẻ thuận, như thuyền gặp gió xuôi. Chỉ cần bạn giữ vững tay lái, nhiều việc sẽ đến nơi đến chốn. Còn vài chỗ nhỏ cần để ý, nhất là đừng buông lơi khi mọi thứ đang dễ.",
+    "areas": [
+      {
+        "title": "Công việc",
+        "text": "Gió đang thuận cho những dự định mở rộng, buôn bán hay hợp tác. Đây là lúc tốt để mạnh dạn hơn. Nhưng dù gió thuận, tay lái vẫn phải chắc. Hãy đặt mục tiêu rõ ràng và theo dõi sổ sách đều đặn. Tuần này, thử xem lại kế hoạch tài chính của mình một lượt."
+      },
+      {
+        "title": "Tình cảm",
+        "text": "Mối quan hệ đang êm đềm, giống chuyến đi thuyền cùng người thương. Hãy cùng nhau định hướng cho tương lai, như cùng nhau cầm lái. Thử ngồi lại nói chuyện về một kế hoạch chung, một chuyến đi, hay một khoản tiết kiệm cho cả hai. Có chung đích đến, hai người sẽ chèo nhịp nhàng hơn."
+      },
+      {
+        "title": "Việc đang chờ",
+        "text": "Việc này thuận, có thể đến nơi như ý muốn. Còn vài chi tiết nhỏ bạn nên kiểm lại cho chắc. Đừng vì thấy dễ mà lơ là. Hãy lập một danh sách ngắn những việc cuối cùng cần làm và đánh dấu từng mục khi xong. Giữ chắc tay lái đến tận bến là đủ."
+      }
+    ],
+    "question": "Khi gió đang thuận, bạn muốn hướng con thuyền của mình về đâu?"
+  }
+]

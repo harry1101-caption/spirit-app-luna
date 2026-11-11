@@ -1,6 +1,7 @@
 import LunaApp from "@/components/luna-app";
 import { JsonLd } from "@/components/json-ld";
 import { pageMetadata, toolJsonLd } from "@/lib/seo";
+import { YearlyHoroscopeLinks } from "@/components/yearly-horoscope-article";
 
 export const metadata = pageMetadata("tu-vi");
 
@@ -11,7 +12,7 @@ export default function TuViPage() {
           React 19 tự đưa thẻ này lên <head>. */}
       <link rel="preload" as="image" href="/images/tarot-sanctuary.webp" fetchPriority="high" />
       <JsonLd data={toolJsonLd("tu-vi")} />
-      <LunaApp initialTab="tuvi" />
+      <LunaApp initialTab="tuvi" belowTool={<YearlyHoroscopeLinks />} />
     </>
   );
 }

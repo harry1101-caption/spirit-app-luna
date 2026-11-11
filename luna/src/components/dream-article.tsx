@@ -3,15 +3,12 @@ import { ArrowRight, Moon } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DREAM_ARTICLES, dreamArticle, type DreamArticle } from "@/content/dream-articles";
+import { ARTICLE_H2 as H2, ARTICLE_P as P } from "@/components/article-styles";
 
 /**
  * Một trang tra cứu "Nằm mơ thấy …". Server component: toàn bộ chữ có sẵn trong
  * HTML cho Google đọc. Cuối trang luôn dẫn về công cụ /giac-mo để người đọc tự giải mã.
- *
- * Kiểu chữ dùng `!` vì h2/p trong .experience-page có style riêng nằm ngoài cascade layer.
  */
-const H2 = "mt-8! font-[family-name:var(--font-serif-app)] text-[26px]! leading-tight! font-medium! text-[#4d2d68]!";
-const P = "mt-3! text-[15px]! leading-[1.8]! text-[#5b5276]!";
 
 export function DreamArticleView({ article }: { article: DreamArticle }) {
   const related = article.related.map(dreamArticle).filter(Boolean) as DreamArticle[];

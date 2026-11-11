@@ -102,9 +102,9 @@ const defaultPrefs: Preferences = {
 };
 const nav: { label: string; action: string }[] = [
   { label: "Trang chủ", action: "home" },
-  { label: "Cây ước nguyện", action: "wish-tree" },
-  { label: "Phác hoạ người ấy", action: "phac-hoa" },
   { label: "Tarot", action: "tarot" },
+  { label: "Xem độ hợp đôi", action: "hop-nhau" },
+  { label: "Cây ước nguyện", action: "wish-tree" },
   { label: "Thần số học", action: "than-so-hoc" },
 ];
 /** Chủ đề trên trang chủ ↔ chủ đề trong form Tarot. */
@@ -754,12 +754,13 @@ export default function LunaApp({
 
           </section>
         ) : null}
-        {tab === "tuvi" && !flow && !report ? <TuViFlow /> : null}
+        {tab === "tuvi" && !flow && !report ? <TuViFlow belowTool={belowTool} /> : null}
         {tab === "xin-xam" && !flow && !report ? (
           <section className="experience-page experience-page-tarot experience-page-xinxam">
             <div className="tarot-page-background" aria-hidden="true" />
             <div className="page-heading tarot-title-only"><h1>Một lời gợi mở từ quẻ xăm</h1></div>
             <RelatedToolsSlot><div className="experience-surface"><XinXamFlow /></div></RelatedToolsSlot>
+            {belowTool}
           </section>
         ) : null}
         {tab === "kinh-dich" && !flow && !report ? (

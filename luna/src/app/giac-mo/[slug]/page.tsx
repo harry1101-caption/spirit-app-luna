@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import LunaApp from "@/components/luna-app";
@@ -16,7 +17,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const a = dreamArticle(slug);
-  if (!a) return { title: "Giải mã giấc mơ", robots: { index: false } };
+  if (!a) notFound(); // slug lạ: trả 404 thật, không để thành soft 404 sau Suspense
   const path = `/giac-mo/${a.slug}`;
   return {
     title: a.title,
@@ -35,14 +36,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function DreamArticlePage({ params }: Props) {
+/**
+ * Khung trang (LunaApp) không phụ thuộc slug nên nằm ngoài; phần đọc `params` bọc
+ * trong Suspense để chuyển trang giữa các slug vẫn tức thì. Slug có trong
+ * generateStaticParams vẫn được dựng sẵn đủ HTML lúc build.
+ */
+export default function DreamArticlePage({ params }: Props) {
+  return (
+    <>
+      <link rel="preload" as="image" href="/images/tarot-sanctuary.webp" fetchPriority="high" />
+      <LunaApp
+        initialTab="article"
+        article={
+          <Suspense fallback={<div className="tarot-setup-panel min-h-[640px]" aria-busy="true" />}>
+            <DreamArticleContent params={params} />
+          </Suspense>
+        }
+      />
+    </>
+  );
+}
+
+async function DreamArticleContent({ params }: Props) {
   const { slug } = await params;
   const a = dreamArticle(slug);
   if (!a) notFound();
   const url = `${SITE_URL}/giac-mo/${a.slug}`;
   return (
     <>
-      <link rel="preload" as="image" href="/images/tarot-sanctuary.webp" fetchPriority="high" />
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -66,7 +87,7 @@ export default async function DreamArticlePage({ params }: Props) {
           ],
         }}
       />
-      <LunaApp initialTab="article" article={<DreamArticleView article={a} />} />
+      <DreamArticleView article={a} />
     </>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import Image from "next/image";
 import {
   ArrowRight,
@@ -124,7 +124,8 @@ function normalizeTarotTopic(topic?: string) {
   return topic && topic in tarotQuestionSuggestions ? topic : "Tình cảm";
 }
 
-export function TuViFlow() {
+/** `belowTool`: khối liên kết tĩnh (vd. Tử vi 2027 theo tuổi) đặt cuối trang. */
+export function TuViFlow({ belowTool }: { belowTool?: ReactNode } = {}) {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
   const [chart, setChart] = useState<TuViChart | null>(null);
   const [formValues, setFormValues] = useState<TuViInput | null>(null);
@@ -313,6 +314,7 @@ export function TuViFlow() {
       </div>
       </div>
       </div>
+      {belowTool}
     </section>
   );
 }

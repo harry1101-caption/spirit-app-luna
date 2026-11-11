@@ -42,6 +42,13 @@ export const PAGES = {
     appName: "Lập lá số Tử Vi",
     priority: 0.9,
   },
+  "tu-vi-2027": {
+    path: "/tu-vi-2027",
+    title: "Tử vi 2027 năm Đinh Mùi cho 12 con giáp",
+    description:
+      "Tử vi năm 2027 Đinh Mùi cho 12 con giáp: tuổi nào hợp, tuổi nào xung với năm Mùi, công việc, tiền bạc, tình cảm và những việc nhỏ nên làm trong năm.",
+    priority: 0.8,
+  },
   "than-so-hoc": {
     path: "/than-so-hoc",
     title: "Thần số học: tính 6 con số theo họ tên và ngày sinh",

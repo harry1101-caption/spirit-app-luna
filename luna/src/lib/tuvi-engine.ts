@@ -9,8 +9,8 @@
  */
 import { batTuChart } from "./bat-tu.ts";
 
-const STEMS = ["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"];
-const BRANCHES = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
+export const STEMS = ["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"];
+export const BRANCHES = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
 const PALACES = ["Mệnh", "Phụ Mẫu", "Phúc Đức", "Điền Trạch", "Quan Lộc", "Nô Bộc", "Thiên Di", "Tật Ách", "Tài Bạch", "Tử Tức", "Phu Thê", "Huynh Đệ"];
 const mod = (n: number, m = 12) => ((n % m) + m) % m;
 
@@ -84,7 +84,7 @@ export function solarToLunar(dd: number, mm: number, yy: number) {
 // ---------- Bảng tra ----------
 const NAP_AM = ["Hải Trung Kim", "Lô Trung Hỏa", "Đại Lâm Mộc", "Lộ Bàng Thổ", "Kiếm Phong Kim", "Sơn Đầu Hỏa", "Giản Hạ Thủy", "Thành Đầu Thổ", "Bạch Lạp Kim", "Dương Liễu Mộc", "Tuyền Trung Thủy", "Ốc Thượng Thổ", "Tích Lịch Hỏa", "Tùng Bách Mộc", "Trường Lưu Thủy", "Sa Trung Kim", "Sơn Hạ Hỏa", "Bình Địa Mộc", "Bích Thượng Thổ", "Kim Bạch Kim", "Phú Đăng Hỏa", "Thiên Hà Thủy", "Đại Trạch Thổ", "Thoa Xuyến Kim", "Tang Đố Mộc", "Đại Khê Thủy", "Sa Trung Thổ", "Thiên Thượng Hỏa", "Thạch Lựu Mộc", "Đại Hải Thủy"];
 const sexagenary = (stem: number, branch: number) => mod(6 * stem - 5 * branch, 60);
-const napAm = (stem: number, branch: number) => NAP_AM[Math.floor(sexagenary(stem, branch) / 2)];
+export const napAm = (stem: number, branch: number) => NAP_AM[Math.floor(sexagenary(stem, branch) / 2)];
 const CUC: Record<string, [number, string]> = { "Thủy": [2, "Thủy nhị cục"], "Mộc": [3, "Mộc tam cục"], "Kim": [4, "Kim tứ cục"], "Thổ": [5, "Thổ ngũ cục"], "Hỏa": [6, "Hỏa lục cục"] };
 
 // Miếu/vượng/đắc/bình/hãm theo chi Tý → Hợi.

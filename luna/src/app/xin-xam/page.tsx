@@ -1,6 +1,7 @@
 import LunaApp from "@/components/luna-app";
 import { JsonLd } from "@/components/json-ld";
 import { pageMetadata, toolJsonLd } from "@/lib/seo";
+import { FortuneStickIndex } from "@/components/fortune-stick-article";
 
 export const metadata = pageMetadata("xin-xam");
 
@@ -11,7 +12,7 @@ export default function XinXamPage() {
           React 19 tự đưa thẻ này lên <head>. */}
       <link rel="preload" as="image" href="/images/tarot-sanctuary.webp" fetchPriority="high" />
       <JsonLd data={toolJsonLd("xin-xam")} />
-      <LunaApp initialTab="xin-xam" />
+      <LunaApp initialTab="xin-xam" belowTool={<FortuneStickIndex />} />
     </>
   );
 }
