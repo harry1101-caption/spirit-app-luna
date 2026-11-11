@@ -81,6 +81,13 @@ export const PAGES = {
     appName: "Xem độ hợp đôi",
     priority: 0.9,
   },
+  "tra-cuu": {
+    path: "/tra-cuu",
+    title: "Tra cứu: tử vi 2027 theo tuổi, giải mã giấc mơ, giải 100 quẻ xăm Quan Âm",
+    description:
+      "Tất cả bài tra cứu của Lunara trên một trang: tử vi năm 2027 cho 12 con giáp, ý nghĩa những giấc mơ hay gặp và lời giải đủ 100 quẻ xăm Quan Âm.",
+    priority: 0.8,
+  },
   "khi-nao-co-nguoi-yeu": {
     path: "/khi-nao-co-nguoi-yeu",
     title: "Khi nào có người yêu? Xem năm, tháng tình duyên vượng theo tuổi",

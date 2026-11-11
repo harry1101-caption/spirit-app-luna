@@ -3,6 +3,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { IntentionIntro } from "@/components/intention-intro";
 import { SectionDivider } from "@/components/section-divider";
+import { HomeLibrary } from "@/components/home-library";
 import { TopicPicker, type Topic } from "@/components/topic-picker";
 import { WhyLunara } from "@/components/why-lunara";
 import { SiteFooter } from "@/components/site-footer";
@@ -331,6 +332,8 @@ export function CelestialHome({
           </div>
         </section>
         <SectionDivider index={0} className="mt-[46px]" />
+        <HomeLibrary />
+        <SectionDivider index={1} className="mt-[46px]" />
         <section
           className="intention-section page-container mt-[46px]!"
           data-reveal
@@ -345,13 +348,13 @@ export function CelestialHome({
           />
           <IntentionIntro onStartTarot={() => onMethod("tarot")} />
         </section>
-        <SectionDivider index={1} className="mt-[46px]" />
+        <SectionDivider index={2} className="mt-[46px]" />
         <FeedbackSection />
         {/* Dải cuối trang: "Vì sao chọn Lunara" và lời kết dùng CHUNG một nền
             trải hết bề ngang, nên phải bọc lại thành một khối. Mẹo full-bleed
             (w-screen + dịch trái nửa màn hình) là cách repo vẫn dùng để thoát
             khỏi bề ngang bị bó của luồng trang. */}
-        <SectionDivider index={2} className="mt-[46px]" />
+        <SectionDivider index={3} className="mt-[46px]" />
         <div className="relative mt-[46px] overflow-hidden">
           <div
             aria-hidden="true"
