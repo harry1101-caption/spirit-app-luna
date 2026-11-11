@@ -14,6 +14,8 @@ import { ThanSoHocFlow } from "@/components/than-so-hoc-flow";
 import { GiacMoFlow } from "@/components/giac-mo-flow";
 import { PhacHoaFlow } from "@/components/phac-hoa-flow";
 import { HopNhauFlow } from "@/components/hop-nhau-flow";
+import { NameLoveFlow } from "@/components/name-love-flow";
+import { LoveTimingFlow } from "@/components/love-timing-flow";
 import { DatingFlow, type DatingView } from "@/components/dating-flow";
 import { HumanDesignFlow } from "@/components/human-design-flow";
 import { ChiTayFlow } from "@/components/chi-tay-flow";
@@ -76,7 +78,7 @@ import { RelatedToolsSlot } from "@/components/related-tools";
 import { LogoMark } from "@/components/logo-mark";
 
 import { buildDailyCardReport, drawDailyCard } from "@/lib/daily-card";
-type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich" | "phac-hoa" | "hop-nhau" | "duyen" | "wish-tree" | "article";
+type Tab = "home" | "explore" | "history" | "profile" | "tuvi" | "lenormand" | "bat-tu" | "than-so-hoc" | "giac-mo" | "human-design" | "chi-tay" | "xin-xam" | "kinh-dich" | "phac-hoa" | "hop-nhau" | "boi-ten" | "khi-nao-co-nguoi-yeu" | "duyen" | "wish-tree" | "article";
 type DailyCardState = { id: number; day: string; revealed: boolean };
 /** Trắc nghiệm tính cách đang tạm ẩn: không liệt kê, không gợi ý. */
 const visibleMethods = methods.filter((m) => m.id !== "personality");
@@ -127,6 +129,8 @@ export default function LunaApp({
   initialTab = "home",
   initialTopic,
   hopNhau,
+  nameLove,
+  loveTiming,
   dating,
   article,
   belowTool,
@@ -139,6 +143,10 @@ export default function LunaApp({
   dating?: DatingView;
   /** Token người mời / người được mời đọc từ query string của /hop-nhau. */
   hopNhau?: { m?: string; b?: string };
+  /** Hai cái tên đọc từ query string của /boi-ten. */
+  nameLove?: { a?: string; b?: string };
+  /** Năm sinh âm lịch và tình trạng đọc từ query string của /khi-nao-co-nguoi-yeu. */
+  loveTiming?: { y?: string; s?: string };
   initialFlow?: Method;
   initialTab?: Tab;
   /** Key chủ đề đọc từ query string, ví dụ /tarot?chu-de=work. */
@@ -329,6 +337,14 @@ export default function LunaApp({
     }
     if (next === "hop-nhau" && window.location.pathname !== "/hop-nhau") {
       window.location.assign("/hop-nhau");
+      return;
+    }
+    if (next === "khi-nao-co-nguoi-yeu" && window.location.pathname !== "/khi-nao-co-nguoi-yeu") {
+      window.location.assign("/khi-nao-co-nguoi-yeu");
+      return;
+    }
+    if (next === "boi-ten" && window.location.pathname !== "/boi-ten") {
+      window.location.assign("/boi-ten");
       return;
     }
     if (next === "phac-hoa" && window.location.pathname !== "/phac-hoa") {
@@ -815,6 +831,20 @@ export default function LunaApp({
             <div className="tarot-page-background" aria-hidden="true" />
             <div className="page-heading tarot-title-only"><h1>Xem độ hợp đôi</h1></div>
             <RelatedToolsSlot><div className="experience-surface"><HopNhauFlow inviteToken={hopNhau?.m} partnerToken={hopNhau?.b} /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "khi-nao-co-nguoi-yeu" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-lovetiming">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Khi nào có người yêu?</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><LoveTimingFlow initialYear={loveTiming?.y} initialStatus={loveTiming?.s} /></div></RelatedToolsSlot>
+          </section>
+        ) : null}
+        {tab === "boi-ten" && !flow && !report ? (
+          <section className="experience-page experience-page-tarot experience-page-boiten">
+            <div className="tarot-page-background" aria-hidden="true" />
+            <div className="page-heading tarot-title-only"><h1>Bói tình duyên qua tên</h1></div>
+            <RelatedToolsSlot><div className="experience-surface"><NameLoveFlow initialA={nameLove?.a} initialB={nameLove?.b} /></div></RelatedToolsSlot>
           </section>
         ) : null}
         {tab === "phac-hoa" && !flow && !report ? (

@@ -81,6 +81,22 @@ export const PAGES = {
     appName: "Xem độ hợp đôi",
     priority: 0.9,
   },
+  "khi-nao-co-nguoi-yeu": {
+    path: "/khi-nao-co-nguoi-yeu",
+    title: "Khi nào có người yêu? Xem năm, tháng tình duyên vượng theo tuổi",
+    description:
+      "Nhập ngày sinh để biết năm nào, tháng nào dễ có người yêu hoặc tiến tới hôn nhân, theo sao Đào Hoa, Hồng Loan, Thiên Hỷ. Kèm tuổi hợp duyên. Miễn phí, không cần tài khoản.",
+    appName: "Khi nào có người yêu?",
+    priority: 0.9,
+  },
+  "boi-ten": {
+    path: "/boi-ten",
+    title: "Bói tình duyên qua tên: hai bạn là tri kỷ, người yêu hay về chung nhà?",
+    description:
+      "Nhập tên bạn và người ấy: gạch chữ trùng, xếp tháp YÊU THƯƠNG ra phần trăm và xem Số Linh hồn của mỗi người. Miễn phí, không cần ngày sinh, không cần tài khoản.",
+    appName: "Bói tình duyên qua tên",
+    priority: 0.8,
+  },
   "phac-hoa": {
     path: "/phac-hoa",
     title: "Phác hoạ người ấy: vẽ chân dung người yêu tương lai bằng AI",

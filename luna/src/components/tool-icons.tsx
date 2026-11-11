@@ -135,3 +135,91 @@ export const BatTuEmblemIcon = imageIcon("/icons/tools/bat-tu.png", "BatTuEmblem
 export const DailyCardImgIcon = imageIcon("/icons/tools/daily-card-img.png", "DailyCardImgIcon");
 export const CoupleMatchIcon = imageIcon("/icons/tools/couple-match.png", "CoupleMatchIcon");
 export const WishTreeIcon = imageIcon("/icons/tools/wish-tree.png", "WishTreeIcon");
+
+/** Bói tình duyên qua tên: phong thư màu pastel, dấu niêm trái tim, hai chữ cái. Vẽ tay theo tông các icon PNG. */
+export function NameLoveIcon({ size = 24, strokeWidth, ...props }: IconProps) {
+  void strokeWidth;
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width={size} height={size} fill="none" {...props}>
+      <defs>
+        <linearGradient id="name-love-paper" x1="10" y1="18" x2="54" y2="52" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#efe4fb" />
+          <stop offset="1" stopColor="#f9dcea" />
+        </linearGradient>
+        <linearGradient id="name-love-flap" x1="10" y1="20" x2="54" y2="40" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#d9c6f2" />
+          <stop offset="1" stopColor="#f3c3da" />
+        </linearGradient>
+        <radialGradient id="name-love-heart" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(29 36) scale(9)">
+          <stop stopColor="#f9b7d3" />
+          <stop offset="1" stopColor="#e07aa9" />
+        </radialGradient>
+        <radialGradient id="name-love-cloud" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(32 54) scale(26 7)">
+          <stop stopColor="#e6d8f6" />
+          <stop offset="1" stopColor="#e6d8f6" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <ellipse cx="32" cy="54" rx="26" ry="7" fill="url(#name-love-cloud)" />
+      {/* Hai mảnh giấy ghi tên ló ra sau phong thư */}
+      <g transform="rotate(-12 22 18)">
+        <rect x="14" y="9" width="15" height="17" rx="2.5" fill="#fffaf3" stroke="#c9a46a" strokeWidth=".8" />
+        <text x="21.5" y="21.5" textAnchor="middle" fontFamily="Georgia, serif" fontSize="11" fontStyle="italic" fill="#6e4a92">A</text>
+      </g>
+      <g transform="rotate(12 42 18)">
+        <rect x="35" y="9" width="15" height="17" rx="2.5" fill="#fffaf3" stroke="#c9a46a" strokeWidth=".8" />
+        <text x="42.5" y="21.5" textAnchor="middle" fontFamily="Georgia, serif" fontSize="11" fontStyle="italic" fill="#c2578c">B</text>
+      </g>
+      <rect x="9" y="22" width="46" height="29" rx="4" fill="url(#name-love-paper)" stroke="#c9a46a" strokeWidth="1" />
+      <path d="M9.6 24.2 32 39.5l22.4-15.3" fill="url(#name-love-flap)" stroke="#c9a46a" strokeWidth="1" strokeLinejoin="round" />
+      <path d="M32 44.5c-4.6-3-7.4-5.6-7.4-8.6 0-2.2 1.7-3.8 3.7-3.8 1.5 0 2.8.8 3.7 2.1.9-1.3 2.2-2.1 3.7-2.1 2 0 3.7 1.6 3.7 3.8 0 3-2.8 5.6-7.4 8.6Z" fill="url(#name-love-heart)" stroke="#fff" strokeWidth="1" />
+      <path d="M52 8c.5 2 1 2.6 3 3.1-2 .5-2.5 1.1-3 3.1-.5-2-1-2.6-3-3.1 2-.5 2.5-1.1 3-3.1Z" fill="#d8b46a" />
+      <path d="M9 32c.4 1.4.7 1.8 2.1 2.2-1.4.4-1.7.8-2.1 2.2-.4-1.4-.7-1.8-2.1-2.2 1.4-.4 1.7-.8 2.1-2.2Z" fill="#d8b46a" />
+      <circle cx="57" cy="40" r="1.2" fill="#e9c98f" />
+      <circle cx="7" cy="20" r="1" fill="#e9c98f" />
+    </svg>
+  );
+}
+
+/** Khi nào có người yêu: tờ lịch pastel có trái tim và cành hoa đào. Vẽ tay theo tông các icon PNG. */
+export function LoveTimingIcon({ size = 24, strokeWidth, ...props }: IconProps) {
+  void strokeWidth;
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width={size} height={size} fill="none" {...props}>
+      <defs>
+        <linearGradient id="love-timing-page" x1="12" y1="14" x2="50" y2="54" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#fffaf3" />
+          <stop offset="1" stopColor="#f6ecfb" />
+        </linearGradient>
+        <linearGradient id="love-timing-top" x1="12" y1="14" x2="50" y2="24" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#d9c6f2" />
+          <stop offset="1" stopColor="#f3c3da" />
+        </linearGradient>
+        <radialGradient id="love-timing-heart" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(30 36) scale(10)">
+          <stop stopColor="#f9b7d3" />
+          <stop offset="1" stopColor="#e07aa9" />
+        </radialGradient>
+        <radialGradient id="love-timing-cloud" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(32 55) scale(26 6)">
+          <stop stopColor="#e6d8f6" />
+          <stop offset="1" stopColor="#e6d8f6" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <ellipse cx="32" cy="55" rx="26" ry="6" fill="url(#love-timing-cloud)" />
+      <rect x="12" y="14" width="38" height="38" rx="5" fill="url(#love-timing-page)" stroke="#c9a46a" strokeWidth="1" />
+      <path d="M12 19a5 5 0 0 1 5-5h28a5 5 0 0 1 5 5v5H12Z" fill="url(#love-timing-top)" stroke="#c9a46a" strokeWidth="1" />
+      <rect x="20" y="10" width="3" height="8" rx="1.5" fill="#c9a46a" />
+      <rect x="39" y="10" width="3" height="8" rx="1.5" fill="#c9a46a" />
+      <g fill="#e9dcf5">
+        <circle cx="19" cy="30" r="1.4" /><circle cx="25" cy="30" r="1.4" /><circle cx="37" cy="30" r="1.4" /><circle cx="43" cy="30" r="1.4" />
+        <circle cx="19" cy="45" r="1.4" /><circle cx="43" cy="45" r="1.4" />
+      </g>
+      <path d="M31 47c-5.4-3.5-8.6-6.5-8.6-10 0-2.6 2-4.4 4.3-4.4 1.8 0 3.3.9 4.3 2.4 1-1.5 2.5-2.4 4.3-2.4 2.3 0 4.3 1.8 4.3 4.4 0 3.5-3.2 6.5-8.6 10Z" fill="url(#love-timing-heart)" stroke="#fff" strokeWidth="1" />
+      {/* Cành hoa đào */}
+      <path d="M44 50c3-4 6-6 11-7" stroke="#a77e5d" strokeWidth="1.2" strokeLinecap="round" />
+      <g fill="#f4a9c8" stroke="#fff" strokeWidth=".6">
+        <circle cx="50" cy="44.5" r="2.4" /><circle cx="55.5" cy="42.5" r="2" /><circle cx="46.5" cy="48" r="1.8" />
+      </g>
+      <path d="M53 6c.5 2 1 2.6 3 3.1-2 .5-2.5 1.1-3 3.1-.5-2-1-2.6-3-3.1 2-.5 2.5-1.1 3-3.1Z" fill="#d8b46a" />
+      <circle cx="8" cy="26" r="1.1" fill="#e9c98f" />
+    </svg>
+  );
+}

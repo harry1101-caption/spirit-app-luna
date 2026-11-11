@@ -2,7 +2,7 @@
  * Danh sách công cụ, dùng chung cho lưới ở trang chủ và menu "Trải nghiệm" trên
  * header. Giữ một nơi duy nhất để thêm feature mới không phải sửa hai chỗ.
  */
-import { Hand, Layers, Leaf, Orbit } from "lucide-react";
+import { Hand, Heart, Layers, Leaf, Orbit } from "lucide-react";
 import {
   AstrologyIcon,
   CoupleMatchIcon,
@@ -14,6 +14,8 @@ import {
   IChingIcon,
   LenormandCardsIcon,
   MoonSignIcon,
+  NameLoveIcon,
+  LoveTimingIcon,
   NumerologyIcon,
   PalmistryIcon,
   PastLifeIcon,
@@ -37,6 +39,16 @@ export const toolGroups = [
     ],
   },
   {
+    title: "Tình duyên",
+    icon: Heart,
+    tools: [
+      { title: "Xem độ hợp đôi", description: "Nhập hai ngày sinh, xem hợp nhau bao nhiêu %.", icon: CoupleMatchIcon, action: "hop-nhau", bare: true },
+      { title: "Khi nào có người yêu?", description: "Năm, tháng duyên vượng theo tuổi của bạn.", icon: LoveTimingIcon, action: "khi-nao-co-nguoi-yeu", bare: true },
+      { title: "Bói tình duyên qua tên", description: "Gạch chữ trùng, xem hai bạn là gì của nhau.", icon: NameLoveIcon, action: "boi-ten", bare: true },
+      { title: "Phác hoạ người ấy", description: "Bức chân dung người dành cho bạn.", icon: PhacHoaIcon, action: "phac-hoa", bare: true },
+    ],
+  },
+  {
     title: "Lá số & Ngày sinh",
     icon: Orbit,
     tools: [
@@ -53,8 +65,6 @@ export const toolGroups = [
     tools: [
       { title: "Xem chỉ tay", description: "Quan sát dấu hiệu trên bàn tay.", icon: PalmistryIcon, action: "chi-tay", bare: true },
       { title: "Nhân tướng học", description: "Tìm hiểu các nét trên khuôn mặt.", icon: FaceReadingIcon, bare: true },
-      { title: "Xem độ hợp đôi", description: "Nhập hai ngày sinh, xem hợp nhau bao nhiêu %.", icon: CoupleMatchIcon, action: "hop-nhau", bare: true },
-      { title: "Phác hoạ người ấy", description: "Bức chân dung người dành cho bạn.", icon: PhacHoaIcon, action: "phac-hoa", bare: true },
       { title: "Khuôn mặt kiếp trước", description: "Một trải nghiệm khám phá hình ảnh.", icon: PastLifeIcon, clip: true },
       { title: "Giải mã giấc mơ", description: "Ghi lại những biểu tượng trong mơ.", icon: DreamIcon, action: "giac-mo", bare: true },
     ],
@@ -92,6 +102,8 @@ export const toolRoutes: Record<string, string> = {
   "kinh-dich": "/kinh-dich",
   "phac-hoa": "/phac-hoa",
   "hop-nhau": "/hop-nhau",
+  "boi-ten": "/boi-ten",
+  "khi-nao-co-nguoi-yeu": "/khi-nao-co-nguoi-yeu",
   "wish-tree": "/cay-uoc-nguyen",
   // Se duyên đang tạm dừng (redirect ở next.config.ts) — mở lại thì thêm `duyen: "/duyen"` và mục trong toolGroups
 };
