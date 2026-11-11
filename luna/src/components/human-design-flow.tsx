@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowRight, CalendarDays, Check, Clock3, Globe, LoaderCircle, LockKeyhole,
   Orbit, RotateCcw, Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import { IconField, IconSelect, FormIntro, ValidatedForm } from "@/components/form-field";
 import { centers, type HumanDesignChart } from "@/lib/human-design";
 import { track } from "@/lib/analytics";
@@ -92,6 +93,22 @@ export function HumanDesignFlow() {
 
   // Gợi ý feature liên quan render ngoài thẻ, do RelatedToolsSlot ở luna-app.
   useRelatedTools(chart ? "human-design" : null);
+
+  useSaveableResult(
+    useMemo(
+      () =>
+        chart
+          ? { feature: "human-design" as const, title: `Human Design · ${chart.type}`, summary: reading?.summary, payload: { chart, reading, lastInput } }
+          : null,
+      [chart, reading, lastInput],
+    ),
+  );
+  useRestoreSaved("human-design", (p: { chart: HumanDesignChart; reading: Interpretation | null; lastInput: Record<string, unknown> | null }) => {
+    setChart(p.chart);
+    setReading(p.reading);
+    setLastInput(p.lastInput);
+    if (!p.reading && p.lastInput) void loadReading(p.lastInput);
+  });
 
   if (!chart) {
     return (
@@ -200,9 +217,12 @@ export function HumanDesignFlow() {
           <h2 className="mt-1 text-[30px] leading-tight text-[#1d1133]">{chart.type}</h2>
           <p className="mt-1 text-[13px] text-[#5b5276]">{chart.strategy}</p>
         </div>
-        <Button variant="outline" onClick={() => { track("human_design_restart"); setChart(null); setReading(null); setLastInput(null); }}>
-          <RotateCcw size={15} /> Lập lại
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" onClick={() => { track("human_design_restart"); setChart(null); setReading(null); setLastInput(null); }}>
+            <RotateCcw size={15} /> Lập lại
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">

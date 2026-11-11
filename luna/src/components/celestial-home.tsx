@@ -3,6 +3,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { IntentionIntro } from "@/components/intention-intro";
 import { SectionDivider } from "@/components/section-divider";
+import { HomeLibrary } from "@/components/home-library";
 import { TopicPicker, type Topic } from "@/components/topic-picker";
 import { WhyLunara } from "@/components/why-lunara";
 import { SiteFooter } from "@/components/site-footer";
@@ -32,25 +33,25 @@ const pillars = [
     icon: Moon,
     title: "Tarot",
     text: "Lắng nghe trực giác",
-    method: "tarot" as Method,
+    action: "tarot",
   },
   {
     icon: Sparkles,
     title: "Chiêm tinh",
     text: "Hiểu rõ bản thân",
-    method: "daily" as Method,
+    action: "daily",
   },
   {
     icon: Leaf,
     title: "Phát triển",
     text: "Sống phiên bản tốt hơn",
-    method: "personality" as Method,
+    action: "than-so-hoc",
   },
   {
     icon: Heart,
     title: "Kết nối",
     text: "Gần hơn với chính mình",
-    method: "personality" as Method,
+    action: "wish-tree",
   },
 ];
 
@@ -143,6 +144,7 @@ export function CelestialHome({
           src="/images/celestial-hero.webp"
           fill
           loading="eager"
+          fetchPriority="high"
           sizes="100vw"
           alt=""
         />
@@ -166,7 +168,7 @@ export function CelestialHome({
             KHÁM PHÁ · THẤU HIỂU · SỐNG TRỌN VẸN HƠN
           </p>
           <h1 id="hero-title">
-            Khám phá thế giới
+            Khám phá thế giới{" "}
             <br />
             bên trong bạn
           </h1>
@@ -200,7 +202,7 @@ export function CelestialHome({
           data-reveal
         >
           {pillars.map((p) => (
-            <button key={p.title} onClick={() => onMethod(p.method)} className="items-center! text-center! after:right-0!">
+            <button key={p.title} onClick={() => onTool(p.action)} className="items-center! text-center! after:right-0!">
               <span className="pillar-icon mx-auto!">
                 <p.icon size={23} strokeWidth={1.25} />
               </span>
@@ -330,6 +332,8 @@ export function CelestialHome({
           </div>
         </section>
         <SectionDivider index={0} className="mt-[46px]" />
+        <HomeLibrary />
+        <SectionDivider index={1} className="mt-[46px]" />
         <section
           className="intention-section page-container mt-[46px]!"
           data-reveal
@@ -344,13 +348,13 @@ export function CelestialHome({
           />
           <IntentionIntro onStartTarot={() => onMethod("tarot")} />
         </section>
-        <SectionDivider index={1} className="mt-[46px]" />
+        <SectionDivider index={2} className="mt-[46px]" />
         <FeedbackSection />
         {/* Dải cuối trang: "Vì sao chọn Lunara" và lời kết dùng CHUNG một nền
             trải hết bề ngang, nên phải bọc lại thành một khối. Mẹo full-bleed
             (w-screen + dịch trái nửa màn hình) là cách repo vẫn dùng để thoát
             khỏi bề ngang bị bó của luồng trang. */}
-        <SectionDivider index={2} className="mt-[46px]" />
+        <SectionDivider index={3} className="mt-[46px]" />
         <div className="relative mt-[46px] overflow-hidden">
           <div
             aria-hidden="true"

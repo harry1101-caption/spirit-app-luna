@@ -4,6 +4,9 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { toolGroups, toolRoutes as routes } from "@/components/tool-groups";
+import { SaveResultInline } from "@/components/save-result-card";
+import { ConsultationSection } from "@/components/consultation-section";
+import type { SaveableResult } from "@/lib/saved-results";
 
 /**
  * Gợi ý feature liên quan, hiện ở cuối trang kết quả.
@@ -22,6 +25,11 @@ import { toolGroups, toolRoutes as routes } from "@/components/tool-groups";
  */
 
 const SlotContext = createContext<((action: string | null) => void) | null>(null);
+/** Kết quả có thể lưu vào tài khoản — flow đăng ký qua `useSaveableResult` */
+type Saveable = { result: SaveableResult; guestOnly?: boolean };
+const SaveContext = createContext<((saveable: Saveable | null) => void) | null>(null);
+/** Kết quả hiện tại mà flow đã đăng ký — để nút lưu nằm ngay trong thẻ kết quả đọc được. */
+const CurrentSaveContext = createContext<Saveable | null>(null);
 
 /**
  * Bọc quanh `.experience-surface`: gợi ý hiện ngay dưới thẻ, ngoài thẻ.
@@ -38,14 +46,27 @@ export function RelatedToolsSlot({
   panel?: string;
 }) {
   const [action, setAction] = useState<string | null>(null);
+  const [saveable, setSaveable] = useState<Saveable | null>(null);
   return (
     <SlotContext.Provider value={setAction}>
-      {children}
-      {action ? (
-        <div className={`${panel} mt-5!`}>
-          <RelatedTools current={action} />
-        </div>
-      ) : null}
+      <SaveContext.Provider value={setSaveable}>
+        <CurrentSaveContext.Provider value={saveable}>{children}</CurrentSaveContext.Provider>
+        {/* Banner "đăng nhập nhận 3 tháng miễn phí" dưới kết quả đã bỏ: khách lưu qua nút
+            "Lưu vào tài khoản" trong header kết quả (mở modal đăng nhập). */}
+        {action ? (
+          <>
+            {/* Se duyên là ghép đôi giữa người dùng, không phải một lần xem → không mời tư vấn. */}
+            {action !== "duyen" ? (
+              <div className={`${panel} mt-5!`}>
+                <ConsultationSection key={action} feature={action} resultTitle={saveable?.result.title} />
+              </div>
+            ) : null}
+            <div className={`${panel} mt-5!`}>
+              <RelatedTools current={action} />
+            </div>
+          </>
+        ) : null}
+      </SaveContext.Provider>
     </SlotContext.Provider>
   );
 }
@@ -57,6 +78,19 @@ export function useRelatedTools(action: string | null) {
     setAction?.(action);
     return () => setAction?.(null);
   }, [action, setAction]);
+}
+
+/**
+ * Gọi trong flow khi đã có kết quả: hiện thẻ "Lưu vào tài khoản" / campaign đăng nhập
+ * ngay dưới kết quả. Truyền `null` khi còn ở form. Bọc `result` trong useMemo.
+ * `guestOnly`: kết quả đã tự đặt `SaveResultInline` cạnh nút Chia sẻ → thẻ chỉ hiện cho khách.
+ */
+export function useSaveableResult(result: SaveableResult | null, guestOnly = false) {
+  const set = useContext(SaveContext);
+  useEffect(() => {
+    set?.(result ? { result, guestOnly } : null);
+    return () => set?.(null);
+  }, [result, guestOnly, set]);
 }
 
 export function RelatedTools({
@@ -117,4 +151,14 @@ export function RelatedTools({
       </div>
     </section>
   );
+}
+
+/**
+ * Nút "Lưu vào tài khoản" đặt trong header thẻ kết quả, cạnh nút làm lại. Lấy kết quả
+ * từ `useSaveableResult` của flow nên không phải truyền prop. Khách và lúc chưa có kết
+ * quả thì không hiện gì (khách đã có banner đăng nhập dưới kết quả).
+ */
+export function ResultSaveButton() {
+  const current = useContext(CurrentSaveContext);
+  return current ? <SaveResultInline result={current.result} /> : null;
 }

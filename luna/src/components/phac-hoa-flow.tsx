@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   CalendarDays,
@@ -20,7 +20,8 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRelatedTools } from "@/components/related-tools";
+import { useRelatedTools, ResultSaveButton, useSaveableResult } from "@/components/related-tools";
+import { useRestoreSaved } from "@/lib/saved-results";
 import { FormIntro, IconField, IconSelect, ValidatedForm } from "@/components/form-field";
 import type { PortraitStyle, SoulmateProfile } from "@/lib/phac-hoa";
 import { track } from "@/lib/analytics";
@@ -96,6 +97,22 @@ export function PhacHoaFlow() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useRelatedTools(result ? "phac-hoa" : null);
+
+  useSaveableResult(
+    useMemo(
+      () =>
+        result
+          ? {
+              feature: "phac-hoa" as const,
+              title: `Phác hoạ người ấy · ${result.profile.target === "Nam" ? "Chàng trai" : "Cô gái"} cung ${result.profile.sign}`,
+              summary: result.profile.traits.slice(0, 3).join(", "),
+              payload: { result },
+            }
+          : null,
+      [result],
+    ),
+  );
+  useRestoreSaved("phac-hoa", (p: { result: Result }) => setResult(p.result));
 
   async function onPhoto(file: File | undefined) {
     setPhotoError("");
@@ -363,9 +380,12 @@ export function PhacHoaFlow() {
           <p className="eyebrow">PHÁC HOẠ NGƯỜI ẤY</p>
           <h2 className="mt-1 text-[30px] leading-tight text-[#1d1133]">{who} dành cho bạn</h2>
         </div>
-        <Button variant="outline" onClick={() => { track("phac_hoa_restart"); setResult(null); }}>
-          <RotateCcw size={15} /> Vẽ lại
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ResultSaveButton />
+          <Button variant="outline" onClick={() => { track("phac_hoa_restart"); setResult(null); }}>
+            <RotateCcw size={15} /> Vẽ lại
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { toolGroups, toolRoutes } from "@/components/tool-groups";
+import { LIBRARY_SECTIONS } from "@/lib/library";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -51,9 +52,9 @@ const socials: { name: string; url: string; Icon: typeof FacebookIcon }[] = [
 
 const notes = [
   "Nội dung để bạn tự chiêm nghiệm, không thay thế lời khuyên y tế, tài chính hay pháp lý.",
-  "Không cần đăng ký, không có tài khoản.",
-  "Họ tên và ngày giờ sinh chỉ dùng để tính, không lưu lại trên máy chủ.",
-  "Kết quả chỉ nằm trên thiết bị của bạn, và chỉ khi bạn chủ động bấm lưu.",
+  "Không cần đăng ký vẫn dùng được. Đăng nhập chỉ để lưu kết quả.",
+  "Họ tên và ngày giờ sinh chỉ dùng để tính, không lưu lại trừ khi bạn bấm lưu kết quả.",
+  "Kết quả chỉ được lưu vào tài khoản khi bạn đăng nhập và chủ động bấm lưu.",
 ];
 
 const badge =
@@ -93,7 +94,7 @@ export function SiteFooter() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(420px_200px_at_82%_12%,#ffffff95,transparent),radial-gradient(320px_180px_at_12%_88%,#e4d3f399,transparent)]"
       />
       <div className="page-container relative">
-        <div className="grid gap-x-10 gap-y-10 sm:grid-cols-[1.15fr_1.25fr_1.3fr]">
+        <div className="grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-[0.95fr_1.55fr_0.85fr_1.05fr]">
           <div>
             <div className="flex items-center gap-2.5">
               <Image src="/images/lunara-mark.png" alt="" width={42} height={42} />
@@ -152,6 +153,24 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Tra cứu">
+            <ColumnTitle>Tra cứu</ColumnTitle>
+            <ul className="mt-4 flex list-none flex-col gap-2.5 p-0">
+              {LIBRARY_SECTIONS.map((s) => (
+                <li key={s.id}>
+                  <Link href={s.href} className="text-[13px]! text-[#6f5f84] transition-colors hover:text-[#5d3f77]">
+                    {s.title}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href="/tra-cuu" className="text-[13px]! font-medium text-[#6f5f84] transition-colors hover:text-[#5d3f77]">
+                  Tất cả bài tra cứu
+                </Link>
+              </li>
             </ul>
           </nav>
 
