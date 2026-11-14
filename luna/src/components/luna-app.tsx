@@ -245,6 +245,38 @@ export default function LunaApp({
               },
             );
           });
+          // Lưới thẻ / nhóm chữ: từng phần tử con hiện lần lượt thay vì cả khối cùng lúc
+          gsap.utils
+            .toArray<HTMLElement>("[data-reveal-stagger]")
+            .forEach((group) => {
+              const items = Array.from(group.children) as HTMLElement[];
+              if (!items.length) return;
+              const below =
+                group.getBoundingClientRect().top > window.innerHeight;
+              gsap.fromTo(
+                items,
+                { y: 22, opacity: 0, scale: 0.98 },
+                {
+                  y: 0,
+                  opacity: 1,
+                  scale: 1,
+                  duration: 0.6,
+                  delay: below ? 0 : 0.12,
+                  stagger: Math.min(0.07, 0.6 / items.length),
+                  ease: "power3.out",
+                  clearProps: "transform,opacity",
+                  ...(below
+                    ? {
+                        scrollTrigger: {
+                          trigger: group,
+                          start: "top 92%",
+                          once: true,
+                        },
+                      }
+                    : {}),
+                },
+              );
+            });
         }, mainRef);
         cleanup = () => ctx.revert();
       },
@@ -669,7 +701,7 @@ export default function LunaApp({
               title="Bạn muốn khám phá điều gì?"
               description="Chọn điều bạn đang quan tâm hoặc bắt đầu bằng một trải nghiệm yêu thích."
             />
-            <div className="explore-intents" data-reveal>
+            <div className="explore-intents" data-reveal-stagger>
               {intents.map((item, i) => (
                 <button
                   key={item}
@@ -702,7 +734,7 @@ export default function LunaApp({
             <div className="section-title" data-reveal>
               <h2>Chọn cách bạn muốn lắng nghe</h2>
             </div>
-            <div className="method-grid" data-reveal>
+            <div className="method-grid" data-reveal-stagger>
               {visibleMethods.map((m, i) => (
                 <ExperienceCard
                   key={m.id}

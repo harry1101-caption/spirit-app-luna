@@ -163,7 +163,7 @@ export function CelestialHome({
             khó đọc. Dùng `!` vì .hero-editorial, .hero-actions và
             .hero-pillars đều nằm ngoài cascade layer. */}
         <div className="hero-glass relative z-[2] mx-auto w-full max-w-[880px] rounded-[26px] border border-white/55 bg-white/38 px-[clamp(24px,4vw,56px)] py-[clamp(16px,1.8vw,26px)] shadow-[0_18px_50px_#6b4b8218] backdrop-blur-xl">
-        <div className="hero-editorial w-full! text-center" data-reveal>
+        <div className="hero-editorial w-full! text-center" data-reveal-stagger>
           <p className="hero-eyebrow">
             KHÁM PHÁ · THẤU HIỂU · SỐNG TRỌN VẸN HƠN
           </p>
@@ -199,7 +199,7 @@ export function CelestialHome({
         </div>
         <div
           className="hero-pillars static! mt-4 justify-center! gap-0! border-t border-[#e6d9ef]/70 pt-4"
-          data-reveal
+          data-reveal-stagger
         >
           {pillars.map((p) => (
             <button key={p.title} onClick={() => onTool(p.action)} className="items-center! text-center! after:right-0!">
@@ -270,7 +270,7 @@ export function CelestialHome({
             </p>
             <ArrowRight size={20} />
           </button>
-          <div className="daily-topics max-[1050px]:grid-cols-3!">
+          <div className="daily-topics max-[1050px]:grid-cols-3!" data-reveal-stagger>
             {[
               { icon: Heart, title: "Tình yêu", text: "Mở lòng hơn" },
               {
@@ -311,7 +311,7 @@ export function CelestialHome({
                 <div className="tool-group-heading">
                   <h3><group.icon size={23} strokeWidth={1.4} aria-hidden="true" />{group.title}</h3>
                 </div>
-                <div className="tool-list">
+                <div className="tool-list" data-reveal-stagger>
                   {group.tools.map((tool) => {
                     const Icon = tool.icon;
                     const action = "action" in tool ? tool.action : undefined;

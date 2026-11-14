@@ -17,7 +17,7 @@ export function HomeLibrary() {
           <p>Tử vi năm mới, giấc mơ đêm qua, quẻ xăm vừa rút: đọc ngay, không cần nhập gì</p>
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3" data-reveal-stagger>
         {LIBRARY_SECTIONS.map((s) => {
           const Icon = ICONS[s.id as keyof typeof ICONS] ?? BookOpen;
           return (

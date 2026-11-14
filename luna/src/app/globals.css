@@ -6531,3 +6531,51 @@ select {
 /* Thẻ lưu kết quả dưới lá số Tử Vi: cùng độ rộng với .tuvi-result */
 .tuvi-save-card{width:min(1200px,calc(100% - 48px));margin:-40px auto 70px}
 @media (max-width:760px){.tuvi-save-card{width:calc(100% - 30px)}}
+
+/* ───────── Motion layer ─────────
+   Dùng thuộc tính `translate`/`scale` riêng (không phải `transform`) để không đè transform
+   sẵn có của phần tử; fill-mode `backwards` để hết animation là trả lại style gốc. */
+@keyframes luna-rise {
+  from { opacity: 0; translate: 0 14px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes luna-pop {
+  from { opacity: 0; scale: 0.94; }
+  to { opacity: 1; scale: 1; }
+}
+/* Mỗi bước / kết quả trong flow: các khối con hiện lần lượt */
+.tarot-setup-panel > *,
+.tarot-selection-panel > *,
+.flow-body > * {
+  animation: luna-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+:is(.tarot-setup-panel, .tarot-selection-panel, .flow-body) > :nth-child(2) { animation-delay: 0.06s; }
+:is(.tarot-setup-panel, .tarot-selection-panel, .flow-body) > :nth-child(3) { animation-delay: 0.12s; }
+:is(.tarot-setup-panel, .tarot-selection-panel, .flow-body) > :nth-child(4) { animation-delay: 0.18s; }
+:is(.tarot-setup-panel, .tarot-selection-panel, .flow-body) > :nth-child(5) { animation-delay: 0.24s; }
+:is(.tarot-setup-panel, .tarot-selection-panel, .flow-body) > :nth-child(n + 6) { animation-delay: 0.3s; }
+/* Hộp thoại / popover mở ra nhẹ nhàng */
+[role="dialog"] { animation: luna-pop 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+
+/* Micro-interaction */
+.tool-card.is-available:active,
+.experience-card:active,
+.hero-pillars > button:active { scale: 0.98; transition-duration: 0.1s; }
+.tool-card.is-available .tool-icon { transition: transform 0.45s cubic-bezier(0.3, 1.6, 0.4, 1), background 0.25s; }
+.tool-card.is-available:hover .tool-icon { transform: rotate(-8deg) scale(1.08); background: #ece3f6; }
+.tool-card.is-available .tool-arrow { transition: translate 0.25s ease; }
+.tool-card.is-available:hover .tool-arrow { translate: 4px 0; }
+.daily-zodiac img { transition: translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), scale 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.daily-zodiac:hover img { translate: 0 -4px; scale: 1.03; }
+.daily-zodiac .zodiac-sign { animation: luna-float 5s ease-in-out infinite; }
+@keyframes luna-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tarot-setup-panel > *,
+  .tarot-selection-panel > *,
+  .flow-body > *,
+  [role="dialog"],
+  .daily-zodiac .zodiac-sign { animation: none; }
+}
